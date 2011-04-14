@@ -1,0 +1,121 @@
+18:45:06: Creating resource group General
+18:45:06: Creating resource group Internal
+18:45:06: Creating resource group Autodetect
+18:45:06: SceneManagerFactory for type 'DefaultSceneManager' registered.
+18:45:06: Registering ResourceManager for type Material
+18:45:06: Registering ResourceManager for type Mesh
+18:45:06: Registering ResourceManager for type Skeleton
+18:45:06: MovableObjectFactory for type 'ParticleSystem' registered.
+18:45:06: OverlayElementFactory for type Panel registered.
+18:45:06: OverlayElementFactory for type BorderPanel registered.
+18:45:06: OverlayElementFactory for type TextArea registered.
+18:45:06: Registering ResourceManager for type Font
+18:45:06: ArchiveFactory for archive type FileSystem registered.
+18:45:06: ArchiveFactory for archive type Zip registered.
+18:45:06: DDS codec registering
+18:45:06: FreeImage version: 3.14.1
+18:45:06: This program uses FreeImage, a free, open source image library supporting all common bitmap formats. See http://freeimage.sourceforge.net for details
+18:45:06: Supported formats: bmp,ico,jpg,jif,jpeg,jpe,jng,koa,iff,lbm,mng,pbm,pbm,pcd,pcx,pgm,pgm,png,ppm,ppm,ras,tga,targa,tif,tiff,wap,wbmp,wbm,psd,cut,xbm,xpm,gif,hdr,g3,sgi,exr,j2k,j2c,jp2,pfm,pct,pict,pic,bay,bmq,cr2,crw,cs1,dc2,dcr,dng,erf,fff,hdr,k25,kdc,mdc,mos,mrw,nef,orf,pef,pxn,raf,raw,rdc,sr2,srf,arw,3fr,cine,ia,kc2,mef,nrw,qtk,rw2,sti,drf,dsc,ptx,cap,iiq,rwz
+18:45:06: Registering ResourceManager for type HighLevelGpuProgram
+18:45:06: Registering ResourceManager for type Compositor
+18:45:06: MovableObjectFactory for type 'Entity' registered.
+18:45:06: MovableObjectFactory for type 'Light' registered.
+18:45:06: MovableObjectFactory for type 'BillboardSet' registered.
+18:45:06: MovableObjectFactory for type 'ManualObject' registered.
+18:45:06: MovableObjectFactory for type 'BillboardChain' registered.
+18:45:06: MovableObjectFactory for type 'RibbonTrail' registered.
+18:45:06: Loading library /usr/lib/OGRE/RenderSystem_GL
+18:45:06: Installing plugin: GL RenderSystem
+18:45:06: OpenGL Rendering Subsystem created.
+18:45:06: Plugin successfully installed
+18:45:06: Loading library /usr/lib/OGRE/Plugin_ParticleFX
+18:45:06: Installing plugin: ParticleFX
+18:45:06: Particle Emitter Type 'Point' registered
+18:45:06: Particle Emitter Type 'Box' registered
+18:45:06: Particle Emitter Type 'Ellipsoid' registered
+18:45:06: Particle Emitter Type 'Cylinder' registered
+18:45:06: Particle Emitter Type 'Ring' registered
+18:45:06: Particle Emitter Type 'HollowEllipsoid' registered
+18:45:06: Particle Affector Type 'LinearForce' registered
+18:45:06: Particle Affector Type 'ColourFader' registered
+18:45:06: Particle Affector Type 'ColourFader2' registered
+18:45:06: Particle Affector Type 'ColourImage' registered
+18:45:06: Particle Affector Type 'ColourInterpolator' registered
+18:45:06: Particle Affector Type 'Scaler' registered
+18:45:06: Particle Affector Type 'Rotator' registered
+18:45:06: Particle Affector Type 'DirectionRandomiser' registered
+18:45:06: Particle Affector Type 'DeflectorPlane' registered
+18:45:06: Plugin successfully installed
+18:45:06: Loading library /usr/lib/OGRE/Plugin_BSPSceneManager
+18:45:06: Installing plugin: BSP Scene Manager
+18:45:06: Plugin successfully installed
+18:45:06: Loading library /usr/lib/OGRE/Plugin_CgProgramManager
+18:45:06: Installing plugin: Cg Program Manager
+18:45:06: Plugin successfully installed
+18:45:06: Loading library /usr/lib/OGRE/Plugin_PCZSceneManager
+18:45:06: Installing plugin: Portal Connected Zone Scene Manager
+18:45:06: PCZone Factory Type 'ZoneType_Default' registered
+18:45:06: Plugin successfully installed
+18:45:06: Loading library /usr/lib/OGRE/Plugin_OctreeZone
+18:45:06: Installing plugin: Octree Zone Factory
+18:45:06: Plugin successfully installed
+18:45:06: Loading library /usr/lib/OGRE/Plugin_OctreeSceneManager
+18:45:06: Installing plugin: Octree & Terrain Scene Manager
+18:45:06: Plugin successfully installed
+18:45:06: *-*-* OGRE Initialising
+18:45:06: *-*-* Version 1.7.2 (Cthugha)
+18:45:06: Creating resource group Essential
+18:45:06: Added resource location '/usr/share/OGRE/media/thumbnails' of type 'FileSystem' to resource group 'Essential'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/SdkTrays.zip' of type 'Zip' to resource group 'Essential'
+18:45:06: Added resource location '/usr/share/OGRE/media' of type 'FileSystem' to resource group 'General'
+18:45:06: Creating resource group Popular
+18:45:06: Added resource location '/usr/share/OGRE/media/fonts' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/materials/programs' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/materials/scripts' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/materials/textures' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/materials/textures/nvidia' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/models' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/particle' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/DeferredShadingMedia' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/PCZAppMedia' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/RTShaderLib' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/RTShaderLib/materials' of type 'FileSystem' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/cubemap.zip' of type 'Zip' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/cubemapsJS.zip' of type 'Zip' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/dragon.zip' of type 'Zip' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/fresneldemo.zip' of type 'Zip' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/ogretestmap.zip' of type 'Zip' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/ogredance.zip' of type 'Zip' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/Sinbad.zip' of type 'Zip' to resource group 'Popular'
+18:45:06: Added resource location '/usr/share/OGRE/media/packs/skybox.zip' of type 'Zip' to resource group 'Popular'
+18:45:09: *-*-* OGRE Shutdown
+18:45:09: Unregistering ResourceManager for type Compositor
+18:45:09: Unregistering ResourceManager for type Font
+18:45:09: Unregistering ResourceManager for type Skeleton
+18:45:09: Unregistering ResourceManager for type Mesh
+18:45:09: Unregistering ResourceManager for type HighLevelGpuProgram
+18:45:09: Uninstalling plugin: Octree & Terrain Scene Manager
+18:45:09: Plugin successfully uninstalled
+18:45:09: Unloading library /usr/lib/OGRE/Plugin_OctreeSceneManager
+18:45:09: Uninstalling plugin: Octree Zone Factory
+18:45:09: Plugin successfully uninstalled
+18:45:09: Unloading library /usr/lib/OGRE/Plugin_OctreeZone
+18:45:09: Uninstalling plugin: Portal Connected Zone Scene Manager
+18:45:09: Plugin successfully uninstalled
+18:45:09: Unloading library /usr/lib/OGRE/Plugin_PCZSceneManager
+18:45:09: Uninstalling plugin: Cg Program Manager
+18:45:09: Plugin successfully uninstalled
+18:45:09: Unloading library /usr/lib/OGRE/Plugin_CgProgramManager
+18:45:09: Uninstalling plugin: BSP Scene Manager
+18:45:09: Plugin successfully uninstalled
+18:45:09: Unloading library /usr/lib/OGRE/Plugin_BSPSceneManager
+18:45:09: Uninstalling plugin: ParticleFX
+18:45:09: Plugin successfully uninstalled
+18:45:09: Unloading library /usr/lib/OGRE/Plugin_ParticleFX
+18:45:09: Uninstalling plugin: GL RenderSystem
+18:45:09: ******************************
+*** Stopping GLX Subsystem ***
+******************************
+18:45:09: Plugin successfully uninstalled
+18:45:09: Unloading library /usr/lib/OGRE/RenderSystem_GL
+18:45:09: Unregistering ResourceManager for type Material
