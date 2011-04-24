@@ -19,6 +19,7 @@ This source file is part of the
 
 #include "stdafx.h"
 #include "BaseApplication.h"
+#include "MotionPath.h"
 
 class TutorialApplication : public BaseApplication
 {
@@ -32,7 +33,12 @@ protected:
 	virtual void createCamera(void);
 	virtual void createViewports(void);
 
+	// needed for user input
+	virtual bool mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
 
+private:
+	Ogre::Plane * mPlane;
+	MotionPath * mPath;
 };
 
 #endif // #ifndef __TutorialApplication_h_

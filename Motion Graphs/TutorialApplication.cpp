@@ -17,6 +17,7 @@ This source file is part of the
 #include "stdafx.h"
 #include "TutorialApplication.h"
 
+
 //-------------------------------------------------------------------------------------
 TutorialApplication::TutorialApplication(void)
 {
@@ -82,9 +83,9 @@ void TutorialApplication::createScene(void)
 
 
 	// create a plane (the ground)
-	Ogre::Plane plane(Ogre::Vector3::UNIT_Y, 0);
+	mPlane = new Ogre::Plane(Ogre::Vector3::UNIT_Y, 0);
 	Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-        plane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+        *mPlane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
 	   
 	Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
     mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
@@ -92,9 +93,53 @@ void TutorialApplication::createScene(void)
     entGround->setMaterialName("Examples/Rockwall");
     entGround->setCastShadows(false);
 
-
 }
 
+
+bool TutorialApplication::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
+{
+	// left mouse button pressed
+	if (id == OIS::MB_Left)
+	{
+
+		// get window height and width
+	   Ogre::Real screenWidth = Ogre::Root::getSingleton().getAutoCreatedWindow()->getWidth();
+	   Ogre::Real screenHeight = Ogre::Root::getSingleton().getAutoCreatedWindow()->getHeight();
+
+	   // convert to 0-1 offset
+	   Ogre::Real offsetX = arg.state.X.abs / screenWidth;
+	   Ogre::Real offsetY = arg.state.Y.abs / screenHeight;
+
+	   // set up the ray
+	   Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(offsetX, offsetY);
+
+	   // check if the ray intersects our plane
+	   // intersects() will return whether it intersects or not (the bool value) and
+	   // what distance (the Real value) along the ray the intersection is
+	   std::pair<bool, Ogre::Real> result = mouseRay.intersects(*mPlane);
+
+		if(result.first)
+		{
+			// if the ray intersect the plane, we have a distance value
+			// telling us how far from the ray origin the intersection occurred.
+			// the last thing we need is the point of the intersection.
+			// Ray provides us getPoint() function which returns a point
+			// along the ray, supplying it with a distance value.
+
+			// get the point where the intersection is
+			Ogre::Vector3 point = mouseRay.getPoint(result.second);
+          
+			//TODO: add to the path
+
+		}
+       
+	}
+
+	if (mTrayMgr->injectMouseDown(arg, id)) return true;
+    mCameraMan->injectMouseDown(arg, id);
+    
+	return true;
+}
 
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
