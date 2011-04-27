@@ -20,6 +20,7 @@ This source file is part of the
 #include "stdafx.h"
 #include "BaseApplication.h"
 #include "MotionPath.h"
+#include "DynamicLines.h"
 
 class TutorialApplication : public BaseApplication
 {

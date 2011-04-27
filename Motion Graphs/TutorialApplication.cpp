@@ -93,6 +93,26 @@ void TutorialApplication::createScene(void)
     entGround->setMaterialName("Examples/Rockwall");
     entGround->setCastShadows(false);
 
+
+
+	//manually define a path
+	mPath = new MotionPath();
+	mPath->add(Ogre::Vector3(0,1,0));
+	mPath->add(Ogre::Vector3(200,1,0));
+	mPath->add(Ogre::Vector3(200,1,200));
+	mPath->add(Ogre::Vector3(200,1,400));
+	mPath->add(Ogre::Vector3(0, 1, 200));
+
+
+	//create a line
+	DynamicLines *lines = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+      for (int i=0; i<mPath->size(); i++) {
+		  lines->addPoint(mPath->get(i));
+      }
+      lines->update();
+      Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
+      linesNode->attachObject(lines);
+
 }
 
 

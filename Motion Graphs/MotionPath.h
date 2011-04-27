@@ -18,17 +18,15 @@ public:
 	MotionPath(void);
 	~MotionPath(void);
 
-
-protected:
 	// add a point to the path
-	virtual void add();
-	// remove a point from the path
-	virtual void del();
-	// get a point
-	virtual void get();
+	virtual void add(Ogre::Vector3);
+
+	// get a point by index
+	virtual Ogre::Vector3 get(int i);
 	// clear the path
 	virtual void clear();
-
+	// get the size()
+	virtual int size();
 
 private:
 	//Ogre::Vector2 m_vec;
