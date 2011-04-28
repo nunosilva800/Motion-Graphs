@@ -40,6 +40,8 @@ protected:
 private:
 	Ogre::Plane * mPlane;
 	MotionPath * mPath;
+	DynamicLines *lines;
+	Ogre::SceneNode *linesNode;
 };
 
 #endif // #ifndef __TutorialApplication_h_

@@ -105,13 +105,14 @@ void TutorialApplication::createScene(void)
 
 
 	//create a line
-	DynamicLines *lines = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
-      for (int i=0; i<mPath->size(); i++) {
-		  lines->addPoint(mPath->get(i));
-      }
-      lines->update();
-      Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
-      linesNode->attachObject(lines);
+	lines = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+    for (int i=0; i<mPath->size(); i++) {
+		lines->addPoint(mPath->get(i));
+    }
+    lines->update();
+    
+    Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
+    linesNode->attachObject(lines);
 
 }
 
@@ -148,9 +149,16 @@ bool TutorialApplication::mousePressed( const OIS::MouseEvent &arg, OIS::MouseBu
 
 			// get the point where the intersection is
 			Ogre::Vector3 point = mouseRay.getPoint(result.second);
+
           
 			//TODO: add to the path
-
+			printf("Mouse pressed\n");
+			printf("X: %f  Y: %f  Z: %f\n", point.x, point.y, point.z);
+			mPath->add(point);
+			// splines->addPoint(point);
+			// splines->update();
+			lines->addPoint(point);
+			lines->update();
 		}
        
 	}
@@ -197,3 +205,93 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
+
+
+
+
+
+
+
+//~ using System;
+//~ using System.Collections.Generic;
+//~ using System.Linq;
+//~ using System.Text;
+//~ using Mogre;
+
+//~ namespace GameEngine.GameMath
+//~ {
+    public static class CatmulleRome{
+        public static Vector3 GetPoint(Vector3 a,Vector3 b,Vector3 ka,Vector3 kb,float u)
+        {
+            float u2 = u * u;
+            float u3 = u2 * u;
+
+            return ka * (-0.5f * u3 + u2 - 0.5f * u) + a * (1.5f * u3 - 2.5f * u2 + 1.0f) +
+                b * (-1.5f * u3 + 2.0f * u2 + 0.5f * u) + kb * (0.5f * u3 - 0.5f * u2);
+        }
+
+        public static List<Vector3> GetPoints(Vector3 a,Vector3 b,Vector3 ka,Vector3 kb,int middlePointsCount,bool addBorderPoints)
+        {
+            List<Vector3> pts = new List<Vector3>(middlePointsCount + 2);
+            if(addBorderPoints==true)
+                pts.Add(a); // GetPoint(a, b, ka, kb, 0);
+            for(int i=1;i<=middlePointsCount;i++)
+            {
+                float u = (float)i / (middlePointsCount+1);
+                pts.Add(GetPoint(a, b, ka, kb, u));
+            }
+            if(addBorderPoints==true)
+                pts.Add(b); // GetPoint(a, b, ka, kb, 1);
+            return pts;
+        }
+
+        public static List<Vector3> GetPoints(Vector3[] basePoints,int middlePointsPerPair)
+        {
+            if(basePoints.Length < 2) throw new ApplicationException("Base points count must be greater than 2.");
+            else if(basePoints.Length==2)
+                return GetPoints(basePoints[0],basePoints[1],basePoints[0],basePoints[1],middlePointsPerPair,true);
+
+            int ptsCount = basePoints.Length + (basePoints.Length - 1) * middlePointsPerPair;
+            List<Vector3> pts = new List<Vector3>(ptsCount);
+
+            Vector3 ka = basePoints[0];
+            Vector3 kb = basePoints[0];
+            for (int i = 0; i < basePoints.Length - 1; i++)
+            {
+                if(i!=0) ka=basePoints[i-1];
+
+                if (i == basePoints.Length - 2)
+                    kb = basePoints[i + 1];
+                else
+                    kb = basePoints[i + 2];
+                pts.Add(basePoints[i]);
+                pts.AddRange(GetPoints(basePoints[i], basePoints[i + 1], ka, kb, middlePointsPerPair, false));
+            }
+            pts.Add(kb);
+
+            return pts;
+        }
+    }
+
+    public static class BezierCubic
+    {
+        public static Vector3 GetPoint(Vector3 a, Vector3 b, Vector3 ka, Vector3 kb, float u)
+        {
+            float u_1 = u - 1;
+            return a * -(u_1 * u_1 * u_1) + ka * (3 * (u_1 * u_1) * u) +
+                kb * -(3 * u_1 * u * u) + b * (u * u * u);
+        }
+    }
+
+    public static class BezierQuadratic
+    {
+        public static Vector3 GetPoint(Vector3 a, Vector3 b, Vector3 kp, float u)
+        {
+            float I_u = 1 - u;
+            return a * (I_u * I_u) + kp * (2 * u * I_u) +
+                b * (u * u);
+        }
+    }
+//~ }
+
