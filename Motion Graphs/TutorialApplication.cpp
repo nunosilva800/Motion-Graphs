@@ -73,8 +73,7 @@ void TutorialApplication::createScene(void) {
 		mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
 		break;
 	}
-
-
+	
     mNode->attachObject(mEntity);
 
 	// this node if for the rest of the objects
@@ -137,6 +136,22 @@ void TutorialApplication::createScene(void) {
     Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
     linesNode->attachObject(lines);
 
+
+
+	// path synthesis
+	// P			-> defined path (our mPath)
+	// P'			-> actual path 
+	// w[i]			-> ith frame
+	// s(w[i])		-> arc-length of frame i
+	// P(s(w[i]))	-> point in P at arc-length of frame i
+	// error function is the sum of the squared distances over all frames :
+	/*
+	for(int i = 0; i < nframes; i++)
+	{
+		error += pow ( P'(s(w[i])) - P(s(w[i])) , 2 ); 
+
+	}
+	*/
 }
 
 bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {
