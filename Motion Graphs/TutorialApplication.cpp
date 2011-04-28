@@ -63,7 +63,7 @@ void TutorialApplication::createScene(void)
     // create the light
     Ogre::Light *light = mSceneMgr->createLight("Light1");
     light->setType(Ogre::Light::LT_POINT);
-    light->setPosition(Ogre::Vector3(250, 150, 250));
+    light->setPosition(Ogre::Vector3(0, 250, 0));
     light->setDiffuseColour(Ogre::ColourValue::White);
     light->setSpecularColour(Ogre::ColourValue::White);
  

@@ -372,8 +372,17 @@ bool BaseApplication::keyReleased( const OIS::KeyEvent &arg )
 
 bool BaseApplication::mouseMoved( const OIS::MouseEvent &arg )
 {
+
+	// set mouse position
+   //CEGUI::Point mousePos = CEGUI::MouseCursor::getSingleton().getPosition();
+   OIS::MouseState &mutableMouseState = const_cast<OIS::MouseState &>(mMouse->getMouseState());
+   mutableMouseState.X.abs = mCamera->getViewport()->getActualWidth() / 2;
+   mutableMouseState.Y.abs = mCamera->getViewport()->getActualHeight() / 2;
+
+
     if (mTrayMgr->injectMouseMove(arg)) return true;
     mCameraMan->injectMouseMove(arg);
+
     return true;
 }
 
