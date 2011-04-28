@@ -57,6 +57,9 @@ void TutorialApplication::createScene(void) {
 
 	MODEL = 0;
 
+	// Create the scene node for the model
+    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
+
     // add the model
 	switch(MODEL)
 	{
@@ -70,10 +73,12 @@ void TutorialApplication::createScene(void) {
 		mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
 		break;
 	}
-	
 
-    Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
-    node->attachObject(mEntity);
+
+    mNode->attachObject(mEntity);
+
+	// this node if for the rest of the objects
+    Ogre::SceneNode *node ;
 	
     // create the light
     Ogre::Light *light = mSceneMgr->createLight("Light1");
@@ -113,6 +118,10 @@ void TutorialApplication::createScene(void) {
     mPath->add(Ogre::Vector3(200, 1, 400));
     mPath->add(Ogre::Vector3(0, 1, 200));
 
+	// add the path to the walklist
+	for (int i = 0; i < mPath->size(); i++) {
+		mWalkList.push_back(mPath->get(i));
+    }
 
     // define a spline
     // http://www.ogre3d.org/docs/api/html/classOgre_1_1SimpleSpline.html#_details
@@ -164,6 +173,7 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
             printf("X: %f  Y: %f  Z: %f\n", point.x, point.y++, point.z);
             mPath->add(point);
             spline->addPoint(point);
+			mWalkList.push_back(point);
             // splines->update();
             lines->addPoint(point);
             lines->update();
@@ -181,21 +191,41 @@ void TutorialApplication::createFrameListener(void)
 {
 	BaseApplication::createFrameListener();
 
-	// Set idle animation
-    mAnimationState = mEntity->getAnimationState("Idle");
-    mAnimationState->setLoop(true);
-    mAnimationState->setEnabled(true);
-
 	// Set default values for variables
     mWalkSpeed = 35.0f;
     mDirection = Ogre::Vector3::ZERO;
 
+	// Set idle animation
+	switch(MODEL)
+	{
+	case 0:
+		mAnimationState = mEntity->getAnimationState("Idle");
+		break;
+	case 1:
+		mAnimationState = mEntity->getAnimationState("Backflip");
+		break;
+	case 2:
+		mAnimationState = mEntity->getAnimationState("Sneak");
+		break;
+	}
+
+	mAnimationState->setLoop(true);
+	mAnimationState->setEnabled(true);
 
 
 }
 
+// checks if the walklist has points to go to
 bool TutorialApplication::nextLocation(void)
 {
+	if(mWalkList.empty()) return false;
+
+	mDestination = mWalkList.front();  // this gets the front of the deque
+    mWalkList.pop_front();             // this removes the front of the deque
+ 
+    mDirection = mDestination - mNode->getPosition();
+    mDistance = mDirection.normalise();
+
 	return true;
 }
 
@@ -206,9 +236,22 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt)
         if (nextLocation()) 
         {
             // Set walking animation
-            mAnimationState = mEntity->getAnimationState("Walk");
-            mAnimationState->setLoop(true);
-            mAnimationState->setEnabled(true);
+			switch(MODEL)
+			{
+			case 0:
+				mAnimationState = mEntity->getAnimationState("Walk");
+				break;
+			case 1:
+				mAnimationState = mEntity->getAnimationState("Walk");
+				break;
+			case 2:
+				mAnimationState = mEntity->getAnimationState("Walk");
+				break;
+			}
+
+			mAnimationState->setLoop(true);
+			mAnimationState->setEnabled(true);
+
         }
     }
 	else
@@ -219,12 +262,25 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt)
 		if (mDistance <= 0.0f)
 		{                 
 			mNode->setPosition(mDestination);
-			mDirection = Ogre::Vector3::ZERO;				
+			mDirection = Ogre::Vector3::ZERO;	
+
 			// Set animation based on if the robot has another point to walk to. 
 			if (!nextLocation())
 			{
 				// Set Idle animation                     
-				mAnimationState = mEntity->getAnimationState("Idle");
+				switch(MODEL)
+				{
+				case 0:
+					mAnimationState = mEntity->getAnimationState("Idle");
+					break;
+				case 1:
+					mAnimationState = mEntity->getAnimationState("Backflip");
+					break;
+				case 2:
+					mAnimationState = mEntity->getAnimationState("Sneak");
+
+					break;
+				}
 				mAnimationState->setLoop(true);
 				mAnimationState->setEnabled(true);
 			}
