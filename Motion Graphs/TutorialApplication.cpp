@@ -53,13 +53,28 @@ void TutorialApplication::createViewports(void) {
 
 void TutorialApplication::createScene(void) {
 
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.25, 0.25, 0.25));
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-    // add the ninja
-    Ogre::Entity *ent = mSceneMgr->createEntity("Ninja", "ninja.mesh");
-    Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode("NinjaNode");
-    node->attachObject(ent);
+	MODEL = 0;
 
+    // add the model
+	switch(MODEL)
+	{
+	case 0:
+		mEntity = mSceneMgr->createEntity("Robot", "robot.mesh");
+		break;
+	case 1:
+		mEntity = mSceneMgr->createEntity("Ninja", "ninja.mesh");
+		break;
+	case 2:
+		mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
+		break;
+	}
+	
+
+    Ogre::SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
+    node->attachObject(mEntity);
+	
     // create the light
     Ogre::Light *light = mSceneMgr->createLight("Light1");
     light->setType(Ogre::Light::LT_POINT);
@@ -76,11 +91,6 @@ void TutorialApplication::createScene(void) {
     // Create the pitch node
     node = node->createChildSceneNode("PitchNode1");
     node->attachObject(mCamera);
-
-    // create the second camera node/pitch node
-    node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode2", Ogre::Vector3(0, 200, 400));
-    node = node->createChildSceneNode("PitchNode2");
-
 
     // create a plane (the ground)
     mPlane = new Ogre::Plane(Ogre::Vector3::UNIT_Y, 0);
@@ -166,6 +176,84 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
 
     return true;
 }
+
+void TutorialApplication::createFrameListener(void)
+{
+	BaseApplication::createFrameListener();
+
+	// Set idle animation
+    mAnimationState = mEntity->getAnimationState("Idle");
+    mAnimationState->setLoop(true);
+    mAnimationState->setEnabled(true);
+
+	// Set default values for variables
+    mWalkSpeed = 35.0f;
+    mDirection = Ogre::Vector3::ZERO;
+
+
+
+}
+
+bool TutorialApplication::nextLocation(void)
+{
+	return true;
+}
+
+bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt)
+{
+	if (mDirection == Ogre::Vector3::ZERO) 
+    {
+        if (nextLocation()) 
+        {
+            // Set walking animation
+            mAnimationState = mEntity->getAnimationState("Walk");
+            mAnimationState->setLoop(true);
+            mAnimationState->setEnabled(true);
+        }
+    }
+	else
+    {
+		Ogre::Real move = mWalkSpeed * evt.timeSinceLastFrame;
+		mDistance -= move;
+
+		if (mDistance <= 0.0f)
+		{                 
+			mNode->setPosition(mDestination);
+			mDirection = Ogre::Vector3::ZERO;				
+			// Set animation based on if the robot has another point to walk to. 
+			if (!nextLocation())
+			{
+				// Set Idle animation                     
+				mAnimationState = mEntity->getAnimationState("Idle");
+				mAnimationState->setLoop(true);
+				mAnimationState->setEnabled(true);
+			}
+			else
+			{
+				// Rotation Code will go here later
+				Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
+				if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) 
+				{
+					mNode->yaw(Ogre::Degree(180));						
+				}
+				else
+				{
+					Ogre::Quaternion quat = src.getRotationTo(mDirection);
+					mNode->rotate(quat);
+				}
+			}//else
+		}
+		else
+		{
+			mNode->translate(mDirection * move);
+		} // else
+	}
+
+	mAnimationState->addTime(evt.timeSinceLastFrame);
+
+	return BaseApplication::frameRenderingQueued(evt);
+}
+
 
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
