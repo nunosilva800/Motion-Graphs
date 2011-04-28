@@ -21,6 +21,7 @@ This source file is part of the
 #include "BaseApplication.h"
 #include "MotionPath.h"
 #include "DynamicLines.h"
+#include <OgreSimpleSpline.h>
 
 class TutorialApplication : public BaseApplication
 {
@@ -40,6 +41,7 @@ protected:
 private:
 	Ogre::Plane * mPlane;
 	MotionPath * mPath;
+        Ogre::SimpleSpline *spline;
 	DynamicLines *lines;
 	Ogre::SceneNode *linesNode;
 };
