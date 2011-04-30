@@ -45,7 +45,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -85,6 +85,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseApplication.cpp" />
+    <ClCompile Include="Edge.cpp" />
+    <ClCompile Include="gNode.cpp" />
+    <ClCompile Include="Graph.cpp" />
+    <ClCompile Include="Ninja.cpp" />
+    <ClCompile Include="PointCloud.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -93,6 +98,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h" />
+    <ClInclude Include="Edge.h" />
+    <ClInclude Include="gNode.h" />
+    <ClInclude Include="Graph.h" />
+    <ClInclude Include="Ninja.h" />
+    <ClInclude Include="PointCloud.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TutorialApplication.h" />
   </ItemGroup>
