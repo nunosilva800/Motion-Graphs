@@ -27,4 +27,6 @@ bool Graph::addNode(gNode *node){
  * Verifica se aquele nodo já está introduzido no grafo
  * @return NULL caso não exista ou retorna o próprio nodo
  */
-gNode* Graph::existNode(gNode *node);
+gNode* Graph::existNode(gNode *node){
+
+}

@@ -24,14 +24,5 @@ class Graph{
 		
 };
 
-class dMap{
-	public:
-		float **compareMotions(Motion *m1, Motion m2){
 
-		}
-
-	private:
-		float ***differenceMap;
-		Motion *relations[2];
-}
 #endif

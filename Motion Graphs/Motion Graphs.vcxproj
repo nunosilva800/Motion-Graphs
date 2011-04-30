@@ -85,6 +85,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseApplication.cpp" />
+    <ClCompile Include="dMap.cpp" />
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="gNode.cpp" />
     <ClCompile Include="Graph.cpp" />
@@ -98,6 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h" />
+    <ClInclude Include="dMap.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="gNode.h" />
     <ClInclude Include="Graph.h" />
