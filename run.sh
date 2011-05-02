@@ -1,6 +1,4 @@
 #!/bin/bash
 
-make
-cd bin
-time ./main
-cd -
+
+time ./bin/main

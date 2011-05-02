@@ -55,30 +55,29 @@ void TutorialApplication::createScene(void) {
 
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-	MODEL = 0;
+    MODEL = 0;
 
-	// Create the scene node for the model
+    // Create the scene node for the model
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
 
     // add the model
-	switch(MODEL)
-	{
-	case 0:
-		mEntity = mSceneMgr->createEntity("Robot", "robot.mesh");
-		break;
-	case 1:
-		mEntity = mSceneMgr->createEntity("Ninja", "ninja.mesh");
-		break;
-	case 2:
-		mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
-		break;
-	}
-	
+    switch (MODEL) {
+        case 0:
+            mEntity = mSceneMgr->createEntity("Robot", "robot.mesh");
+            break;
+        case 1:
+            mEntity = mSceneMgr->createEntity("Ninja", "ninja.mesh");
+            break;
+        case 2:
+            mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
+            break;
+    }
+
     mNode->attachObject(mEntity);
 
-	// this node if for the rest of the objects
-    Ogre::SceneNode *node ;
-	
+    // this node if for the rest of the objects
+    Ogre::SceneNode *node;
+
     // create the light
     Ogre::Light *light = mSceneMgr->createLight("Light1");
     light->setType(Ogre::Light::LT_POINT);
@@ -111,15 +110,22 @@ void TutorialApplication::createScene(void) {
 
     //manually define a path
     mPath = new MotionPath();
-    mPath->add(Ogre::Vector3(0, 1, 0));
-    mPath->add(Ogre::Vector3(200, 1, 0));
-    mPath->add(Ogre::Vector3(200, 1, 200));
-    mPath->add(Ogre::Vector3(200, 1, 400));
-    mPath->add(Ogre::Vector3(0, 1, 200));
 
-	// add the path to the walklist
-	for (int i = 0; i < mPath->size(); i++) {
-		mWalkList.push_back(mPath->get(i));
+//    mPath->add(Ogre::Vector3(0, 1, 0));
+//    mPath->add(Ogre::Vector3(200, 1, 0));
+//    mPath->add(Ogre::Vector3(200, 1, 200));
+//    mPath->add(Ogre::Vector3(200, 1, 400));
+//    mPath->add(Ogre::Vector3(0, 1, 200));
+
+    mPath->add(Ogre::Vector3(0, 1, 0));
+    mPath->add(Ogre::Vector3(10, 1, 0));
+    mPath->add(Ogre::Vector3(10, 1, 10));
+    mPath->add(Ogre::Vector3(0, 1, 10));
+    mPath->add(Ogre::Vector3(0, 1, 0));
+
+    // add the path to the walklist
+    for (int i = 0; i < mPath->size(); i++) {
+        mWalkList.push_back(mPath->get(i));
     }
 
     // define a spline
@@ -136,22 +142,6 @@ void TutorialApplication::createScene(void) {
     Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
     linesNode->attachObject(lines);
 
-
-
-	// path synthesis
-	// P			-> defined path (our mPath)
-	// P'			-> actual path 
-	// w[i]			-> ith frame
-	// s(w[i])		-> arc-length of frame i
-	// P(s(w[i]))	-> point in P at arc-length of frame i
-	// error function is the sum of the squared distances over all frames :
-	/*
-	for(int i = 0; i < nframes; i++)
-	{
-		error += pow ( P'(s(w[i])) - P(s(w[i])) , 2 ); 
-
-	}
-	*/
 }
 
 bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {
@@ -188,7 +178,7 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
             printf("X: %f  Y: %f  Z: %f\n", point.x, point.y++, point.z);
             mPath->add(point);
             spline->addPoint(point);
-			mWalkList.push_back(point);
+            mWalkList.push_back(point);
             // splines->update();
             lines->addPoint(point);
             lines->update();
@@ -202,127 +192,132 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
     return true;
 }
 
-void TutorialApplication::createFrameListener(void)
-{
-	BaseApplication::createFrameListener();
+void TutorialApplication::createFrameListener(void) {
+    BaseApplication::createFrameListener();
 
-	// Set default values for variables
-    mWalkSpeed = 35.0f;
+    // Set default values for variables
+    mWalkSpeed = 100.0f;
     mDirection = Ogre::Vector3::ZERO;
 
-	// Set idle animation
-	switch(MODEL)
-	{
-	case 0:
-		mAnimationState = mEntity->getAnimationState("Idle");
-		break;
-	case 1:
-		mAnimationState = mEntity->getAnimationState("Backflip");
-		break;
-	case 2:
-		mAnimationState = mEntity->getAnimationState("Sneak");
-		break;
-	}
+    // Set idle animation
+    switch (MODEL) {
+        case 0:
+            mAnimationState = mEntity->getAnimationState("Idle");
+            break;
+        case 1:
+            mAnimationState = mEntity->getAnimationState("Backflip");
+            break;
+        case 2:
+            mAnimationState = mEntity->getAnimationState("Sneak");
+            break;
+    }
 
-	mAnimationState->setLoop(true);
-	mAnimationState->setEnabled(true);
+    mAnimationState->setLoop(true);
+    mAnimationState->setEnabled(true);
 
 
 }
 
 // checks if the walklist has points to go to
-bool TutorialApplication::nextLocation(void)
-{
-	if(mWalkList.empty()) return false;
 
-	mDestination = mWalkList.front();  // this gets the front of the deque
-    mWalkList.pop_front();             // this removes the front of the deque
- 
+bool TutorialApplication::nextLocation(void) {
+    if (mWalkList.empty()) return false;
+
+    mDestination = mWalkList.front(); // this gets the front of the deque
+    mWalkList.pop_front(); // this removes the front of the deque
+
     mDirection = mDestination - mNode->getPosition();
     mDistance = mDirection.normalise();
 
-	return true;
+    return true;
 }
 
-bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt)
-{
-	if (mDirection == Ogre::Vector3::ZERO) 
-    {
-        if (nextLocation()) 
-        {
-            // Set walking animation
-			switch(MODEL)
-			{
-			case 0:
-				mAnimationState = mEntity->getAnimationState("Walk");
-				break;
-			case 1:
-				mAnimationState = mEntity->getAnimationState("Walk");
-				break;
-			case 2:
-				mAnimationState = mEntity->getAnimationState("Walk");
-				break;
-			}
+bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
-			mAnimationState->setLoop(true);
-			mAnimationState->setEnabled(true);
+    if (mDirection == Ogre::Vector3::ZERO) {
+        if (nextLocation()) {
+            // Set walking animation
+            switch (MODEL) {
+                case 0:
+                    mAnimationState = mEntity->getAnimationState("Walk");
+                    break;
+                case 1:
+                    mAnimationState = mEntity->getAnimationState("Walk");
+                    break;
+                case 2:
+                    mAnimationState = mEntity->getAnimationState("Walk");
+                    break;
+            }
+
+            mAnimationState->setLoop(true);
+            mAnimationState->setEnabled(true);
 
         }
+    } else {
+        Ogre::Real move = mWalkSpeed * evt.timeSinceLastFrame;
+        mDistance -= move;
+
+        if (mDistance <= 0.0f) {
+            mNode->setPosition(mDestination);
+            mDirection = Ogre::Vector3::ZERO;
+
+            // Set animation based on if the robot has another point to walk to.
+            if (!nextLocation()) {
+                // Set Idle animation
+                switch (MODEL) {
+                    case 0:
+                        mAnimationState = mEntity->getAnimationState("Idle");
+                        break;
+                    case 1:
+                        mAnimationState = mEntity->getAnimationState("Backflip");
+                        break;
+                    case 2:
+                        mAnimationState = mEntity->getAnimationState("Sneak");
+
+                        break;
+                }
+                mAnimationState->setLoop(true);
+                mAnimationState->setEnabled(true);
+            } else {
+                // Rotation Code will go here later
+                Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
+                if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) {
+                    mNode->yaw(Ogre::Degree(180));
+                } else {
+                    Ogre::Quaternion quat = src.getRotationTo(mDirection);
+                    mNode->rotate(quat);
+                }
+            }//else
+
+            // lmiranda
+            // get control point coordinates 
+            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", mNode->getPosition().x, mNode->getPosition().y, mNode->getPosition().z);
+
+            // path synthesis
+            // P			-> defined path (our mPath)
+            // P'			-> actual path
+            // w[i]			-> ith frame
+            // s(w[i])		-> arc-length of frame i
+            // P(s(w[i]))	-> point in P at arc-length of frame i
+            // error function is the sum of the squared distances over all frames :
+
+            //    for(int i = 0; i < nframes; i++)
+            //    {
+            //            error += pow ( P'(s(w[i])) - P(s(w[i])) , 2 );
+            //
+            //    }
+
+
+
+        } else {
+            mNode->translate(mDirection * move);
+        } // else
     }
-	else
-    {
-		Ogre::Real move = mWalkSpeed * evt.timeSinceLastFrame;
-		mDistance -= move;
 
-		if (mDistance <= 0.0f)
-		{                 
-			mNode->setPosition(mDestination);
-			mDirection = Ogre::Vector3::ZERO;	
+    mAnimationState->addTime(evt.timeSinceLastFrame);
+    printf("Control Point (%4.2f, %4.2f, %4.2f)\n", mNode->getPosition().x, mNode->getPosition().y, mNode->getPosition().z);
 
-			// Set animation based on if the robot has another point to walk to. 
-			if (!nextLocation())
-			{
-				// Set Idle animation                     
-				switch(MODEL)
-				{
-				case 0:
-					mAnimationState = mEntity->getAnimationState("Idle");
-					break;
-				case 1:
-					mAnimationState = mEntity->getAnimationState("Backflip");
-					break;
-				case 2:
-					mAnimationState = mEntity->getAnimationState("Sneak");
-
-					break;
-				}
-				mAnimationState->setLoop(true);
-				mAnimationState->setEnabled(true);
-			}
-			else
-			{
-				// Rotation Code will go here later
-				Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
-				if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) 
-				{
-					mNode->yaw(Ogre::Degree(180));						
-				}
-				else
-				{
-					Ogre::Quaternion quat = src.getRotationTo(mDirection);
-					mNode->rotate(quat);
-				}
-			}//else
-		}
-		else
-		{
-			mNode->translate(mDirection * move);
-		} // else
-	}
-
-	mAnimationState->addTime(evt.timeSinceLastFrame);
-
-	return BaseApplication::frameRenderingQueued(evt);
+    return BaseApplication::frameRenderingQueued(evt);
 }
 
 
