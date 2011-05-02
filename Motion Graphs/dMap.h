@@ -10,13 +10,14 @@ class dMap{
 		~dMap();
 
 		void constructMap(Motion **motions, int nMotion);
-		float **compareMotions(Motion *m1, Motion m2);
+		void compareMotions(Motion *m1, Motion *m2);
 		float compareFrames(PointCloud *s1, PointCloud *s2);
 
 	private:
 		float ***differenceMap;
-		Motion **relations;
+		Motion ***relations;
 		int nRelations;
+		int maxRelations;
 
 		void duplicateSpace();
 };

@@ -36,6 +36,14 @@ PointCloud::~PointCloud(){
 }
 
 
+
+Point *PointCloud::getPoint(int i){
+	if(this->nPoints < i) return 0;
+
+	return this->points[i];
+}
+
+
 /**************************************************************************
  * Motion
 **************************************************************************/
@@ -46,4 +54,11 @@ Motion::Motion(){
 
 Motion::~Motion(){
 
+}
+
+
+PointCloud *Motion::getPointCloud(int i){
+	if(i > this->nClouds) return 0;
+
+	return this->clouds[i];
 }

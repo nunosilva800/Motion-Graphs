@@ -32,9 +32,12 @@ class PointCloud{
 		PointCloud();
 		~PointCloud();
 
+		int getNPoints(){return this->nPoints;}
+		Point *getPoint(int i);
+
 	private:
-		Point *p;
-		int nPoint;
+		Point **points;
+		int nPoints;
 };
 
 class Motion{
@@ -43,8 +46,12 @@ class Motion{
 		Motion();
 		~Motion();
 
+		int getNPointClouds(){return this->nClouds;}
+		PointCloud *getPointCloud(int i);
+
+
 	private:
-		PointCloud * clouds;
+		PointCloud **clouds;
 		int nClouds;
 		char * label;
 };
