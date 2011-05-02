@@ -107,6 +107,8 @@ void TutorialApplication::createScene(void) {
     entGround->setCastShadows(false);
 
 
+    // Define the entity state
+    isIdle = 1;
 
     //manually define a path
     mPath = new MotionPath();
@@ -118,9 +120,9 @@ void TutorialApplication::createScene(void) {
 //    mPath->add(Ogre::Vector3(0, 1, 200));
 
     mPath->add(Ogre::Vector3(0, 1, 0));
-    mPath->add(Ogre::Vector3(10, 1, 0));
-    mPath->add(Ogre::Vector3(10, 1, 10));
-    mPath->add(Ogre::Vector3(0, 1, 10));
+    mPath->add(Ogre::Vector3(5, 1, 0));
+    mPath->add(Ogre::Vector3(5, 1, 5));
+    mPath->add(Ogre::Vector3(0, 1, 5));
     mPath->add(Ogre::Vector3(0, 1, 0));
 
     // add the path to the walklist
@@ -252,6 +254,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
             mAnimationState->setLoop(true);
             mAnimationState->setEnabled(true);
 
+            isIdle = 0;
         }
     } else {
         Ogre::Real move = mWalkSpeed * evt.timeSinceLastFrame;
@@ -276,8 +279,12 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
                         break;
                 }
-                mAnimationState->setLoop(true);
-                mAnimationState->setEnabled(true);
+                mAnimationState->setLoop(false);
+                mAnimationState->setEnabled(false);
+
+                printf("Idle\n");
+                isIdle = 1;
+
             } else {
                 // Rotation Code will go here later
                 Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
@@ -287,12 +294,10 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
                     Ogre::Quaternion quat = src.getRotationTo(mDirection);
                     mNode->rotate(quat);
                 }
+                printf("Rotating\n");
             }//else
 
-            // lmiranda
-            // get control point coordinates 
-            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", mNode->getPosition().x, mNode->getPosition().y, mNode->getPosition().z);
-
+            // TODO: 
             // path synthesis
             // P			-> defined path (our mPath)
             // P'			-> actual path
@@ -307,16 +312,23 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
             //
             //    }
 
-
-
         } else {
             mNode->translate(mDirection * move);
         } // else
+
+        // lmiranda
+        // if is not idle, save coordinates
+        if (isIdle) {
+            printf("Entity is idle\n");
+        } else {
+            printf("Entity is not idle\n");
+            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", mNode->getPosition().x, mNode->getPosition().y, mNode->getPosition().z);
+            // save root coordinates on every frame
+            frameRootCoordinates.push_back(mNode->getPosition());
+        }
     }
 
     mAnimationState->addTime(evt.timeSinceLastFrame);
-    printf("Control Point (%4.2f, %4.2f, %4.2f)\n", mNode->getPosition().x, mNode->getPosition().y, mNode->getPosition().z);
-
     return BaseApplication::frameRenderingQueued(evt);
 }
 

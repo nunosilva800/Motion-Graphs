@@ -60,8 +60,13 @@ private:
     Ogre::Entity *mEntity; // The Entity we are animating
     Ogre::SceneNode *mNode; // The SceneNode that the Entity is attached to
     std::deque<Ogre::Vector3> mWalkList; // The list of points we are walking to
-
     Ogre::Real mWalkSpeed; // The speed at which the object is moving
+
+    //
+    // lmiranda
+    //
+    std::deque<Ogre::Vector3> frameRootCoordinates;
+    int isIdle;
 
 };
 
