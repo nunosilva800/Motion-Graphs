@@ -92,18 +92,18 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 float dMap::compareFrames(PointCloud *s1, PointCloud *s2){
 	//TODO numero de pontos entre PointClouds é sempre o mesmo?
 	float x0 = 0,z0 = 0,teta = 0;
-	float error = 0;
+	double error = 0;
 
 	this->calculateTransformation(s1,s2,&teta,&x0,&z0);
 
 	s2->translate(x0,0,z0);
 	s2->rotate(1,teta);
 	
-	for(int i = 0 ; i < s1->getNPoints() ; i++){
+	for(int i = 0 ; i < NPOINTS ; i++){
 		error += s1->getPoint(i)->getWeight() * pow((double)(abs(s1->getPoint(i) - s2->getPoint(i))),2);
 	}
 
-	return error;
+	return (float)error;
 }
 
 void dMap::calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, float *x0, float *z0){
@@ -120,32 +120,32 @@ void dMap::calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, 
 
 	*teta = atan( ((p1 - p2) / (p3 - p4)));
 	
-	*x0 = (1.0/weights) * ( (x1_ - (x2_ * cos(*teta))) - (z2_ * sin(*teta)) );
+	*x0 = (float)((1.0/weights) * ( (x1_ - (x2_ * cos(*teta))) - (z2_ * sin(*teta)) ));
 
-	*z0 = (1.0/weights) * ( (z1_ + (x2_ * sin(*teta))) - (z2_ * cos(*teta)) );
+	*z0 = (float)((1.0/weights) * ( (z1_ + (x2_ * sin(*teta))) - (z2_ * cos(*teta)) ));
 }
 
 
 void dMap::calculateSums(PointCloud *s1, PointCloud *s2, float *x1_, float *x2_, float *z1_, float *z2_, float *weights){
 	int i;
 
-	for(i = 0 ; i < s1->getNPoints() ; i++){
+	for(i = 0 ; i < NPOINTS ; i++){
 		*x1_ += s1->getPoint(i)->getWeight() * s1->getPoint(i)->getX();
 	}
 
-	for(i = 0 ; i < s1->getNPoints() ; i++){
+	for(i = 0 ; i < NPOINTS ; i++){
 		*z1_ += s1->getPoint(i)->getWeight() * s1->getPoint(i)->getZ();
 	}
 
-	for(i = 0 ; i < s2->getNPoints() ; i++){
+	for(i = 0 ; i < NPOINTS ; i++){
 		*x2_ += s2->getPoint(i)->getWeight() * s2->getPoint(i)->getX();
 	}
 
-	for(i = 0 ; i < s2->getNPoints() ; i++){
+	for(i = 0 ; i < NPOINTS ; i++){
 		*z2_ += s2->getPoint(i)->getWeight() * s2->getPoint(i)->getZ();
 	}
 
-	for(i = 0 ; i < s1->getNPoints() ; i++){
+	for(i = 0 ; i < NPOINTS ; i++){
 		*weights += s1->getPoint(i)->getWeight();
 	}
 }
@@ -154,7 +154,7 @@ void dMap::calculateSums(PointCloud *s1, PointCloud *s2, float *x1_, float *x2_,
 float dMap::calculateTeta1(PointCloud *s1, PointCloud *s2){
 	float result = 0;
 
-	for(int i = 0 ; i < s1->getNPoints() ; i++){
+	for(int i = 0 ; i < NPOINTS ; i++){
 		result += s1->getPoint(i)->getWeight() * (
 													(s1->getPoint(i)->getX() * s2->getPoint(i)->getX()) +
 													(s1->getPoint(i)->getZ() * s2->getPoint(i)->getZ())
@@ -165,13 +165,13 @@ float dMap::calculateTeta1(PointCloud *s1, PointCloud *s2){
 }
 
 float dMap::calculateTeta2(float x1_, float x2_, float z1_, float z2_, float weights){
-	return ((1.0/weights) * ((x1_ * z2_) - (x2_ * z1_)));
+	return (float)((1.0/weights) * ((x1_ * z2_) - (x2_ * z1_)));
 }
 
 float dMap::calculateTeta3(PointCloud *s1, PointCloud *s2){
 	float result = 0;
 
-	for(int i = 0 ; i < s1->getNPoints() ; i++){
+	for(int i = 0 ; i < NPOINTS ; i++){
 		result += s1->getPoint(i)->getWeight() * (
 													(s1->getPoint(i)->getX() * s2->getPoint(i)->getZ()) -
 													(s2->getPoint(i)->getX() * s1->getPoint(i)->getZ())
@@ -182,5 +182,5 @@ float dMap::calculateTeta3(PointCloud *s1, PointCloud *s2){
 }
 
 float dMap::calculateTeta4(float x1_, float x2_, float z1_, float z2_, float weights){
-	return ((1.0/weights) * ((x1_ * x2_) - (z1_ * z2_)));
+	return (float)((1.0/weights) * ((x1_ * x2_) - (z1_ * z2_)));
 }

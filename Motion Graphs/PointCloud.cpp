@@ -38,7 +38,7 @@ PointCloud::~PointCloud(){
 
 
 Point *PointCloud::getPoint(int i){
-	if(this->nPoints < i) return NULL;
+	if(i >= NPOINTS) return NULL;
 
 	return &this->points[i];
 }

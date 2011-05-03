@@ -6,6 +6,12 @@
 
 gNode::gNode(){
 	this->nEdges = 0;
+	this->nodeID = -1;
+}
+
+gNode::gNode(int id){
+	this->nEdges = 0;
+	this->nodeID = id;
 }
 
 gNode::~gNode(){

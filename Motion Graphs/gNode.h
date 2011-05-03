@@ -8,6 +8,7 @@ using namespace std;
 class gNode{
 	public:
 		gNode();
+		gNode(int id);
 		~gNode();
 
 		int addEdge(Edge *edge);
@@ -16,7 +17,7 @@ class gNode{
 		//Edge *getEdges();
 		Edge *getEdge(int e);
 
-		void setID(int i){ nodeID = i;}
+		void setID(int id){nodeID = id;}
 		int getID(){return nodeID;}
 		
 	private:

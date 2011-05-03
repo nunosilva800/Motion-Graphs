@@ -33,20 +33,21 @@ class Point{
 };
 
 
+#define NPOINTS 40
+
 class PointCloud{
 	//TODO
 	public:
 		PointCloud();
 		~PointCloud();
 
-		int getNPoints(){return this->nPoints;}
 		Point *getPoint(int i);
 		void rotate(int axis, float angle);
 		void translate(float xx, float yy, float zz);
 
 	private:
 		std::vector<Point> points;
-		int nPoints;
+		//int nPoints; // = NPOINTS?
 };
 
 class Motion{
