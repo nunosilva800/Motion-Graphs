@@ -91,14 +91,22 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 
 float dMap::compareFrames(PointCloud *s1, PointCloud *s2){
 	//TODO numero de pontos entre PointClouds é sempre o mesmo?
-	float x0 = 0,y0 = 0,teta = 0;
+	float x0 = 0,z0 = 0,teta = 0;
+	float error = 0;
 
+	this->calculateTransformation(s1,s2,&teta,&x0,&z0);
+
+	s2->translate(x0,0,z0);
+	s2->rotate(1,teta);
+	
 	for(int i = 0 ; i < s1->getNPoints() ; i++){
-		this->calculateTransformation(s1,s2,&teta,&x0,&y0);
+		error += s1->getPoint(i)->getWeight() * pow((double)(abs(s1->getPoint(i) - s2->getPoint(i))),2);
 	}
+
+	return error;
 }
 
-void dMap::calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, float *x0, float *y0){
+void dMap::calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, float *x0, float *z0){
 	float x1_ = 0, x2_ = 0, z1_ = 0, z2_ = 0, weights = 0;
 	int i = 0;
 	float p1 = 0, p2 = 0, p3 = 0, p4 = 0;
@@ -114,7 +122,7 @@ void dMap::calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, 
 	
 	*x0 = (1.0/weights) * ( (x1_ - (x2_ * cos(*teta))) - (z2_ * sin(*teta)) );
 
-	*y0 = (1.0/weights) * ( (z1_ + (x2_ * sin(*teta))) - (z2_ * cos(*teta)) );
+	*z0 = (1.0/weights) * ( (z1_ + (x2_ * sin(*teta))) - (z2_ * cos(*teta)) );
 }
 
 

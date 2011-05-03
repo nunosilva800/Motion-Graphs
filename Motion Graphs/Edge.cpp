@@ -9,6 +9,11 @@ Edge::Edge(){
 	this->ninja = NULL;
 }
 
+Edge::Edge(gNode *d, Ninja *n){
+	this->dest = d;
+	this->ninja = n;
+}
+
 Edge::~Edge(){
 
 }

@@ -19,14 +19,15 @@ Graph::~Graph(){
 /**
  * Adiciona o novo nodo ao grafo
  */
-bool Graph::addNode(gNode *node){
-
+void Graph::addNode(gNode node){
+	this->nodes.push_back(node);
 }
 
 /**
  * Verifica se aquele nodo já está introduzido no grafo
  * @return NULL caso não exista ou retorna o próprio nodo
  */
-gNode* Graph::existNode(gNode *node){
+gNode* Graph::existNode(gNode node){
 
+	return NULL;
 }

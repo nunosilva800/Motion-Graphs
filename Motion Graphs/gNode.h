@@ -2,7 +2,8 @@
 #define _GNODE
 
 #include "Edge.h"
-#include <vector>
+
+using namespace std;
 
 class gNode{
 	public:
@@ -11,13 +12,17 @@ class gNode{
 
 		int addEdge(Edge *edge);
 
-		int getNEdges(){return nEdges};
-		Edge **getEdges();
+		int getNEdges(){return nEdges;}
+		//Edge *getEdges();
+		Edge *getEdge(int e);
 
-	private:
-		int nEdges;
-		lEdge edges;
+		void setID(int i){ nodeID = i;}
+		int getID(){return nodeID;}
 		
+	private:
+		int nodeID;
+		int nEdges;
+		std::vector<Edge> edges;	
 };
 
 #endif

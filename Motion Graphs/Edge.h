@@ -8,6 +8,7 @@ class gNode;
 class Edge{
 	public:
 		Edge();
+		Edge(gNode *d, Ninja *n);
 		~Edge();
 
 		void setNinja(Ninja *ninja){this->ninja = ninja;}
@@ -21,9 +22,9 @@ class Edge{
 		Ninja *ninja;
 };
 
-typedef struct le{
-	Edge *edge;
-	struct le *next;
-} *lEdge, LEdge;
+//typedef struct le{
+//	Edge *edge;
+//	struct le *next;
+//} *lEdge, LEdge;
 
 #endif

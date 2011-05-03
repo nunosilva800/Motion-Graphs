@@ -1,6 +1,10 @@
 #ifndef _POINTCLOUD
 #define _POINTCLOUD
 
+#include <stdio.h>
+using namespace std;
+
+#include <vector>
 
 class Point{
 	public:
@@ -37,9 +41,11 @@ class PointCloud{
 
 		int getNPoints(){return this->nPoints;}
 		Point *getPoint(int i);
+		void rotate(int axis, float angle);
+		void translate(float xx, float yy, float zz);
 
 	private:
-		Point **points;
+		std::vector<Point> points;
 		int nPoints;
 };
 
@@ -54,9 +60,9 @@ class Motion{
 
 
 	private:
-		PointCloud **clouds;
+		std::vector<PointCloud> clouds;
 		int nClouds;
-		char * label;
+		std::string label;
 };
 
 

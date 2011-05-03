@@ -38,9 +38,23 @@ PointCloud::~PointCloud(){
 
 
 Point *PointCloud::getPoint(int i){
-	if(this->nPoints < i) return 0;
+	if(this->nPoints < i) return NULL;
 
-	return this->points[i];
+	return &this->points[i];
+}
+
+/*
+ * axis:
+ *	0 - X
+ *	1 - Y
+ *	2 - Z
+ */
+void rotate(int axis, float angle){
+	
+}
+
+void translate(float xx, float yy, float zz){
+
 }
 
 
@@ -58,7 +72,7 @@ Motion::~Motion(){
 
 
 PointCloud *Motion::getPointCloud(int i){
-	if(i > this->nClouds) return 0;
+	if(i > this->nClouds) return NULL;
 
-	return this->clouds[i];
+	return &this->clouds[i];
 }
