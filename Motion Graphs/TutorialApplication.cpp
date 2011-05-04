@@ -53,9 +53,14 @@ void TutorialApplication::createViewports(void) {
 
 void TutorialApplication::createScene(void) {
 
+	// TODO: disable frustum culling
+	//Ogre::Frustum * noCulling = mCamera->getCullingFrustum()->;
+	//noCulling->setFOVy(Ogre::Radian(360));
+	//mCamera->setCullingFrustum(noCulling);
+	
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-    MODEL = 0;
+	MODEL = 0;
 
     // Create the scene node for the model
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
@@ -134,16 +139,27 @@ void TutorialApplication::createScene(void) {
     // http://www.ogre3d.org/docs/api/html/classOgre_1_1SimpleSpline.html#_details
     spline = new Ogre::SimpleSpline();
 
-    //create a line
+    //create a line to show the desired path
     lines = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
     for (int i = 0; i < mPath->size(); i++) {
         lines->addPoint(mPath->get(i));
     }
     lines->update();
-
     Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
     linesNode->attachObject(lines);
-
+	
+	// create a line to show the path done by the char
+	lines_path_done = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+	
+	//TODO change color of the line
+	/*lines_path_done->getMaterial()->setAmbient(Ogre::ColourValue(1,0,0));
+	lines_path_done->getMaterial()->setDiffuse(Ogre::ColourValue(1,0,0));
+	lines_path_done->getMaterial()->setCullingMode(Ogre::CullingMode::CULL_NONE);*/
+	
+	lines_path_done->update();
+	Ogre::SceneNode *linesNode_path_done = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines_path_done");
+    linesNode_path_done->attachObject(lines_path_done);
+	
 }
 
 bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {
@@ -297,8 +313,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
                 printf("Rotating\n");
             }//else
 
-            // TODO: 
-            // path synthesis
+            //TODO: path synthesis
             // P			-> defined path (our mPath)
             // P'			-> actual path
             // w[i]			-> ith frame
@@ -322,9 +337,14 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
             printf("Entity is idle\n");
         } else {
             printf("Entity is not idle\n");
-            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", mNode->getPosition().x, mNode->getPosition().y, mNode->getPosition().z);
+			Ogre::Vector3 currentPos = mNode->getPosition();
+            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y,currentPos.z);
             // save root coordinates on every frame
-            frameRootCoordinates.push_back(mNode->getPosition());
+            frameRootCoordinates.push_back(currentPos);
+			// add point to draw the lines
+			currentPos.y++;
+			lines_path_done->addPoint(currentPos);
+			lines_path_done->update();
         }
     }
 

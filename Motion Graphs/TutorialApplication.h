@@ -47,7 +47,9 @@ private:
     MotionPath * mPath;
     Ogre::SimpleSpline *spline;
     DynamicLines *lines;
+	DynamicLines *lines_path_done;
     Ogre::SceneNode *linesNode;
+	Ogre::SceneNode *linesNode_path_done;
 
     int MODEL; // the model identifier
 
