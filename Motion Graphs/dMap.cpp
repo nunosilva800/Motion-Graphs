@@ -70,7 +70,7 @@ int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
 
 					   if(ok){
 						   m1.push_back(i);
-						   m2.push_back(j);
+						   m2.push_back(j+this->nSteps);
 						   nPts++;
 					   }
 				}
@@ -82,8 +82,8 @@ int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
 }
 
 void dMap::constructMap(Motion **motions, int nMotions){
-	for(int i = 0 ; i < nMotions -1 ; i++){
-		for(int j = i + 1 ; j < nMotions; j++){
+	for(int i = 0 ; i < nMotions ; i++){
+		for(int j = 0 ; j < nMotions; j++){
 			if(i != j) this->compareMotions(motions[i], motions[j]);
 		}
 	}

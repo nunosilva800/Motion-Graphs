@@ -11,10 +11,10 @@ class Graph{
 		Graph();
 		~Graph();
 
-		void constructGraph(Ninja **ninjas, int nNinjas);
+		void constructGraph(Ninja **ninjas, int nNinjas, float threshold, int nCoincidents);
 
-		void addNode(gNode *node);
-		void addEdge(gNode);
+		int addNode(gNode *node);
+		//void addEdge(gNode);
 		gNode* existNode(gNode *node);
 
 		int getNNodes(){return this->nNodes;}
@@ -27,6 +27,10 @@ class Graph{
 		void createTransition(Motion *m1, int mPos1, std::vector<int> tPos1, 
 							  Motion *m2, int mPos2, std::vector<int> tPos2, 
 							  dMap *map, int r);
+
+		int **indexes;
+		
+		void initIndexes(Ninja **ninjas, int nNinjas);
 };
 
 

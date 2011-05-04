@@ -9,6 +9,7 @@ class Edge{
 	public:
 		Edge();
 		Edge(gNode *d, Ninja *n);
+		Edge(gNode *d, Ninja *n,bool transition, Motion *m1, Motion *m2, int init1, int init2, int end1, int end2);
 		~Edge();
 
 		void setNinja(Ninja *ninja){this->ninja = ninja;}
@@ -20,6 +21,12 @@ class Edge{
 	private:
 		gNode *dest;
 		Ninja *ninja;
+
+		//Teste
+		bool transition;
+		Motion *m1,*m2;
+		int init1,init2,end1,end2;
+
 };
 
 //typedef struct le{
