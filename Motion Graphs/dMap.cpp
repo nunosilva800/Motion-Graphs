@@ -51,6 +51,36 @@ void dMap::duplicateSpace(){
 }
 
 
+int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
+	int nPts = 0;
+
+	if(level >= this->nRelations) return 0;
+
+	for(int i = 0 ; i < this->relations[level][0]->getNPointClouds() ; i++){
+		for(int j = 0 ; j < this->relations[level][1]->getNPointClouds() ; j++){
+			if(this->differenceMap[level][i][j] < this->threshold){
+				if((this->relations[level][0]->getNPointClouds() - i) <= this->nSteps &&
+				   (this->relations[level][1]->getNPointClouds() - j) <= this->nSteps ){
+					   bool ok = true;
+					   for(int l = 0 ; l < this->nSteps && ok ; l++){
+							for(int c = 0 ; c < this->nSteps && ok; c++){
+								if(this->differenceMap[level][l+i][c+j] >= this->threshold) ok = false;
+							}
+					   }
+
+					   if(ok){
+						   m1.push_back(i);
+						   m2.push_back(j);
+						   nPts++;
+					   }
+				}
+			}
+		}
+	}
+
+	return nPts;
+}
+
 void dMap::constructMap(Motion **motions, int nMotions){
 	for(int i = 0 ; i < nMotions -1 ; i++){
 		for(int j = i + 1 ; j < nMotions; j++){
@@ -100,7 +130,7 @@ float dMap::compareFrames(PointCloud *s1, PointCloud *s2){
 	s2->rotate(1,teta);
 	
 	for(int i = 0 ; i < NPOINTS ; i++){
-		error += s1->getPoint(i)->getWeight() * pow((double)(abs(s1->getPoint(i) - s2->getPoint(i))),2);
+		error += s1->getPoint(i)->getWeight() * pow((double)(this->difference(s1->getPoint(i),s2->getPoint(i))),2);
 	}
 
 	return (float)error;

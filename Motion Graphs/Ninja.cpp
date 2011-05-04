@@ -5,7 +5,9 @@
  */
 
 Ninja::Ninja(){
-	Ogre::Animation("",0);
+	Ogre::Animation a = Ogre::Animation("",0);
+
+	
 }
 
 Ninja::~Ninja(){

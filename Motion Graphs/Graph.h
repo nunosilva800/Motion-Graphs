@@ -13,7 +13,7 @@ class Graph{
 
 		void constructGraph(Ninja **ninjas, int nNinjas);
 
-		void addNode(gNode node);
+		void addNode(gNode *node);
 		void addEdge(gNode);
 		gNode* existNode(gNode *node);
 
@@ -23,6 +23,10 @@ class Graph{
 	private:
 		int nNodes;
 		std::vector<gNode> nodes;
+
+		void createTransition(Motion *m1, int mPos1, std::vector<int> tPos1, 
+							  Motion *m2, int mPos2, std::vector<int> tPos2, 
+							  dMap *map, int r);
 };
 
 
