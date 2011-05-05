@@ -53,14 +53,14 @@ void TutorialApplication::createViewports(void) {
 
 void TutorialApplication::createScene(void) {
 
-	// TODO: disable frustum culling
-	//Ogre::Frustum * noCulling = mCamera->getCullingFrustum()->;
-	//noCulling->setFOVy(Ogre::Radian(360));
-	//mCamera->setCullingFrustum(noCulling);
-	
+    // TODO: disable frustum culling
+    //Ogre::Frustum * noCulling = mCamera->getCullingFrustum()->;
+    //noCulling->setFOVy(Ogre::Radian(360));
+    //mCamera->setCullingFrustum(noCulling);
+
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-	MODEL = 0;
+    MODEL = 0;
 
     // Create the scene node for the model
     mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
@@ -118,11 +118,11 @@ void TutorialApplication::createScene(void) {
     //manually define a path
     mPath = new MotionPath();
 
-//    mPath->add(Ogre::Vector3(0, 1, 0));
-//    mPath->add(Ogre::Vector3(200, 1, 0));
-//    mPath->add(Ogre::Vector3(200, 1, 200));
-//    mPath->add(Ogre::Vector3(200, 1, 400));
-//    mPath->add(Ogre::Vector3(0, 1, 200));
+    //    mPath->add(Ogre::Vector3(0, 1, 0));
+    //    mPath->add(Ogre::Vector3(200, 1, 0));
+    //    mPath->add(Ogre::Vector3(200, 1, 200));
+    //    mPath->add(Ogre::Vector3(200, 1, 400));
+    //    mPath->add(Ogre::Vector3(0, 1, 200));
 
     mPath->add(Ogre::Vector3(0, 1, 0));
     mPath->add(Ogre::Vector3(5, 1, 0));
@@ -147,19 +147,19 @@ void TutorialApplication::createScene(void) {
     lines->update();
     Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
     linesNode->attachObject(lines);
-	
-	// create a line to show the path done by the char
-	lines_path_done = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
-	
-	//TODO change color of the line
-	/*lines_path_done->getMaterial()->setAmbient(Ogre::ColourValue(1,0,0));
-	lines_path_done->getMaterial()->setDiffuse(Ogre::ColourValue(1,0,0));
-	lines_path_done->getMaterial()->setCullingMode(Ogre::CullingMode::CULL_NONE);*/
-	
-	lines_path_done->update();
-	Ogre::SceneNode *linesNode_path_done = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines_path_done");
+
+    // create a line to show the path done by the char
+    lines_path_done = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+
+    //TODO change color of the line
+    /*lines_path_done->getMaterial()->setAmbient(Ogre::ColourValue(1,0,0));
+    lines_path_done->getMaterial()->setDiffuse(Ogre::ColourValue(1,0,0));
+    lines_path_done->getMaterial()->setCullingMode(Ogre::CullingMode::CULL_NONE);*/
+
+    lines_path_done->update();
+    Ogre::SceneNode *linesNode_path_done = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines_path_done");
     linesNode_path_done->attachObject(lines_path_done);
-	
+
 }
 
 bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {
@@ -292,7 +292,6 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
                         break;
                     case 2:
                         mAnimationState = mEntity->getAnimationState("Sneak");
-
                         break;
                 }
                 mAnimationState->setLoop(false);
@@ -335,16 +334,29 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
         // if is not idle, save coordinates
         if (isIdle) {
             printf("Entity is idle\n");
+            
+            // TODO: Detectar que a entidade terminou o caminho definido pelo user
+            // Se a entidade estiver "isIdle" então é porque o caminho terminou.           
+
+            // TODO: Para cada coordenada em frameRootCoordinates (corresponde a um frame??) escolher uma nova coordenada random que não exceda o erro
+            // (estas coordenadas random, seriam um movimento da animação vinda do grafo)
+
+
         } else {
             printf("Entity is not idle\n");
-			Ogre::Vector3 currentPos = mNode->getPosition();
-            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y,currentPos.z);
-            // save root coordinates on every frame
+            // Get root coordinates
+            Ogre::Vector3 currentPos = mNode->getPosition();
+            // Save root coordinates on every frame
             frameRootCoordinates.push_back(currentPos);
-			// add point to draw the lines
-			currentPos.y++;
-			lines_path_done->addPoint(currentPos);
-			lines_path_done->update();
+            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
+            printf("Distance from start: (%4.2f, %4.2f, %4.2f)\n", frameRootCoordinates.at(0).x - currentPos.x,
+                                                                   frameRootCoordinates.at(0).y - currentPos.y,
+                                                                   frameRootCoordinates.at(0).z - currentPos.z);
+
+            // add point to draw the lines
+            currentPos.y++;
+            lines_path_done->addPoint(currentPos);
+            lines_path_done->update();
         }
     }
 
