@@ -68,12 +68,6 @@ void TutorialApplication::createScene(void) {
     // add the model
     switch (MODEL) {
         case 0:
-            mEntity = mSceneMgr->createEntity("Robot", "robot.mesh");
-            break;
-        case 1:
-            mEntity = mSceneMgr->createEntity("Ninja", "ninja.mesh");
-            break;
-        case 2:
             mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
             break;
     }
@@ -90,10 +84,10 @@ void TutorialApplication::createScene(void) {
     light->setDiffuseColour(Ogre::ColourValue::White);
     light->setSpecularColour(Ogre::ColourValue::White);
 
-    // Create the scene node
+    // Create the scene cam node
     node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode1", Ogre::Vector3(-400, 200, 400));
 
-    // Make it look towards the ninja
+    // Make it look towards the model
     node->yaw(Ogre::Degree(-45));
 
     // Create the pitch node
@@ -220,12 +214,6 @@ void TutorialApplication::createFrameListener(void) {
     // Set idle animation
     switch (MODEL) {
         case 0:
-            mAnimationState = mEntity->getAnimationState("Idle");
-            break;
-        case 1:
-            mAnimationState = mEntity->getAnimationState("Backflip");
-            break;
-        case 2:
             mAnimationState = mEntity->getAnimationState("Sneak");
             break;
     }
@@ -257,13 +245,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
             // Set walking animation
             switch (MODEL) {
                 case 0:
-                    mAnimationState = mEntity->getAnimationState("Walk");
-                    break;
-                case 1:
-                    mAnimationState = mEntity->getAnimationState("Walk");
-                    break;
-                case 2:
-                    mAnimationState = mEntity->getAnimationState("Walk");
+                    mAnimationState = mEntity->getAnimationState("Stagger");
                     break;
             }
 
@@ -271,6 +253,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
             mAnimationState->setEnabled(true);
 
             isIdle = 0;
+
         }
     } else {
         Ogre::Real move = mWalkSpeed * evt.timeSinceLastFrame;
@@ -285,17 +268,11 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
                 // Set Idle animation
                 switch (MODEL) {
                     case 0:
-                        mAnimationState = mEntity->getAnimationState("Idle");
-                        break;
-                    case 1:
-                        mAnimationState = mEntity->getAnimationState("Backflip");
-                        break;
-                    case 2:
                         mAnimationState = mEntity->getAnimationState("Sneak");
                         break;
                 }
-                mAnimationState->setLoop(false);
-                mAnimationState->setEnabled(false);
+                mAnimationState->setLoop(true);
+                mAnimationState->setEnabled(true);
 
                 printf("Idle\n");
                 isIdle = 1;
@@ -328,6 +305,10 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
         } else {
             mNode->translate(mDirection * move);
+				
+			// make camera look at the model
+			//mCamera->lookAt(mNode->getPosition());
+
         } // else
 
         // lmiranda
