@@ -18,8 +18,12 @@ class Edge{
 		Ninja *getNinja(){return this->ninja;}
 		gNode *getDestionation(){return this->dest;}
 
+		Ogre::String getLabel(){return this->label;}
+		void setLabel(Ogre::String label){this->label = label;}
+
 	private:
 		gNode *dest;
+		Ogre::String label;
 		Ninja *ninja;
 
 		//Teste

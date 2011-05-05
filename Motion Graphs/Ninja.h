@@ -8,14 +8,17 @@ using namespace Ogre;
 
 class Ninja : public Animation{
 	public:
-		Ninja();
+		//Ninja();
+		Ninja(Ogre::String &name, Ogre::Real d, Motion *m1);
 		~Ninja();
 
 		bool addMotion(Motion *motion);
 		Motion *getMotion();
 
+
 	private:
 		Motion *motion;
+
 };
 
 

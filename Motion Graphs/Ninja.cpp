@@ -4,11 +4,12 @@
  * Contructors and Destructors
  */
 
-Ninja::Ninja(){
-	Ogre::Animation a = Ogre::Animation("",0);
+//Ninja::Ninja(){
+//Ninja::Ninja(Ogre::String &name, Ogre::Real d, Motion *m1){
+	//Ogre::Animation a = Ogre::Animation("",0);
 
 	
-}
+//}
 
 Ninja::~Ninja(){
 

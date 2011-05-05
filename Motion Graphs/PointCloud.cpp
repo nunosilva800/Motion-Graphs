@@ -49,11 +49,11 @@ Point *PointCloud::getPoint(int i){
  *	1 - Y
  *	2 - Z
  */
-void rotate(int axis, float angle){
+void PointCloud::rotate(int axis, float angle){
 	
 }
 
-void translate(float xx, float yy, float zz){
+void PointCloud::translate(float xx, float yy, float zz){
 
 }
 
