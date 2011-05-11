@@ -1,19 +1,23 @@
-#include "StdAfx.h"
 #include "Motion.h"
 
+/*
+ * Construtores
+ */
+Motion::Motion(){
 
-Motion::Motion(void)
-{
+}
+
+Motion::~Motion(){
+
 }
 
 
-Motion::~Motion(void)
-{
-}
-
+/*
+ * Metodos
+ */
 
 PointCloud *Motion::getPointCloud(int i){
 	if(i > this->nClouds) return NULL;
 
-	return &(this->clouds[i]);
+	return &this->clouds[i];
 }

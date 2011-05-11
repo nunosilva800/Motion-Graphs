@@ -1,22 +1,27 @@
-#pragma once
+#ifndef _POINTCLOUD
+#define _POINTCLOUD
 
-#include "Point3D.h"
+#include <stdio.h>
+#include "Point.h"
 
-class PointCloud
-{
-public:
-	PointCloud(void);
-	~PointCloud(void);
+using namespace std;
 
-	Point3D *getPoint(int i);
-	void rotate(int axis, float angle);
-	void translate(float xx, float yy, float zz);
-	void addPoint(float xx, float yy, float zz){
-		points.push_back(Point3D(xx,yy,zz));
-	}
+#include <vector>
 
-private:
-	std::vector<Point3D> points;
-	//int nPoints; // = NPOINTS?
+#define NPOINTS 40
+
+class PointCloud{
+	public:
+		PointCloud();
+		~PointCloud();
+
+		Point3D *getPoint(int i);
+		void rotate(int axis, float angle);
+		void translate(float xx, float yy, float zz);
+
+	private:
+		std::vector<Point3D> points;
+		//int nPoints; // = NPOINTS?
 };
 
+#endif

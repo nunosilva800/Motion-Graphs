@@ -1,27 +1,27 @@
-#pragma once
+#ifndef _MOTION
+#define _MOTION
 
 #include "PointCloud.h"
 
-#define NPOINTS 40
+
+class Motion{
+	public:
+		Motion();
+		~Motion();
+
+		int getNPointClouds(){return this->nClouds;}
+		PointCloud *getPointCloud(int i);
+		std::string getLabel(){return this->label;}
+
+		void setPointClouds(std::vector<PointCloud> pClouds, int nClouds){this->clouds = pCloud;this->nClouds = nClouds;}
+		void setNClouds(int nClouds){this->nClouds = nClouds;}
+		void setLabel(std::string label){this->label = label;}
 
 
-class Motion
-{
-public:
-
-
-	int getNPointClouds(){return this->nClouds;}
-	PointCloud *getPointCloud(int i);
-
-	std::map<Ogre::Real,PointCloud> clouds; //indexado pelas keyframes
-	int nClouds;
-	std::string label;
-
-
-	Motion(void);
-	~Motion(void);
-
-
-	
+	private:
+		std::vector<PointCloud> clouds;
+		int nClouds;
+		std::string label;
 };
 
+#endif
