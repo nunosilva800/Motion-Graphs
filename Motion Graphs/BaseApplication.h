@@ -36,6 +36,8 @@ This source file is part of the
 #include <SdkTrays.h>
 #include <SdkCameraMan.h>
 
+#include "_Assets.h"
+
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {
 public:
@@ -59,7 +61,7 @@ protected:
 
     // Ogre::FrameListener
     virtual bool frameRenderingQueued(const Ogre::FrameEvent& evt);
-
+		
     // OIS::KeyListener
     virtual bool keyPressed( const OIS::KeyEvent &arg );
     virtual bool keyReleased( const OIS::KeyEvent &arg );
@@ -92,6 +94,24 @@ protected:
     OIS::InputManager* mInputManager;
     OIS::Mouse*    mMouse;
     OIS::Keyboard* mKeyboard;
+	
+
+	Ogre::SceneNode *mNode;                // The SceneNode that the Entity is attached to
+
+	_Assets* _assets;
+
+
+	std::vector<std::string> _entityNames;
+	std::vector<Ogre::Entity*> _entities;	
+	std::vector<Ogre::Skeleton*> _skeletons;
+	std::vector<Ogre::AnimationState*> _animStates;	
+
+	Ogre::Real _timeController;
+
+	static const int FPS = 30;
+	static const int iFPS = 1/FPS;
+
+	void _frameRenderingQueued(const Ogre::FrameEvent& evt);
 };
 
 #endif // #ifndef __BaseApplication_h_
