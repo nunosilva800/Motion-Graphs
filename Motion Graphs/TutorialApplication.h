@@ -24,6 +24,9 @@ This source file is part of the
 #include <OgreSimpleSpline.h>
 #include <deque>
 
+#define CALC_AVATAR_PATH 1
+#define SHOW_AVATAR_PATH 2
+
 class TutorialApplication : public BaseApplication {
 public:
     TutorialApplication(void);
@@ -41,8 +44,8 @@ protected:
 
     // needed for user input
     virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
-
-	double TutorialApplication::errorFunc(double w, double e);
+    virtual bool keyPressed( const OIS::KeyEvent &arg );
+    //double TutorialApplication::errorFunc(double w, double e);
 
 private:
     Ogre::Plane * mPlane;
@@ -69,8 +72,7 @@ private:
     //
     // lmiranda
     //
-    std::deque<Ogre::Vector3> frameRootCoordinates;
-    int isIdle;
+    int state;
 
 };
 
