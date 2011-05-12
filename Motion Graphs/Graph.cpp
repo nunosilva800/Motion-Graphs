@@ -5,13 +5,13 @@
  */
 
 Graph::Graph(){
-	this->motionGraph = NULL;
+	this->entity = NULL;
 	this->indexes = NULL;
 	this->nNodes = 0;
 }
 
-Graph::Graph(MotionGraph *m){
-	this->motionGraph = m;
+Graph::Graph(Ogre::Entity *e){
+	this->entity = e;
 	this->indexes = NULL;
 	this->nNodes = 0;
 }
@@ -132,6 +132,43 @@ void Graph::splitAnimation(std::string name, int separation,
 	this->getNode(node1)->addEdge(new Edge(this->getNode(node2),label));
 
 	//TODO split animations
+	Ogre::Animation *animation = this->entity->getSkeleton()->getAnimation(name);
+	
+	float length = animation->getLength();
+	int totalFrames = animation->getNodeTrack(0)->getNumKeyFrames();
+	float tInit = ((float)((float)frame1 * length)) / ((float)totalFrames);
+	float tEnd = ((float)((float)frame2 * length)) / ((float)totalFrames);
+	float newDuration = tEnd - tInit;
+	
+
+	this->entity->getSkeleton()->createAnimation(label,newDuration);
+
+	Ogre::Animation *newAnimation = animation->clone(label);//this->entity->getSkeleton()->getAnimation(label);
+	
+	//????
+	newAnimation->destroyAllTracks();
+	
+	int numBones = this->entity->getSkeleton()->getNumBones();
+	for(int i = 0 ; i < numBones ; i++){
+		//TODO só isto?
+		newAnimation->createNodeTrack(i,animation->getNodeTrack(i)->getAssociatedNode());
+	
+		//copiar todas as keyframes do bone
+		for(int j = frame1, ac = 0 ; j < (frame1 + (frame2 - frame1)) ; j++, ac++){
+			newAnimation->getNodeTrack(i)->createNodeKeyFrame(
+				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getTime() - 
+				animation->getNodeTrack(i)->getNodeKeyFrame(frame1)->getTime());
+
+			newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setRotation(
+				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation());
+			newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setScale(
+				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getScale());
+			newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setTranslate(
+				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getTranslate());
+
+		}
+		
+	}
 
 }
 

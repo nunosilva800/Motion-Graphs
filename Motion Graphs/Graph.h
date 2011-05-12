@@ -4,13 +4,16 @@
 #include "gNode.h"
 #include "dMap.h"
 #include <sstream>
+#include "stdafx.h"
+#include <OgreEntity.h>
+#include <OgreAnimation.h>
 
 class MotionGraph;
 
 class Graph{
 	public:
 		Graph();
-		Graph(MotionGraph *m);
+		Graph(Ogre::Entity *e);
 		~Graph();
 
 		void constructGraph(Ninja motions, int nMotions, float threshold, int nCoincidents);
@@ -23,7 +26,7 @@ class Graph{
 		gNode* getNode(int node);
 
 	private:
-		MotionGraph *motionGraph;
+		Ogre::Entity *entity;
 		int nNodes;
 		std::vector<gNode> nodes;
 
