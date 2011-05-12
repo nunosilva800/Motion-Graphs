@@ -224,8 +224,28 @@ void TutorialApplication::createFrameListener(void) {
 
 }
 
-// checks if the walklist has points to go to
+double TutorialApplication::errorFunc(double w, double e)
+{
+	// P			-> defined path (our mPath)
+	// P'			-> actual path
+	// w[i]			-> ith frame
+	// s(w[i])		-> arc-length of frame i
+	// P(s(w[i]))	-> point in P at arc-length of frame i
+	// error function is the sum of the squared distances over all frames :
 
+	//    for(int i = 0; i < nframes; i++)
+	//    {
+	//            error += pow ( P'(s(e[i])) - P(s(e[i])) , 2 );
+	//
+	//    }
+
+
+
+
+
+}
+
+// checks if the walklist has points to go to
 bool TutorialApplication::nextLocation(void) {
     if (mWalkList.empty()) return false;
 
@@ -248,6 +268,8 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
                     mAnimationState = mEntity->getAnimationState("Stagger");
                     break;
             }
+
+			//mEntity->getMesh()->getAnimation(0)->
 
             mAnimationState->setLoop(true);
             mAnimationState->setEnabled(true);
@@ -277,7 +299,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
                 printf("Idle\n");
                 isIdle = 1;
 
-            } else {
+            } else { // if we still have a point to go to, rotate in that direction and go
                 // Rotation Code will go here later
                 Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
                 if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) {
@@ -290,22 +312,12 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
             }//else
 
             //TODO: path synthesis
-            // P			-> defined path (our mPath)
-            // P'			-> actual path
-            // w[i]			-> ith frame
-            // s(w[i])		-> arc-length of frame i
-            // P(s(w[i]))	-> point in P at arc-length of frame i
-            // error function is the sum of the squared distances over all frames :
+			//error = TutorialApplication::errorFunc(w, e);
 
-            //    for(int i = 0; i < nframes; i++)
-            //    {
-            //            error += pow ( P'(s(w[i])) - P(s(w[i])) , 2 );
-            //
-            //    }
-
-        } else {
-            mNode->translate(mDirection * move);
-				
+        } else {// model is in the middle of a translation
+            //mNode->translate(mDirection * move);
+			
+					
 			// make camera look at the model
 			//mCamera->lookAt(mNode->getPosition());
 

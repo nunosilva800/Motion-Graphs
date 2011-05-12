@@ -1,0 +1,100 @@
+\documentclass[a4paper]{article}
+%\documentclass[twocolumn]{article}
+\setlength{\columnsep}{5mm}
+
+%\usepackage[portuges]{babel}
+\usepackage[latin1]{inputenc}
+
+\usepackage{url}
+\usepackage{alltt}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\usepackage{graphicx}
+\usepackage{algorithmic}
+\usepackage[lined,algonl,boxed]{algorithm2e}
+\usepackage{aeguill}  % usefull for pdflatex
+\usepackage[a4paper,left=20mm,right=20mm,bottom=20mm,top=15mm]{geometry}
+\usepackage{amsmath}
+\usepackage{indentfirst}
+
+\lstset{
+	language=C,
+	basicstyle=\footnotesize,
+	%numbers=left,
+	%stepnumber=2,
+	%numberstyle=\footnotesize, 
+	showtabs=false,
+	tabsize=2,
+	breaklines=true,
+	morecomment=[l]{//}
+	}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks,
+            citecolor=black,
+            filecolor=black,
+            linkcolor=black,
+            urlcolor=black,
+            pdftex}
+
+
+\title{ Motion Graphs \\ Path Synthesis \\
+\small MSc in Informatics Engineering \\
+\small University of Minho - Portugal
+	 }
+
+\author{
+Nuno A. Silva\\ \small pg17455@alunos.uminho.pt \\
+\and
+Luis Miranda\\ \small pgXXXXX@alunos.uminho.pt \\
+}
+
+\begin{document}
+
+\maketitle
+
+%\abstract
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+This report refers to a work based on a paper from Lucas Kovar, et. al\ref{motiongraphs}, particularly the path synthesis technique described there. Motion Graphs is a method for creating realistic, controllable motion. A directed graph is automatically generated, this graph contains pieces of original motion and automatically generated transitions. The authors also presented a general framework for extracting a particular graph walk that meet the user's specifications, and apply this framework to a specific problem with different styles of locomotion and arbitrary paths. \\
+
+Path synthesis relates to this final step in the proposed framework, where a user specifies a path and a graph walk is performed in order to generate the locomotion that best suits the path. The goal is for to integrate this specific module into a larger virtual character locomotion system. Ideally the user defined path should be aproximated by a spline and then a search in the motion graph should be done in order to find a set of motion capture data that minimizes the error. This error is the sum of the squared differences between the defined path and the path that the animation will produce, for that it is used the arc-length distance of the paths. \\
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Implementation details}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+The error function:
+\[
+g(w,e) = \sum_{i=1}^{n}\left \| P'(s(e_{i}))-P(s(e_{i})) \right \|^{2}
+\]
+w is the frame
+e is the error
+P is the defined path
+P' is the generated path
+s is the arc-length distance
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{}
+
+\bibitem{motiongraphs}
+{Lucas Kovar, Michael Gleicher and Frederic Pighin},{Motion Graphs}, {2002}
+    
+    
+\end{thebibliography} 
+
+
+\end{document}

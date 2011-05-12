@@ -42,6 +42,8 @@ protected:
     // needed for user input
     virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
 
+	double TutorialApplication::errorFunc(double w, double e);
+
 private:
     Ogre::Plane * mPlane;
     MotionPath * mPath;
