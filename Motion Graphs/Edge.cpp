@@ -6,15 +6,14 @@
 
 Edge::Edge(){
 	this->dest = NULL;
-	this->ninja = NULL;
 }
 
-Edge::Edge(gNode *d, Ninja *n){
+Edge::Edge(gNode *d, std::string label){
 	this->dest = d;
-	this->ninja = n;
+	this->label = label;
 }
 
-Edge::Edge(gNode *d, Ninja *n,bool transition, Motion *m1, Motion *m2, int init1, int init2, int end1, int end2){
+/*Edge::Edge(gNode *d, Ninja *n,bool transition, Motion *m1, Motion *m2, int init1, int init2, int end1, int end2){
 	this->dest = d;
 	this->ninja = n;
 	this->transition = transition;
@@ -24,7 +23,7 @@ Edge::Edge(gNode *d, Ninja *n,bool transition, Motion *m1, Motion *m2, int init1
 	this->init2 = init2;
 	this->end1 = end1;
 	this->end2 = end2;
-}
+}*/
 
 Edge::~Edge(){
 

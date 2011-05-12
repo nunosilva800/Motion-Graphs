@@ -2,7 +2,7 @@
 #define _NINJA
 
 #include "OgreAnimation.h"
-#include "PointCloud.h"
+#include "Motion.h"
 
 using namespace Ogre;
 
@@ -18,9 +18,6 @@ class Ninja : public Animation{
 
 	private:
 		Motion *motion;
-
 };
-
-
 
 #endif

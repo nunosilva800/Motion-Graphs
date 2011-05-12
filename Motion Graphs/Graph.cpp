@@ -5,7 +5,15 @@
  */
 
 Graph::Graph(){
+	this->motionGraph = NULL;
+	this->indexes = NULL;
+	this->nNodes = 0;
+}
 
+Graph::Graph(MotionGraph *m){
+	this->motionGraph = m;
+	this->indexes = NULL;
+	this->nNodes = 0;
 }
 
 Graph::~Graph(){
@@ -48,64 +56,85 @@ gNode *Graph::getNode(int node){
 }
 
 
-void Graph::constructGraph(Ninja **ninjas, int nNinjas, float threshold, int nCoincidents){
-	Motion **motions = NULL;
+void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCoincidents){
+	if(nMotions = 0) return;
 
-	if(nNinjas = 0) return;
-	else motions = (Motion**)malloc(sizeof(Motion*) * nNinjas);
+	this->initIndexes(motions,nMotions);
+	
+	sNinja::iterator it;
+	int i;
 
-	this->initIndexes(ninjas,nNinjas);
-
-	for(int i = 0 ; i < nNinjas ; i++){
-		motions[i] = ninjas[i]->getMotion();
-		//Constroi os nodos
+	for(i = 0, it = motions->begin() ; it != motions->end() ; it++,i++){
 		this->indexes[i][0] = this->addNode(new gNode());
-		this->indexes[i][ninjas[i]->getMotion()->getNPointClouds()-1] = this->addNode(new gNode());
+		this->indexes[i][it->second.getNPointClouds()-1] = this->addNode(new gNode());
 		this->getNode(this->indexes[i][0])->addEdge(new Edge(
-			this->getNode(this->indexes[i][ninjas[i]->getMotion()->getNPointClouds()-1]), ninjas[i]
-			,false,ninjas[i]->getMotion(),NULL,0,-1,ninjas[i]->getMotion()->getNPointClouds()-1,-1));
+			this->getNode(this->indexes[i][it->second.getNPointClouds()-1]), it->second.getLabel()));
 	}
 
-	dMap map = dMap(nNinjas);
+	dMap map = dMap(nMotions);
 	map.setNSteps(nCoincidents);
 	map.setThreshold(threshold);
 
-	if(motions) map.constructMap(motions, nNinjas);
+	map.constructMap(motions, nMotions);
 
 	for(int i = 0 ; i < map.getNRelations() ; i++){
 		std::vector<int> pts1;
 		std::vector<int> pts2;
-		//CONFIRMAR
-		int m1 = i % (nNinjas-1) + i / (nNinjas-1) - 1;
-		int m2 = i % (nNinjas-1);
+
+		int m1 = -1, m2 = -1;
+		for(i = 0, it = motions->begin() ; it != motions->end() && (m1 == -1 || m2 == -1) ; it++,i++){
+			if(it->second.getLabel().compare(map.relations[i][0]) == 0) m1 = i;
+			if(it->second.getLabel().compare(map.relations[i][1]) == 0) m2 = i;
+		}
 
 		int nTransitionPoints = map.getMinimuns(i,pts1,pts2);
 
 		for(int j = 0 ; j < nTransitionPoints ; j++){
 			//Cria os nodos
-			if(this->indexes[m1][pts1[i]] == -1) this->indexes[m1][pts1[i]] = this->addNode(new gNode());
-			if(this->indexes[m2][pts2[i]] == -1) this->indexes[m2][pts2[i]] = this->addNode(new gNode());
+			if(this->indexes[m1][pts1[i]] == -1) 
+				this->indexes[m1][pts1[i]] = this->addNode(new gNode());
+			if(this->indexes[m2][pts2[i]] == -1)
+				this->indexes[m2][pts2[i]] = this->addNode(new gNode());
+			
 			//Liga a transacção
-			//TODO criar Ninja de transacção
-			this->getNode(this->indexes[m1][pts1[i]])->addEdge(new Edge(this->getNode(this->indexes[m2][pts2[i]]),NULL
-				,true,ninjas[m1]->getMotion(),ninjas[m2]->getMotion(),pts1[j],pts2[j]-nCoincidents,pts1[j] + nCoincidents,pts2[j]));
+			this->createTransition(map.relations[i][0], this->indexes[m1][pts1[i]], pts1[i],
+								   map.relations[i][1], this->indexes[m2][pts2[i]], pts2[i], j, nCoincidents);
 		}
 	}
 
-	for(int i = 0 ; i < nNinjas ; i++){
-		for(int j = 0 ; j < ninjas[i]->getMotion()->getNPointClouds() ; j++){
+	for(i = 0, it = motions->begin() ; it != motions->end() ; it++, i++){
+		for(int j = 0 ; j < it->second.getNPointClouds() ; j++){
+			int sep = 1;
 			if(this->indexes[i][j] != -1){
-				for(int jj = j+1 ; jj < ninjas[i]->getMotion()->getNPointClouds() ; jj++){
+				for(int jj = j+1 ; jj < it->second.getNPointClouds() ; jj++){
 					if(this->indexes[i][j] != -1){
-						//TODO criar ninja a partir de ninjas[i] da frame i a j
-						this->getNode(this->indexes[i][j])->
-							addEdge(new Edge(this->getNode(this->indexes[i][jj]),NULL,false,ninjas[i]->getMotion(),NULL,j,-1,jj,-1));
+						//TODO criar ninja a partir de motions[i] da frame i a j
+						this->splitAnimation(it->first,sep,this->indexes[i][j],j,this->indexes[i][jj],jj);
+						sep++;
 					}
 				}
 			}
 		}
 	}
 }
+
+
+
+
+void Graph::splitAnimation(std::string name, int separation,
+							int node1, int frame1,
+							int node2, int frame2){
+	
+	std::stringstream ss;
+	ss << name << "_" << separation << "1";
+	std::string label = ss.str();
+						   
+	this->getNode(node1)->addEdge(new Edge(this->getNode(node2),label));
+
+	//TODO split animations
+
+}
+
 
 
 /*
@@ -115,43 +144,46 @@ void Graph::constructGraph(Ninja **ninjas, int nNinjas, float threshold, int nCo
 								     \
  3-------------->4			3-------->6---->4
 		e2						e5		e6
+*/
+
+void Graph::createTransition(std::string m1, int node1, int frame1,
+							 std::string m2, int node2, int frame2,
+							 int transiction,int range){
+
+	std::stringstream ss;
+	ss << m1 << "_" ;
+	ss << m2 << "_" << transiction;
+	std::string newName = ss.str();
+
+	this->getNode(node1)->addEdge(new Edge(this->getNode(node2),newName));
+
+	//TODO criar animação com o newName entre frame1 de m1 e frame2 de m2
+	/*
+		true,this->motionGraph->getMotion(
+		&motions->at(map.relations[i][0]),&motions->at(map.relations[i][0]),
+		pts1[j],pts2[j]-nCoincidents,pts1[j] + nCoincidents,pts2[j])));
+	*/
+
+}
 
 
-void Graph::createTransition(Motion *m1, int mPos1, std::vector<int> tPos1, 
-							 Motion *m2, int mPos2, std::vector<int> tPos2, 
-							 dMap *map, int r){
-	gNode *n1,*n2,*n3,*n4,*n5,*n6;
-	n1 = n2 = n3 = n4 = n5 = n6 = NULL;
-	Edge *e1,*e2,*e3,*e4,*e5,*e6,*e7;
-	e1 = e2 = e3 = e4 = e5 = e6 = e7 = NULL;
-
-	n1 = &this->nodes[mPos1 * 2];
-	n2 = &this->nodes[mPos1 * 2 + 1];
-	n3 = &this->nodes[mPos2 * 2];
-	n4 = &this->nodes[mPos2 * 2 + 1];
-
-	std::vector<int>::iterator it = tPos1.begin();
-	tPos1.erase(it);
-
-
-}*/
-
-
-void Graph::initIndexes(Ninja **ninjas, int nNinjas){
+void Graph::initIndexes(Ninja motions, int nMotions){
 	int maxFrames = -1;
 
-	for(int i = 0 ; i < nNinjas ; i++){
-		if(ninjas[i]->getMotion()->getNPointClouds() > maxFrames) 
-			maxFrames = ninjas[i]->getMotion()->getNPointClouds();
+	sNinja::iterator it;
+
+	for(it = motions->begin() ; it != motions->end() ; it++){
+		if(it->second.getNPointClouds() > maxFrames)
+			maxFrames = it->second.getNPointClouds();
 	}
 
-	this->indexes = (int**)malloc(sizeof(int*) * nNinjas);
+	this->indexes = (int**)malloc(sizeof(int*) * nMotions);
 	
-	for(int i = 0 ; i < nNinjas ; i++){
+	for(int i = 0 ; i < nMotions ; i++){
 		this->indexes[i] = (int*)malloc(sizeof(int) * maxFrames);
 	}
 
-	for(int i = 0 ; i < nNinjas ; i++){
+	for(int i = 0 ; i < nMotions ; i++){
 		for(int j = 0 ; j < maxFrames ; j++){
 			this->indexes[i][j] = -1;
 		}

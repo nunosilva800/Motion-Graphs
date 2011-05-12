@@ -1,17 +1,19 @@
 #ifndef _GRAPH
 #define _GRAPH
 
-#include "Ninja.h"
 #include "gNode.h"
 #include "dMap.h"
+#include <sstream>
 
+class MotionGraph;
 
 class Graph{
 	public:
 		Graph();
+		Graph(MotionGraph *m);
 		~Graph();
 
-		void constructGraph(Ninja **ninjas, int nNinjas, float threshold, int nCoincidents);
+		void constructGraph(Ninja motions, int nMotions, float threshold, int nCoincidents);
 
 		int addNode(gNode *node);
 		//void addEdge(gNode);
@@ -21,16 +23,21 @@ class Graph{
 		gNode* getNode(int node);
 
 	private:
+		MotionGraph *motionGraph;
 		int nNodes;
 		std::vector<gNode> nodes;
 
-		void createTransition(Motion *m1, int mPos1, std::vector<int> tPos1, 
-							  Motion *m2, int mPos2, std::vector<int> tPos2, 
-							  dMap *map, int r);
+
+		void splitAnimation(std::string name, int separation,
+							int node1, int frame1,
+							int node2, int frame2);
+		void createTransition(std::string m1, int node1, int frame1,
+							  std::string m2, int node2, int frame2,
+							  int transiction,int range);
 
 		int **indexes;
 		
-		void initIndexes(Ninja **ninjas, int nNinjas);
+		void initIndexes(Ninja motions, int nMotions);
 };
 
 

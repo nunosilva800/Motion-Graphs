@@ -8,13 +8,12 @@ dMap::dMap(){
 }
 
 dMap::dMap(int nMotions){
-	this->differenceMap = (float***)malloc(sizeof(float**) * nMotions * nMotions);
-	this->relations = (Motion***)malloc(sizeof(Motion**) * nMotions * nMotions);
-	this->maxRelations = nMotions * nMotions;
+	this->differenceMap = (float***)malloc(sizeof(float**) * nMotions * nMotions * 2);
+	this->relations = (std::string**)malloc(sizeof(std::string*) * nMotions * nMotions * 2);
+	this->maxRelations = nMotions * nMotions * 2;
 	this->nRelations = 0;
+	this->motions = NULL;
 }
-
-
 
 dMap::~dMap(){
 
@@ -28,51 +27,57 @@ void dMap::duplicateSpace(){
 	int nRel = this->nRelations;
 	int maxRel = this->maxRelations * 2;
 	float ***difMap = (float***)malloc(sizeof(float**) * maxRel);
-	Motion ***rel = (Motion***)malloc(sizeof(Motion**) * maxRel);
+	std::string **rel = (std::string**)malloc(sizeof(std::string*) * maxRel);
+
 
 	for(int i = 0 ; i < nRel ; i++){
-		rel[i] = (Motion**)malloc(sizeof(Motion*) * 2);
+		rel[i] = (std::string*)malloc(sizeof(std::string) * 2);
 		rel[i][0] = this->relations[i][0];
 		rel[i][1] = this->relations[i][1];
 		
-		float **map = (float**)malloc(sizeof(float*) * rel[i][0]->getNPointClouds());
+		float **map = (float**)malloc(sizeof(float*) * (this->motions->at(rel[i][0]).getNPointClouds()));
 
-		for(int j = 0 ; j < rel[i][0]->getNPointClouds() ; j++){
-			map[j] = (float*)malloc(sizeof(float) * rel[i][1]->getNPointClouds());
+		for(int j = 0 ; j < this->motions->at(rel[i][0]).getNPointClouds() ; j++){
+			map[j] = (float*)malloc(sizeof(float) * this->motions->at(rel[i][1]).getNPointClouds());
 		}
 
-		for(int c = 0 ; c < rel[i][0]->getNPointClouds() ; c++){
-			for(int l = 0 ; l < rel[i][1]->getNPointClouds() ; l++){
+		for(int c = 0 ; c < this->motions->at(rel[i][0]).getNPointClouds() ; c++){
+			for(int l = 0 ; l < this->motions->at(rel[i][1]).getNPointClouds() ; l++){
 				map[l][c] = this->differenceMap[i][l][c];
 			}
 		}
+
+		this->differenceMap[i] = map;
 	}
 	
 }
 
-
 int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
 	int nPts = 0;
+	int np1,np2;
 
 	if(level >= this->nRelations) return 0;
 
-	for(int i = 0 ; i < this->relations[level][0]->getNPointClouds() ; i++){
-		for(int j = 0 ; j < this->relations[level][1]->getNPointClouds() ; j++){
-			if(this->differenceMap[level][i][j] < this->threshold){
-				if((this->relations[level][0]->getNPointClouds() - i) <= this->nSteps &&
-				   (this->relations[level][1]->getNPointClouds() - j) <= this->nSteps ){
-					   bool ok = true;
-					   for(int l = 0 ; l < this->nSteps && ok ; l++){
-							for(int c = 0 ; c < this->nSteps && ok; c++){
-								if(this->differenceMap[level][l+i][c+j] >= this->threshold) ok = false;
-							}
-					   }
+	np1 = this->motions->at(this->relations[level][0]).getNPointClouds();
+	np2 = this->motions->at(this->relations[level][1]).getNPointClouds();
 
-					   if(ok){
-						   m1.push_back(i);
-						   m2.push_back(j+this->nSteps);
-						   nPts++;
-					   }
+	for(int i = 0 ; i < np1 ; i++){
+		for(int j = 0 ; j < np2 ; j++){
+			if(this->differenceMap[level][i][j] < this->threshold){
+				if((np1 - i) >= this->nSteps && (np2 - j) >= this->nSteps ){
+					bool ok = true;
+					for(int l = i ; l < i + this->nSteps && ok ; l++){
+						for(int c = j ; c < j + this->nSteps && ok; c++){
+							if(this->differenceMap[level][l][c] >= this->threshold) 
+								ok = false;
+						}
+					}
+
+					if(ok){
+						m1.push_back(i);
+						m2.push_back(j+this->nSteps);
+						nPts++;
+					}
 				}
 			}
 		}
@@ -81,10 +86,15 @@ int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
 	return nPts;
 }
 
-void dMap::constructMap(Motion **motions, int nMotions){
-	for(int i = 0 ; i < nMotions ; i++){
-		for(int j = 0 ; j < nMotions; j++){
-			if(i != j) this->compareMotions(motions[i], motions[j]);
+void dMap::constructMap(Ninja motions, int nMotions){
+	this->motions = motions;
+
+	sNinja::iterator it1;
+	sNinja::iterator it2;
+
+	for(it1 = motions->begin() ; it1 != motions->end() ; it1++){
+		for(it2 = motions->begin() ; it2 != motions->end() ; it2++){
+			/*if(it1 == it2) */ this->compareMotions(&it1->second,&it2->second);
 		}
 	}
 }
@@ -97,9 +107,9 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 
 	if(this->nRelations > (int)((float)this->maxRelations * 0.75)) this->duplicateSpace();
 
-	this->relations[this->nRelations] = (Motion**)malloc(sizeof(Motion*) * 2);
-	this->relations[this->nRelations][0] = m1;
-	this->relations[this->nRelations][1] = m2;
+	this->relations[this->nRelations] = (std::string*)malloc(sizeof(std::string) * 2);
+	this->relations[this->nRelations][0] = m1->getLabel();
+	this->relations[this->nRelations][1] = m2->getLabel();
 
 	map = (float**)malloc(sizeof(float*) * m1->getNPointClouds());
 
@@ -109,7 +119,6 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 	
 	for(int i = 0 ; i < m1->getNPointClouds() ; i++){
 		for(int j = 0 ; j < m2->getNPointClouds() ; j++){
-			//TODO compareFrames(i,j) == compareFrames(j,i) ?
 			map[i][j] = this->compareFrames(m1->getPointCloud(i), m2->getPointCloud(j));
 		}
 	}
@@ -120,7 +129,6 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 }
 
 float dMap::compareFrames(PointCloud *s1, PointCloud *s2){
-	//TODO numero de pontos entre PointClouds é sempre o mesmo?
 	float x0 = 0,z0 = 0,teta = 0;
 	double error = 0;
 
@@ -155,7 +163,6 @@ void dMap::calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, 
 	*z0 = (float)((1.0/weights) * ( (z1_ + (x2_ * sin(*teta))) - (z2_ * cos(*teta)) ));
 }
 
-
 void dMap::calculateSums(PointCloud *s1, PointCloud *s2, float *x1_, float *x2_, float *z1_, float *z2_, float *weights){
 	int i;
 
@@ -179,7 +186,6 @@ void dMap::calculateSums(PointCloud *s1, PointCloud *s2, float *x1_, float *x2_,
 		*weights += s1->getPoint(i)->getWeight();
 	}
 }
-
 
 float dMap::calculateTeta1(PointCloud *s1, PointCloud *s2){
 	float result = 0;

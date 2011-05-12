@@ -89,7 +89,9 @@
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="gNode.cpp" />
     <ClCompile Include="Graph.cpp" />
-    <ClCompile Include="Ninja.cpp" />
+    <ClCompile Include="Motion.cpp" />
+    <ClCompile Include="MotionGraph.cpp" />
+    <ClCompile Include="Point3D.cpp" />
     <ClCompile Include="PointCloud.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -103,7 +105,9 @@
     <ClInclude Include="Edge.h" />
     <ClInclude Include="gNode.h" />
     <ClInclude Include="Graph.h" />
-    <ClInclude Include="Ninja.h" />
+    <ClInclude Include="Motion.h" />
+    <ClInclude Include="MotionGraph.h" />
+    <ClInclude Include="Point3D.h" />
     <ClInclude Include="PointCloud.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TutorialApplication.h" />

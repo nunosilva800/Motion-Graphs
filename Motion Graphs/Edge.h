@@ -1,35 +1,32 @@
 #ifndef _EDGE
 #define _EDGE
 
-#include "Ninja.h"
+#include "Motion.h"
 
 class gNode;
 
 class Edge{
 	public:
 		Edge();
-		Edge(gNode *d, Ninja *n);
-		Edge(gNode *d, Ninja *n,bool transition, Motion *m1, Motion *m2, int init1, int init2, int end1, int end2);
+		Edge(gNode *d, std::string label);
+		//Edge(gNode *d, std::string label, bool transition, Motion *m1, Motion *m2, int init1, int init2, int end1, int end2);
 		~Edge();
 
-		void setNinja(Ninja *ninja){this->ninja = ninja;}
+		void setLabel(std::string label){this->label = label;}
 		void setDestination(gNode *d){this->dest = d;}
 
-		Ninja *getNinja(){return this->ninja;}
+		std::string getLabel(){return this->label;}
 		gNode *getDestionation(){return this->dest;}
 
-		Ogre::String getLabel(){return this->label;}
-		void setLabel(Ogre::String label){this->label = label;}
 
 	private:
 		gNode *dest;
-		Ogre::String label;
-		Ninja *ninja;
+		std::string label;
 
 		//Teste
-		bool transition;
+		/*bool transition;
 		Motion *m1,*m2;
-		int init1,init2,end1,end2;
+		int init1,init2,end1,end2;*/
 
 };
 
