@@ -59,14 +59,23 @@ Luis Miranda\\ \small pgXXXXX@alunos.uminho.pt \\
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-This report refers to a work based on a paper from Lucas Kovar, et. al\ref{motiongraphs}, particularly the path synthesis technique described there. Motion Graphs is a method for creating realistic, controllable motion. A directed graph is automatically generated, this graph contains pieces of original motion and automatically generated transitions. The authors also presented a general framework for extracting a particular graph walk that meet the user's specifications, and apply this framework to a specific problem with different styles of locomotion and arbitrary paths. \\
+This report refers to a work based on a paper from Lucas Kovar, et. al\ref{motiongraphs}, particularly the path synthesis technique described there. Motion Graphs is a method for creating realistic, controllable motion. In Kovar's work a directed graph is automatically generated, this graph contains pieces of original motion and automatically generated transitions. The authors also presented a general framework for extracting a particular graph walk that meet the user's specifications, and apply this framework to a specific problem with different styles of locomotion and arbitrary paths. \\
 
-Path synthesis relates to this final step in the proposed framework, where a user specifies a path and a graph walk is performed in order to generate the locomotion that best suits the path. The goal is for to integrate this specific module into a larger virtual character locomotion system. Ideally the user defined path should be aproximated by a spline and then a search in the motion graph should be done in order to find a set of motion capture data that minimizes the error. This error is the sum of the squared differences between the defined path and the path that the animation will produce, for that it is used the arc-length distance of the paths. \\
+Path synthesis relates to this final step in the proposed framework, where a user specifies a path and a graph walk is performed in order to generate the locomotion that best suits the path. The goal is to integrate this specific module into a larger virtual character locomotion system. Ideally the user defined path should be aproximated by a spline and then a search in the motion graph should be done in order to find a set of motion capture data that minimizes the error. This error is the sum of the squared differences between the defined path and the path that the animation will produce, for that it is used the arc-length distance of the paths. \\
+
+The OGRE engine will be used as the basis for the entire project. A scene with a model is generated where the user can input the desired path to traverse. Once the program finds the set of motions that respect the rules explained above, it is rendered on the scene.
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation details}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
 
 
 The error function:
@@ -84,6 +93,7 @@ s is the arc-length distance
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusion}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+
 
 
 
