@@ -275,11 +275,14 @@ bool TutorialApplication::nextLocation(void) {
 bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
     if( state == CALC_AVATAR_PATH){
-    
+
         //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
+        //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+        //printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
+ 
+        mAnimationState->setTimePosition(mAnimationState->getLength());
         Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
         printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
-        
     }
     
     
