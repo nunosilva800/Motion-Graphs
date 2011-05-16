@@ -2,11 +2,11 @@
 #define _POINT
 
 class Point3D{
-	public:
-		Point3D();
-		Point3D(float xx, float yy, float zz);
-		Point3D(int xx, int yy, int zz);
-		~Point3D();
+public:
+	Point3D();
+	Point3D(float xx, float yy, float zz);
+	Point3D(int xx, int yy, int zz);
+	~Point3D();
 
 		void setCoordinates(float xx, float yy, float zz){this->x = xx;	this->y = yy; this->z = zz;}
 		

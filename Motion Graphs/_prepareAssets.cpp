@@ -5,9 +5,10 @@
 #include "TutorialApplication.h"
 #include "_Assets.h"
 
+//junk
 void TutorialApplication::_loadEntityNames() 
 {
-	
+
 	_entityNames.push_back("buckle");
 	_entityNames.push_back("belt");
 	_entityNames.push_back("right_shoe");
@@ -26,8 +27,47 @@ void TutorialApplication::_loadEntityNames()
 	_entityNames.push_back("leftHand");
 	_entityNames.push_back("standardTie");
 	_entityNames.push_back("buckle");
+
+
 }
 
+void TutorialApplication:: loadAnimationNames(){
+
+		_assets->_animNames = new std::vector<std::string>();
+
+		_assets->_animNames->push_back("2frente2tras");
+		_assets->_animNames->push_back("2passosatras");
+		_assets->_animNames->push_back("acenarvoltaratras");
+		_assets->_animNames->push_back("andarcostas");
+		_assets->_animNames->push_back("andarfrente");
+		_assets->_animNames->push_back("andarfrente2");
+		_assets->_animNames->push_back("bebado");
+		_assets->_animNames->push_back("camfrente180");
+	//	_assets->_animNames->push_back("caminharacenar");
+		_assets->_animNames->push_back("esquerda");
+		_assets->_animNames->push_back("esquerdaconfiante");
+		_assets->_animNames->push_back("esquerdaconfiante2");
+		_assets->_animNames->push_back("falargestos");
+		_assets->_animNames->push_back("frenteconfiante");
+		_assets->_animNames->push_back("frentedevagar");
+		_assets->_animNames->push_back("frenteviragem180");
+		_assets->_animNames->push_back("olharacenar");
+		_assets->_animNames->push_back("olharvolta");
+		_assets->_animNames->push_back("pegarchao");
+		_assets->_animNames->push_back("props");
+		_assets->_animNames->push_back("reclamar");
+		_assets->_animNames->push_back("viragemdireita");
+		_assets->_animNames->push_back("viragemesq");
+		_assets->_animNames->push_back("viragemesqdevagar");
+		_assets->_animNames->push_back("viraresq");
+
+		_assets->_currentAnimation = _assets->_animNames->begin();
+
+		
+	
+}
+
+//Junk
 void TutorialApplication::_loadSingleAnimationScene( CDotScene &_scene, std::string _scene_name,std::string _animation_name) 
 {
 	_scene.parseDotScene(_scene_name, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,  
@@ -39,8 +79,10 @@ void TutorialApplication::_loadSingleAnimationScene( CDotScene &_scene, std::str
 
 		Entity* _Entity = mSceneMgr->getEntity(*_i);
 		_entities.push_back(_Entity);
-
+		
 		SkeletonInstance* sk = _Entity->getSkeleton();
+
+
 		_skeletons.push_back(sk);
 		
 		Ogre::AnimationState * _AnimationState = _Entity->getAnimationState(_animation_name);
@@ -51,21 +93,22 @@ void TutorialApplication::_loadSingleAnimationScene( CDotScene &_scene, std::str
 	}
 } 
 
-void TutorialApplication::_loadFullScene( CDotScene &_scene) 
+void TutorialApplication::_loadFullScene( /*CDotScene &_scene*/) 
 {
-	_scene.parseDotScene(_assets->_sceneName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, mSceneMgr);
-	_assets->_entity = mSceneMgr->getEntity(_assets->_entityName);
+// 	_scene.parseDotScene(_assets->_sceneName, ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME, mSceneMgr);
+// 	_assets->_entity = mSceneMgr->getEntity(_assets->_entityName);
 
-// 	_assets->_entity = mSceneMgr->createEntity(_assets->_entityName, _assets->_meshName);
-// 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("RobotNode", Ogre::Vector3(0.0f, 0.0f, 25.0f));
-// 	mNode->attachObject(_assets->_entity );
+ 	_assets->_entity = mSceneMgr->createEntity(_assets->_entityName, _assets->_meshName);
+	//_assets->_entity->getMesh()->Mar
+ 	_assets->mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("Node", Ogre::Vector3(0.0f, 0.0f, 25.0f));
+ 	_assets->mNode->attachObject(_assets->_entity );
 
 		
 	_assets->_skeleton = _assets->_entity->getSkeleton();
 	_assets->_anims = _assets->_entity->getAllAnimationStates();
 
-	//_assets->_animeCount = _assets->_animeStates-
-		//Ogre::AnimationState * _AnimationState = _Entity->getAnimationState(_animation_name);
+	//_assets->_animeCount = _assets->_animeStates.
+//	Ogre::AnimationState * _AnimationState = _Entity->getAnimationState(_animation_name);
 		
 	
 }
@@ -73,99 +116,89 @@ void TutorialApplication::_loadFullScene( CDotScene &_scene)
 void TutorialApplication::createScene(void)
 {
 	// create your scene here :)
-	mSceneMgr->setAmbientLight(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
+	//mSceneMgr->setAmbientLight(Ogre::ColourValue(1.0f, 1.0f, 1.0f));
 	mSceneMgr->setSkyDome(true, "Examples/CloudySky", 5, 8);
+	
+	// necessario nao sei bem pk apenas cria uma luz extra, a luz ambiente nao é suf para iluminar o material
+	mSceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));						/// Create a light
+	mSceneMgr->setShadowTechnique(Ogre::SHADOWTYPE_STENCIL_ADDITIVE);
+	mainlight = mSceneMgr->createLight("MainLight");
+	mainlight->setType(Light::LT_POINT);
+	mainlight->setPosition(Vector3(0, 25, 75));
+	mainlight->setDiffuseColour(ColourValue::White);
+	mainlight->setSpecularColour(ColourValue::White);
+	mainlight->setAttenuation(8000,1,0.0005,0);
+	mainlight->setPowerScale(5.0);
+	mainlight->setCastShadows(true);
+
 
 	//_loadEntityNames();
 
-// 	std::string _scene_name = "blakeacenarandar2.scene";
-// 	std::string _animation_name = "acernarandar2";
+	
 
-	//std::string _scene_name = "blake.scene";
-//	std::string _animation_name = "andar";
-
-	//blake
-
-	CDotScene _scene;
+	//CDotScene _scene;
 
 	//_loadSingleAnimationScene(_scene,_scene_name,_animation_name);
 
 
-	_assets = new _Assets();
-	_assets->_meshName = "robot.mesh";
-	_assets->_entityName = "Robot";
+ 	_assets = new MotionGraph();
+ 	_assets->_meshName = "BodyMesh.mesh";
+ 	_assets->_entityName = "BodyMesh";
+	_assets->_sceneName = "blake.scene";
+	//_assets->_currentAnimation = "camfrente180";
 
+	loadAnimationNames();
 
-	Ninja m;
+	//_loadFullScene( _scene);
+	_loadFullScene();
 
-	_loadFullScene( _scene);
-
-	 	_assets->_anims->getAnimationState("Walk")->setEnabled(true);
-		_assets->_anims->getAnimationState("Walk")->setLoop(true);
+	 	_assets->_anims->getAnimationState(*_assets->_currentAnimation)->setEnabled(true);
+		_assets->_anims->getAnimationState(*_assets->_currentAnimation)->setLoop(true);
 
 	_timeController = 0.0;
 }
 
 void BaseApplication::_frameRenderingQueued(const Ogre::FrameEvent& evt) 
 {
-
-
-	PointCloud pc;
- 	_assets->_anims->getAnimationState("Walk")->addTime(evt.timeSinceLastFrame);
-
+	//_assets->_anims->getAnimationState(*_assets->_currentAnimation)->addTime(evt.timeSinceLastFrame);
+	
+	PointCloud* pc = new PointCloud();
+	// time controler usado para iterar o tempo, para cada animaçao vai correr a animaçao ate ao fim com timesteps
+	//	de 1/fps 
+	if (_timeController <= _assets->_anims->getAnimationState(*_assets->_currentAnimation)->getLength()){ 	
+	
+	_assets->_anims->getAnimationState(*_assets->_currentAnimation)->setTimePosition(_timeController);
 
 	Ogre::Skeleton::BoneIterator _i= _assets->_skeleton->getBoneIterator();
-	for ( ; _i.hasMoreElements(); )
-	{
-		Ogre::Bone* bone=_i.getNext();
-		const Ogre::Vector3& rp = bone->getPosition();
-		pc.addPoint(rp.x,rp.y,rp.z);
+ 	for ( ; _i.hasMoreElements(); )
+ 	{
+ 		Ogre::Bone* bone=_i.getNext();
+		// calcula as posiçoes no mundo, TODO: verificar se ta coerente
+		const Ogre::Vector3& rp = _assets->mNode->_getDerivedPosition() + _assets->mNode->_getDerivedOrientation() * _assets->mNode->_getDerivedScale() * bone->_getDerivedPosition();
 
+ 		//const Ogre::Vector3& rp = bone->getPosition();
+ 		pc->addPoint(rp.x,rp.y,rp.z);
+ 
+ 	}
+
+	_assets->insertPointCloud(*_assets->_currentAnimation,_timeController,pc);
+
+		_timeController+=0.033; // TODO: use the iFPS
+		//_timeController+=evt.timeSinceLastFrame;
 	}
-
-
-	
-	/*
-
-	PointCloud pc;
-
-
-	//	if (_timeController <= (*(_animStates.begin()))->getLength()){
-
-	int index =0;
-
-	Point* p;
-	std::vector<Ogre::AnimationState*>::iterator _i;
-	for(_i = _animStates.begin();_i != _animStates.end(); _i++){
-		(*_i)->addTime(evt.timeSinceLastFrame);	
-		//(*_i)->setTimePosition(_timeController);	
-
-		(*_i)->setTimePosition(2);
-		const Ogre::Vector3& rp = _skeletons.at(index)->getRootBone()->getPosition();
-
-
-		(*_i)->setTimePosition(6);
-		const Ogre::Vector3& rpp = _skeletons.at(index)->getRootBone()->getPosition();
-
-
-
-		Ogre::Skeleton::BoneIterator i = _skeletons.at(index)->getBoneIterator();
-		for ( ; i.hasMoreElements(); )
-		{
-
-
-
-			Ogre::Bone* bone=i.getNext();
-			const Ogre::Vector3& rp = bone->getPosition();
-			p = new Point(rp.x,rp.y,rp.z);
-			pc.addPoint(rp.x,rp.y,rp.z);
-
+	else {
+		//itera as animaçoes
+		_assets->_currentAnimation++;
+		if 	(_assets->_currentAnimation == 	_assets->_animNames->end()){
+			printf("All Done!!\n");
+			_assets->_prepare_assets_done = true;
 		}
-
-		//	(*i)->setTimePosition(27);
-		index++;
+		else {
+			_assets->_anims->getAnimationState(*_assets->_currentAnimation)->setEnabled(true);
+			_assets->_anims->getAnimationState(*_assets->_currentAnimation)->setLoop(true);
+			_timeController=0;
+		}
+		
 	}
-	_timeController+=0.03; // TODO: use the iFPS
-*/
-
+	
 }

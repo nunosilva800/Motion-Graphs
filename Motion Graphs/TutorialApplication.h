@@ -29,8 +29,10 @@ public:
 protected:
     virtual void createScene(void);
 
+	void loadAnimationNames() ;
+	
 	void _loadSingleAnimationScene( CDotScene &scene, std::string scene_name,std::string animation_name);
-	void _loadFullScene( CDotScene &scene);
+	void _loadFullScene( /*CDotScene &scene*/);
 	
 	void _loadEntityNames();
 

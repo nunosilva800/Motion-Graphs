@@ -6,7 +6,7 @@
 #include "stdafx.h"
 #include "BaseApplication.h"
 #include <map>
-#include "Ninja.h"
+
 
 #include "Motion.h"
 
@@ -23,11 +23,12 @@ public:
 	SkeletonInstance* _skeleton;
 	std::vector<std::string> _animNames;
 	AnimationStateSet* _anims;
-	std::map<std::string, Ninja> _ninjas;
+	std::map<std::string, Motion> ninja;
 
 	
 	_Assets(void){
-		_ninjas = std::map<std::string, Ninja>();
+		ninja = std::map<std::string, Motion>();
+		
 	}
 	virtual ~_Assets(void){}
 

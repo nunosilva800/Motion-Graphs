@@ -36,7 +36,7 @@ This source file is part of the
 #include <SdkTrays.h>
 #include <SdkCameraMan.h>
 
-#include "_Assets.h"
+#include "MotionGraph.h"
 
 class BaseApplication : public Ogre::FrameListener, public Ogre::WindowEventListener, public OIS::KeyListener, public OIS::MouseListener, OgreBites::SdkTrayListener
 {
@@ -98,7 +98,9 @@ protected:
 
 	Ogre::SceneNode *mNode;                // The SceneNode that the Entity is attached to
 
-	_Assets* _assets;
+//	_Assets* _assets;
+	MotionGraph* _assets;
+	Light* mainlight;
 
 
 	std::vector<std::string> _entityNames;

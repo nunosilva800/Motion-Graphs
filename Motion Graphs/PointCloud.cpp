@@ -5,7 +5,7 @@
  */
 
 PointCloud::PointCloud(){
-
+	this->points = std::vector<Point3D>();
 }
 
 PointCloud::~PointCloud(){

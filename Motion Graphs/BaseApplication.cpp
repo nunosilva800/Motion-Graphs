@@ -270,10 +270,8 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 		}
 	}
 
-
-	_frameRenderingQueued(evt);
-
-
+	//prepare assets
+	if (!(_assets->_prepare_assets_done)) _frameRenderingQueued(evt);
 
 
 	//  	mAnimationState1->addTime(evt.timeSinceLastFrame);
