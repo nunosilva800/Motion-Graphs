@@ -1,0 +1,330 @@
+<scene formatVersion="1.0" upAxis="y" unitsPerMeter="100" unitType="centimeters" minOgreVersion="1.7" ogreMaxVersion="2.3.9" author="OgreMax Scene Exporter (www.ogremax.com)" application="Maya">
+    <environment>
+        <colourAmbient r="0.33" g="0.33" b="0.33" />
+        <colourBackground r="0" g="0" b="0" />
+        <clipping near="0" far="100000" />
+    </environment>
+    <nodes>
+        <node name="Blake">
+            <position x="0" y="0" z="0" />
+            <scale x="1" y="1" z="1" />
+            <rotation qx="0" qy="0" qz="0" qw="1" />
+            <node name="BodyMesh">
+                <position x="0" y="0" z="0" />
+                <scale x="1" y="1" z="1" />
+                <rotation qx="0" qy="0" qz="0" qw="1" />
+                <entity name="BodyMesh" castShadows="true" receiveShadows="true" meshFile="BodyMesh.mesh">
+                    <subentities>
+                        <subentity index="0" materialName="blake3_straightTieMat" />
+                        <subentity index="1" materialName="blake3_skinMat" />
+                        <subentity index="2" materialName="blake3_hairMaterial" />
+                        <subentity index="3" materialName="blake3_shirtMaterial" />
+                        <subentity index="4" materialName="blake3_pantsMaterial" />
+                        <subentity index="5" materialName="blake3_tongueMat" />
+                        <subentity index="6" materialName="blake3_teethMat" />
+                        <subentity index="7" materialName="blake3_mouthInteriorMat" />
+                        <subentity index="8" materialName="blake3_shoeMat" />
+                        <subentity index="9" materialName="blake3_shoeSoleMat" />
+                        <subentity index="10" materialName="blake3_brassMat" />
+                        <subentity index="11" materialName="OgreMaxMaterial2" />
+                    </subentities>
+                </entity>
+            </node>
+        </node>
+        <node name="Cameras">
+            <position x="0" y="0" z="0" />
+            <scale x="1" y="1" z="1" />
+            <rotation qx="0" qy="0" qz="0" qw="1" />
+        </node>
+        <node name="Blake_Ctrl:Reference">
+            <position x="0" y="0" z="0" />
+            <scale x="1" y="1" z="1" />
+            <rotation qx="0" qy="0" qz="0" qw="1" />
+            <node name="Hips">
+                <position x="-1.89312" y="10.1143" z="-1.48221" />
+                <scale x="1" y="1" z="1" />
+                <rotation qx="0" qy="0" qz="0" qw="1" />
+                <node name="Spine">
+                    <position x="-7.78884e-006" y="0.694479" z="-0.0819093" />
+                    <scale x="1" y="1" z="1" />
+                    <rotation qx="-4.08287e-011" qy="-2.74868e-006" qz="-1.48539e-005" qw="1" />
+                    <node name="Spine1">
+                        <position x="3.0128e-005" y="0.980563" z="-0.18145" />
+                        <scale x="1" y="1" z="1" />
+                        <rotation qx="-1.36939e-013" qy="1.26552e-007" qz="1.08208e-006" qw="1" />
+                        <node name="Neck">
+                            <position x="-6.44661e-006" y="2.93862" z="-0.34368" />
+                            <scale x="1" y="1" z="1" />
+                            <rotation qx="2.37844e-011" qy="-2.8134e-006" qz="8.45398e-006" qw="1" />
+                            <node name="Head">
+                                <position x="-1.37027e-005" y="0.729621" z="0.242811" />
+                                <scale x="1" y="1" z="1" />
+                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                            </node>
+                        </node>
+                        <node name="RightShoulder">
+                            <position x="-0.864388" y="2.44464" z="-0.272153" />
+                            <scale x="1" y="1" z="1" />
+                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                            <node name="RightArm">
+                                <position x="-0.462555" y="0.0786142" z="0.0706039" />
+                                <scale x="1" y="1" z="1" />
+                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                <node name="RightForeArm">
+                                    <position x="-1.76322" y="-0.0465884" z="-0.0482955" />
+                                    <scale x="1" y="1" z="1" />
+                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                    <node name="RightForeArmRoll">
+                                        <position x="-2.3114" y="0.0523565" z="0.131077" />
+                                        <scale x="1" y="1" z="1" />
+                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                        <node name="RightHand">
+                                            <position x="-0.447898" y="0.00177443" z="0.00244261" />
+                                            <scale x="1" y="1" z="1" />
+                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                            <node name="RightHandPinky1">
+                                                <position x="-1.09521" y="0.226143" z="-0.310125" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="RightHandPinky2">
+                                                    <position x="-0.349213" y="-0.0456776" z="-0.0361952" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="RightHandPinky3">
+                                                        <position x="-0.249642" y="-0.111742" z="-0.00497149" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="RightHandPinky4">
+                                                            <position x="-0.166241" y="-0.0465389" z="-0.00662971" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                            <node name="RightHandMiddle1">
+                                                <position x="-1.14153" y="0.2686" z="0.191336" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="RightHandMiddle2">
+                                                    <position x="-0.235548" y="-0.112032" z="0.0308126" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="RightHandMiddle3">
+                                                        <position x="-0.280882" y="-0.0457044" z="0.0420928" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="RightHandMiddle4">
+                                                            <position x="-0.252065" y="-0.0574332" z="0.0377801" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                            <node name="RightHandIndex1">
+                                                <position x="-1.20582" y="0.237381" z="-0.0826439" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="RightHandIndex2">
+                                                    <position x="-0.478611" y="-0.026847" z="0.0184657" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="RightHandIndex3">
+                                                        <position x="-0.252322" y="-0.0406674" z="0.00280935" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="RightHandIndex4">
+                                                            <position x="-0.185216" y="-0.0591603" z="0.0106317" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                            <node name="RightHandThumb1">
+                                                <position x="-0.216299" y="-0.002026" z="0.275703" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="RightHandThumb2">
+                                                    <position x="-0.193732" y="-0.102259" z="0.143928" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="RightHandThumb3">
+                                                        <position x="-0.379328" y="-0.0602399" z="0.142927" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="RightHandThumb4">
+                                                            <position x="-0.381758" y="-0.0109388" z="0.0692487" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                        </node>
+                                    </node>
+                                </node>
+                            </node>
+                        </node>
+                        <node name="LeftShoulder">
+                            <position x="0.832746" y="2.44461" z="-0.272121" />
+                            <scale x="1" y="1" z="1" />
+                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                            <node name="LeftArm">
+                                <position x="0.411207" y="0.0804428" z="0.0618946" />
+                                <scale x="1" y="1" z="1" />
+                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                <node name="LeftForeArm">
+                                    <position x="1.94754" y="-0.0072312" z="-0.00693466" />
+                                    <scale x="1" y="1" z="1" />
+                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                    <node name="LeftForeArmRoll">
+                                        <position x="2.12279" y="0.0218899" z="0.0548064" />
+                                        <scale x="1" y="1" z="1" />
+                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                        <node name="LeftHand">
+                                            <position x="0.709532" y="0.047793" z="0.00157505" />
+                                            <scale x="1" y="1" z="1" />
+                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                            <node name="LeftHandPinky1">
+                                                <position x="0.7294" y="0.132062" z="-0.31076" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="LeftHandPinky2">
+                                                    <position x="0.4046" y="0.0198125" z="-0.0613215" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="LeftHandPinky3">
+                                                        <position x="0.338112" y="-0.0422616" z="-0.0367875" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="LeftHandPinky4">
+                                                            <position x="0.188163" y="-0.0725715" z="-0.00850561" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                            <node name="LeftHandMiddle1">
+                                                <position x="0.807011" y="0.166436" z="-0.0511308" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="LeftHandMiddle2">
+                                                    <position x="0.582486" y="0.0465975" z="-0.00747219" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="LeftHandMiddle3">
+                                                        <position x="0.304113" y="-0.0628584" z="0.00891574" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="LeftHandMiddle4">
+                                                            <position x="0.280019" y="-0.0999551" z="0.0253315" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                            <node name="LeftHandIndex1">
+                                                <position x="0.715219" y="0.118466" z="0.17116" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="LeftHandIndex2">
+                                                    <position x="0.547" y="0.104623" z="0.0891973" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="LeftHandIndex3">
+                                                        <position x="0.290184" y="-0.0620813" z="0.0483826" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="LeftHandIndex4">
+                                                            <position x="0.215015" y="-0.0157332" z="0.0193594" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                            <node name="LeftHandThumb1">
+                                                <position x="0.226031" y="-0.0807558" z="0.294796" />
+                                                <scale x="1" y="1" z="1" />
+                                                <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                <node name="LeftHandThumb2">
+                                                    <position x="0.172404" y="-0.140632" z="0.196574" />
+                                                    <scale x="1" y="1" z="1" />
+                                                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                    <node name="LeftHandThumb3">
+                                                        <position x="0.315726" y="-0.0264435" z="0.0490567" />
+                                                        <scale x="1" y="1" z="1" />
+                                                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        <node name="LeftHandThumb4">
+                                                            <position x="0.295998" y="0.0190935" z="0.110413" />
+                                                            <scale x="1" y="1" z="1" />
+                                                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                                                        </node>
+                                                    </node>
+                                                </node>
+                                            </node>
+                                        </node>
+                                    </node>
+                                </node>
+                            </node>
+                        </node>
+                    </node>
+                </node>
+                <node name="RightUpLeg">
+                    <position x="-0.724127" y="-1.07981" z="-0.00136377" />
+                    <scale x="1" y="1" z="1" />
+                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                    <node name="RightLeg">
+                        <position x="-0.151121" y="-4.50887" z="-0.297514" />
+                        <scale x="1" y="1" z="1" />
+                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                        <node name="RightFoot">
+                            <position x="-0.183857" y="-3.76632" z="-0.197502" />
+                            <scale x="1" y="1" z="1" />
+                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                            <node name="RightFootIndex1">
+                                <position x="-0.0167111" y="-0.552302" z="1.04418" />
+                                <scale x="1" y="1" z="1" />
+                                <rotation qx="-3.23718e-010" qy="-8.08951e-005" qz="-4.00171e-006" qw="1" />
+                                <node name="RightFootIndex2">
+                                    <position x="-0.000130535" y="-0.0398142" z="0.804848" />
+                                    <scale x="1" y="1" z="1" />
+                                    <rotation qx="-3.23718e-010" qy="-8.08951e-005" qz="-4.00171e-006" qw="1" />
+                                </node>
+                            </node>
+                        </node>
+                    </node>
+                </node>
+                <node name="LeftUpLeg">
+                    <position x="0.676996" y="-1.05585" z="-0.00135785" />
+                    <scale x="1" y="1" z="1" />
+                    <rotation qx="0" qy="0" qz="0" qw="1" />
+                    <node name="LeftLeg">
+                        <position x="0.219532" y="-4.49027" z="-0.356271" />
+                        <scale x="1" y="1" z="1" />
+                        <rotation qx="0" qy="0" qz="0" qw="1" />
+                        <node name="LeftFoot">
+                            <position x="-0.0209728" y="-3.70724" z="-0.0761891" />
+                            <scale x="1" y="1" z="1" />
+                            <rotation qx="0" qy="0" qz="0" qw="1" />
+                            <node name="LeftFootIndex1">
+                                <position x="0.0158534" y="-0.268324" z="1.15582" />
+                                <scale x="1" y="1" z="1" />
+                                <rotation qx="-6.49831e-009" qy="0.000181959" qz="3.5713e-005" qw="1" />
+                                <node name="LeftFootIndex2">
+                                    <position x="0.000300506" y="-0.156058" z="0.795122" />
+                                    <scale x="1" y="1" z="1" />
+                                    <rotation qx="-6.49831e-009" qy="0.000181959" qz="3.5713e-005" qw="1" />
+                                </node>
+                            </node>
+                        </node>
+                    </node>
+                </node>
+            </node>
+        </node>
+    </nodes>
+</scene>
