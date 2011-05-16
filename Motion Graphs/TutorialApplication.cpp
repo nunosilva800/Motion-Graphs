@@ -378,7 +378,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 //            lines_path_done->addPoint(currentPos);
 //            lines_path_done->update();
 //        }
-//    }
+//    } 
 
     mAnimationState->addTime(evt.timeSinceLastFrame);
     return BaseApplication::frameRenderingQueued(evt);
