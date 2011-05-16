@@ -206,11 +206,12 @@ bool TutorialApplication::keyPressed( const OIS::KeyEvent &arg ){
         
         // TODO: Aceder aqui ao grafo 
         mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
-        mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
-        mNode->attachObject(mEntity);
-        mAnimationState = mEntity->getAnimationState("Sneak");
+        //mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");        
+        mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");mNode->attachObject(mEntity);
+        mAnimationState = mEntity->getAnimationState("andarfrente");
         mAnimationState->setLoop(true);
         mAnimationState->setEnabled(true);
+        
     }
     
     return BaseApplication::keyPressed(arg);
@@ -275,9 +276,8 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
     if( state == CALC_AVATAR_PATH){
     
-        Ogre::Vector3 currentPos = mEntity->get
-                //getSkeleton()->getRootBone()->getPosition();
-        //Ogre::Vector3 currentPos = mNode->getPosition();
+        //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
+        Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
         printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
         
     }

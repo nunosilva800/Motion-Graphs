@@ -24,6 +24,7 @@ This source file is part of the
 #include <OgreSimpleSpline.h>
 #include <deque>
 
+#define SET_USER_PATH    0
 #define CALC_AVATAR_PATH 1
 #define SHOW_AVATAR_PATH 2
 
