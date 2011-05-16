@@ -1,0 +1,204 @@
+
+material blake3_straightTieMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.114 0.216 0.133 1
+			specular 0.2 0.2 0.2 1 6.4
+		}
+
+	}
+
+}
+
+
+
+material blake3_skinMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.8 0.550485 0.3736 1
+			specular 0.2 0.2 0.2 1 6.4
+		}
+
+	}
+
+}
+
+
+
+material blake3_hairMaterial
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 2.1536 1.82137 1.5191 1
+			specular 0 0 0 1 2.56
+		}
+
+	}
+
+}
+
+
+
+material blake3_shirtMaterial
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 2.71697 2.59944 2.41695 1
+			specular 0 0 0 1 2.56
+		}
+
+	}
+
+}
+
+
+
+material blake3_pantsMaterial
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.127707 0.127707 0.127707 1
+			specular 0 0 0 1 2.56
+		}
+
+	}
+
+}
+
+
+
+material blake3_tongueMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.555376 0.312121 0.32846 1
+			specular 0.5 0.5 0.5 1 1.76684
+		}
+
+	}
+
+}
+
+
+
+material blake3_teethMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.8 0.8 0.8 1
+			specular 0.20662 0.20662 0.20662 1 1.59454
+		}
+
+	}
+
+}
+
+
+
+material blake3_mouthInteriorMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.293021 0.164678 0.173298 1
+			specular 0.2 0.2 0.2 1 6.4
+		}
+
+	}
+
+}
+
+
+
+material blake3_shoeMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.0536585 0.0536585 0.0536585 1
+			specular 0.398367 0.398367 0.398367 1 20.9171
+		}
+
+	}
+
+}
+
+
+
+material blake3_shoeSoleMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0 0 0 1
+			specular 0.3967 0.3967 0.3967 1 25.6
+		}
+
+	}
+
+}
+
+
+
+material blake3_brassMat
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			diffuse 0.45098 0.267305 0.0618993 1
+			specular 0.786 0.695805 0.321474 1 25.6
+		}
+
+	}
+
+}
+
+
+
+material OgreMaxMaterial2
+{
+	technique
+	{
+		pass
+		{
+			ambient 0.5 0.5 0.5 1
+			diffuse 0.5 0.5 0.5 1
+			specular 0.2 0.2 0.2 1 6.4
+		}
+
+	}
+
+}
+
+
