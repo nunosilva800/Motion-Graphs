@@ -275,7 +275,9 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
     if( state == CALC_AVATAR_PATH){
     
-        Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+        Ogre::Vector3 currentPos = mEntity->get
+                //getSkeleton()->getRootBone()->getPosition();
+        //Ogre::Vector3 currentPos = mNode->getPosition();
         printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
         
     }
