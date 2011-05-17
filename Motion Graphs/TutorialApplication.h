@@ -75,6 +75,8 @@ private:
     std::deque<Ogre::Vector3> mWalkList; // The list of points we are walking to
     Ogre::Real mWalkSpeed; // The speed at which the object is moving
 
+	
+
     //
     // lmiranda
     //

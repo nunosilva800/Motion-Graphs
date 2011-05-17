@@ -85,11 +85,11 @@ void TutorialApplication::createScene(void) {
     light->setSpecularColour(Ogre::ColourValue::White);
 
     // Create the scene cam node
-    node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode1", Ogre::Vector3(0, 50, 0));
+    node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode1", Ogre::Vector3(10, 50, 0));
 
     // Make it look towards the model
-    //node->yaw(Ogre::Degree(-45));
-    node->pitch(Ogre::Degree(-90));
+    node->yaw(Ogre::Degree(-45));
+    //node->pitch(Ogre::Degree(-90));
 
     // Create the pitch node
     node = node->createChildSceneNode("PitchNode1");
@@ -202,10 +202,11 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 
     if (arg.key == OIS::KC_SPACE) // toggle visibility of advanced frame stats
     {
+		mInfoLabel->setCaption("Loading Model...");
 
         state = CALC_AVATAR_PATH;
 		anim_state = AVATAR_ANIM_IN_CALC;
-
+		
         // TODO: Aceder aqui ao grafo 
         mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
         //mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");        
@@ -217,7 +218,7 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 
 		// Get all animations
         AnimSSet = mEntity->getAllAnimationStates();
-        assIte = &AnimSSet->getAnimationStateIterator();
+		assIte = new Ogre::AnimationStateIterator(AnimSSet->getAnimationStateIterator());
 
 		mAnimationState = assIte->getNext();
 		totalLenght = mAnimationState->getLength();
@@ -299,22 +300,31 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
             // Get current position
             Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
             framePositionCollection.push_back(currentPos);
-            mAnimationState->addTime(evt.timeSinceLastFrame);
+            //mAnimationState->addTime(evt.timeSinceLastFrame);
+			mAnimationState->addTime(1);
 			//force animation update
 			mEntity->_updateAnimation();
         }
 
         if(mAnimationState->getTimePosition() == totalLenght)
 		{ 
-			Ogre::Vector3 tmpVect = framePositionCollection.front();
+			//Ogre::Vector3 tmpVect = framePositionCollection.front();
 			Ogre::Real arcLenght = 0;
 			// Calculate the total arclenght
-			while(!framePositionCollection.empty()){
+			while(framePositionCollection.size() > 1)
+			{
+				// get two points, but only discard the 1st
+				Ogre::Vector3 v1 = framePositionCollection.front();
 				framePositionCollection.pop_front();
-				arcLenght += (framePositionCollection.front() - tmpVect).length();
-				tmpVect = framePositionCollection.front(); 
+				Ogre::Vector3 v2 = framePositionCollection.front();
+
+				arcLenght += (v2 - v1).length();
+				printf("current ArcLenght is %f\n", arcLenght);
 			}
 			printf("Total ArcLenght is %f\n", arcLenght);
+			char s[25];
+			sprintf(s, "Arc Lenght: %d", arcLenght);
+			mInfoLabel2->setCaption(s);
 			anim_state = AVATAR_ANIM_DONE;
         }
 		
@@ -325,10 +335,14 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				// get next animation 
 				mAnimationState = assIte->getNext();
 				mAnimationState->setEnabled(true);
-				mAnimationState->setLoop(FALSE);
+				mAnimationState->setLoop(false);
 				framePositionCollection.clear();
 				totalLenght = mAnimationState->getLength();
 				anim_state = AVATAR_ANIM_IN_CALC;
+				
+				Ogre::String str = "Current animation is ";
+				str.append(mAnimationState->getAnimationName());
+				mInfoLabel->setCaption(str);
 			}
 			else state = SHOW_AVATAR_PATH;
 		}
