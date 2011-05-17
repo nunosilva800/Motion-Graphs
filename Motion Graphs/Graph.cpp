@@ -66,9 +66,9 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 
 	for(i = 0, it = motions->begin() ; it != motions->end() ; it++,i++){
 		this->indexes[i][0] = this->addNode(new gNode());
-		this->indexes[i][it->second.getNPointClouds()-1] = this->addNode(new gNode());
+		this->indexes[i][it->second->getNPointClouds()-1] = this->addNode(new gNode());
 		this->getNode(this->indexes[i][0])->addEdge(new Edge(
-			this->getNode(this->indexes[i][it->second.getNPointClouds()-1]), it->second.getLabel()));
+			this->getNode(this->indexes[i][it->second->getNPointClouds()-1]), it->second->getLabel()));
 	}
 
 	dMap map = dMap(nMotions);
@@ -83,8 +83,8 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 
 		int m1 = -1, m2 = -1;
 		for(i = 0, it = motions->begin() ; it != motions->end() && (m1 == -1 || m2 == -1) ; it++,i++){
-			if(it->second.getLabel().compare(map.relations[i][0]) == 0) m1 = i;
-			if(it->second.getLabel().compare(map.relations[i][1]) == 0) m2 = i;
+			if(it->second->getLabel().compare(map.relations[i][0]) == 0) m1 = i;
+			if(it->second->getLabel().compare(map.relations[i][1]) == 0) m2 = i;
 		}
 
 		int nTransitionPoints = map.getMinimuns(i,pts1,pts2);
@@ -103,10 +103,10 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 	}
 
 	for(i = 0, it = motions->begin() ; it != motions->end() ; it++, i++){
-		for(int j = 0 ; j < it->second.getNPointClouds() ; j++){
+		for(int j = 0 ; j < it->second->getNPointClouds() ; j++){
 			int sep = 1;
 			if(this->indexes[i][j] != -1){
-				for(int jj = j+1 ; jj < it->second.getNPointClouds() ; jj++){
+				for(int jj = j+1 ; jj < it->second->getNPointClouds() ; jj++){
 					if(this->indexes[i][j] != -1){
 						//TODO criar ninja a partir de motions[i] da frame i a j
 						this->splitAnimation(it->first,sep,this->indexes[i][j],j,this->indexes[i][jj],jj);
@@ -210,8 +210,8 @@ void Graph::initIndexes(Ninja motions, int nMotions){
 	sNinja::iterator it;
 
 	for(it = motions->begin() ; it != motions->end() ; it++){
-		if(it->second.getNPointClouds() > maxFrames)
-			maxFrames = it->second.getNPointClouds();
+		if(it->second->getNPointClouds() > maxFrames)
+			maxFrames = it->second->getNPointClouds();
 	}
 
 	this->indexes = (int**)malloc(sizeof(int*) * nMotions);

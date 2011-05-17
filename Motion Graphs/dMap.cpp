@@ -35,14 +35,14 @@ void dMap::duplicateSpace(){
 		rel[i][0] = this->relations[i][0];
 		rel[i][1] = this->relations[i][1];
 		
-		float **map = (float**)malloc(sizeof(float*) * (this->motions->at(rel[i][0]).getNPointClouds()));
+		float **map = (float**)malloc(sizeof(float*) * (this->motions->at(rel[i][0])->getNPointClouds()));
 
-		for(int j = 0 ; j < this->motions->at(rel[i][0]).getNPointClouds() ; j++){
-			map[j] = (float*)malloc(sizeof(float) * this->motions->at(rel[i][1]).getNPointClouds());
+		for(int j = 0 ; j < this->motions->at(rel[i][0])->getNPointClouds() ; j++){
+			map[j] = (float*)malloc(sizeof(float) * this->motions->at(rel[i][1])->getNPointClouds());
 		}
 
-		for(int c = 0 ; c < this->motions->at(rel[i][0]).getNPointClouds() ; c++){
-			for(int l = 0 ; l < this->motions->at(rel[i][1]).getNPointClouds() ; l++){
+		for(int c = 0 ; c < this->motions->at(rel[i][0])->getNPointClouds() ; c++){
+			for(int l = 0 ; l < this->motions->at(rel[i][1])->getNPointClouds() ; l++){
 				map[l][c] = this->differenceMap[i][l][c];
 			}
 		}
@@ -58,8 +58,8 @@ int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
 
 	if(level >= this->nRelations) return 0;
 
-	np1 = this->motions->at(this->relations[level][0]).getNPointClouds();
-	np2 = this->motions->at(this->relations[level][1]).getNPointClouds();
+	np1 = this->motions->at(this->relations[level][0])->getNPointClouds();
+	np2 = this->motions->at(this->relations[level][1])->getNPointClouds();
 
 	for(int i = 0 ; i < np1 ; i++){
 		for(int j = 0 ; j < np2 ; j++){
@@ -94,7 +94,7 @@ void dMap::constructMap(Ninja motions, int nMotions){
 
 	for(it1 = motions->begin() ; it1 != motions->end() ; it1++){
 		for(it2 = motions->begin() ; it2 != motions->end() ; it2++){
-			/*if(it1 == it2) */ this->compareMotions(&it1->second,&it2->second);
+			/*if(it1 == it2) */ this->compareMotions(it1->second,it2->second);
 		}
 	}
 }
@@ -117,9 +117,14 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 		map[i] = (float*)malloc(sizeof(float) * m2->getNPointClouds());
 	}
 	
-	for(int i = 0 ; i < m1->getNPointClouds() ; i++){
-		for(int j = 0 ; j < m2->getNPointClouds() ; j++){
-			map[i][j] = this->compareFrames(m1->getPointCloud(i), m2->getPointCloud(j));
+	std::map<Ogre::Real,PointCloud*>::iterator it1, it2;
+	int i,j;
+
+	it1 = m1->map_clouds->begin();
+	it2 = m2->map_clouds->begin();
+	for(it1 = m1->map_clouds->begin(), i = 0 ; it1 != m1->map_clouds->end() ; i++, it1++){
+		for(it2 = m2->map_clouds->begin(), j = 0 ; it2 != m2->map_clouds->end() ; j++, it2++){
+			map[i][j] = this->compareFrames(it1->second, it2->second);
 		}
 	}
 

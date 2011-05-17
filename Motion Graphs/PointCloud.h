@@ -8,7 +8,7 @@ using namespace std;
 
 #include <vector>
 
-#define NPOINTS 40
+#define NPOINTS 71
 
 class PointCloud{
 	public:
@@ -19,6 +19,9 @@ class PointCloud{
 		//TODO  apply transformations
 		void rotate(int axis, float angle);
 		void translate(float xx, float yy, float zz);
+		void addPoint(float xx, float yy, float zz){
+			points.push_back(Point3D(xx,yy,zz));
+		}
 
 	private:
 		std::vector<Point3D> points;

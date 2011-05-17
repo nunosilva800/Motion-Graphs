@@ -14,6 +14,7 @@ This source file is part of the
       http://www.ogre3d.org/tikiwiki/
 -----------------------------------------------------------------------------
 */
+//#include "DotScene.h"
 #include "stdafx.h"
 #include "TutorialApplication.h"
 
@@ -24,12 +25,6 @@ TutorialApplication::TutorialApplication(void)
 //-------------------------------------------------------------------------------------
 TutorialApplication::~TutorialApplication(void)
 {
-}
-
-//-------------------------------------------------------------------------------------
-void TutorialApplication::createScene(void)
-{
-    // create your scene here :)
 }
 
 

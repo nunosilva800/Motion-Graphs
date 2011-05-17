@@ -4,7 +4,7 @@
  * Construtores
  */
 Motion::Motion(){
-
+	map_clouds = new std::map<Ogre::Real,PointCloud*>();
 }
 
 Motion::~Motion(){

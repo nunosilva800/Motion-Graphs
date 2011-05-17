@@ -48,6 +48,9 @@
     <ClCompile Include="Point3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="_prepareAssets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h">

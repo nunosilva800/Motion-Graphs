@@ -16,6 +16,9 @@ This source file is part of the
 */
 #include "stdafx.h"
 #include "BaseApplication.h"
+#include "PointCloud.h"
+
+#include <OgreSkeletonInstance.h>
 
 //-------------------------------------------------------------------------------------
 BaseApplication::BaseApplication(void)
@@ -266,6 +269,10 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
             mDetailsPanel->setParamValue(7, Ogre::StringConverter::toString(mCamera->getDerivedOrientation().z));
         }
     }
+
+	//prepare assets
+	if (!(_assets->assetsPrepared())) _frameRenderingQueued(evt);
+
 
     return true;
 }

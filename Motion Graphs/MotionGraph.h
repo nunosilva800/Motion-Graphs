@@ -1,8 +1,10 @@
 #ifndef _MOTIONGRAPH
 #define _MOTIONGRAPH
 
-#include "Graph.h"
 #include "stdafx.h"
+#include "Motion.h"
+#include "Graph.h"
+
 #include <OgreEntity.h>
 
 
@@ -31,19 +33,27 @@ class MotionGraph{
 
 		void constructGraph(float threshold, int nCoincidents);
 
-	private:
+		void insertPointCloud(std::string animation,Ogre::Real indexFrame,PointCloud* pt);
+
+		bool assetsPrepared(){return this->_prepare_assets_done;}
+
+
+	//private:
 		Graph *graph;
 		std::string meshName;
 		std::string sceneName;
 		std::string entityName;
-		
+		std::vector<std::string>::iterator _currentAnimation;
+
+		Ogre::SceneNode* mNode;
 		Ogre::Entity *entity;
-		//SkeletonInstance *skeleton;
+		Ogre::SkeletonInstance *skeleton;
 
 		int animCount;
-		std::vector<std::string> animNames;
+		std::vector<std::string>* animNames;
 		//AnimationStateSet* _anims;
-
+		Ogre::AnimationStateSet* anims;
+		bool _prepare_assets_done;
 		Ninja motions;
 };
 
