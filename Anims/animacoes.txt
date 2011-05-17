@@ -1,0 +1,73 @@
+128		- 250	idle
+
+251		- 468	frenteetras
+
+509		- 612	acenar
+
+985		- 1119	andaracenar
+
+1120	- 1217	andarptras
+
+1291	- 1409	andaracenar2
+
+1410	- 1527	andarptras2
+
+1618	- 1967	idleacenar
+
+1968	- 2066	andarfrente
+
+2134	- 2226	trasacenar
+
+2505	- 2985	reclamarsair
+
+2987	- 3103	frenteacenar
+
+3137	- 3251	trasacenar2
+
+4025	- 5041	muitotempofalar
+
+5259	- 5413	direitaacenar
+
+5591	- 5695	apanharchao
+
+6087	- 6184	andarfrente2
+
+6666	- 6806	viraresqrapido
+
+6959	- 7108	trasdirrapdirlento
+
+7165	- 7261	diagonal
+
+7362	- 7446	diagonal2
+
+7592	- 7693	diagonal3
+
+7762	- 7894	volta
+
+7970	- 8128	volta2
+
+8204	- 8363	volta3
+
+8448	- 8699	esquerda
+
+8700	- 8851	direita
+
+9087	- 9171	confiante
+
+9261	- 9364	confianteesq
+
+9478	- 9565	confiantedir
+
+9634	- 9708	bruscoesq
+
+9844	- 9921	bruscodir
+
+10050	- 10110 diagonal4
+
+10227	- 10297	diagonal5
+
+10552	- 10664 volta4
+
+10764	- 11030 frentetras2
+
+11335	- 11483 esquerda2
