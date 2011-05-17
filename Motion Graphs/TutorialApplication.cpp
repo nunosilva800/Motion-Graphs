@@ -63,16 +63,16 @@ void TutorialApplication::createScene(void) {
     MODEL = 0;
 
     // Create the scene node for the model
-//    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
-//
-//    // add the model
-//    switch (MODEL) {
-//        case 0:
-//            mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
-//            break;
-//    }
-//
-//    mNode->attachObject(mEntity);
+    //    mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
+    //
+    //    // add the model
+    //    switch (MODEL) {
+    //        case 0:
+    //            mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");
+    //            break;
+    //    }
+    //
+    //    mNode->attachObject(mEntity);
 
     // this node if for the rest of the objects
     Ogre::SceneNode *node;
@@ -112,10 +112,10 @@ void TutorialApplication::createScene(void) {
     // Set initial point
     mPath->add(Ogre::Vector3(0, 1, 0));
     //    mPath->add(Ogre::Vector3(0, 1, 0));
-//    mPath->add(Ogre::Vector3(5, 1, 0));
-//    mPath->add(Ogre::Vector3(5, 1, 5));
-//    mPath->add(Ogre::Vector3(0, 1, 5));
-//    mPath->add(Ogre::Vector3(0, 1, 0));
+    //    mPath->add(Ogre::Vector3(5, 1, 0));
+    //    mPath->add(Ogre::Vector3(5, 1, 5));
+    //    mPath->add(Ogre::Vector3(0, 1, 5));
+    //    mPath->add(Ogre::Vector3(0, 1, 0));
 
     // add the path to the walklist
     for (int i = 0; i < mPath->size(); i++) {
@@ -197,23 +197,24 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
     return true;
 }
 
-bool TutorialApplication::keyPressed( const OIS::KeyEvent &arg ){
+bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 
-    if (arg.key == OIS::KC_SPACE)   // toggle visibility of advanced frame stats
+    if (arg.key == OIS::KC_SPACE) // toggle visibility of advanced frame stats
     {
-    
+
         state = CALC_AVATAR_PATH;
-        
+
         // TODO: Aceder aqui ao grafo 
         mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
         //mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");        
-        mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");mNode->attachObject(mEntity);
+        mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");
+        mNode->attachObject(mEntity);
         mAnimationState = mEntity->getAnimationState("andarfrente");
         mAnimationState->setLoop(true);
         mAnimationState->setEnabled(true);
-        
+
     }
-    
+
     return BaseApplication::keyPressed(arg);
 
 }
@@ -222,18 +223,18 @@ void TutorialApplication::createFrameListener(void) {
     BaseApplication::createFrameListener();
 
     // Set default values for variables
-//    mWalkSpeed = 100.0f;
-//    mDirection = Ogre::Vector3::ZERO;
-//
-//    // Set idle animation
-//    switch (MODEL) {
-//        case 0:
-//            mAnimationState = mEntity->getAnimationState("Sneak");
-//            break;
-//    }
-//
-//    mAnimationState->setLoop(true);
-//    mAnimationState->setEnabled(true);
+    //    mWalkSpeed = 100.0f;
+    //    mDirection = Ogre::Vector3::ZERO;
+    //
+    //    // Set idle animation
+    //    switch (MODEL) {
+    //        case 0:
+    //            mAnimationState = mEntity->getAnimationState("Sneak");
+    //            break;
+    //    }
+    //
+    //    mAnimationState->setLoop(true);
+    //    mAnimationState->setEnabled(true);
 
 
 }
@@ -260,6 +261,7 @@ void TutorialApplication::createFrameListener(void) {
 //}
 
 // checks if the walklist has points to go to
+
 bool TutorialApplication::nextLocation(void) {
     if (mWalkList.empty()) return false;
 
@@ -274,111 +276,64 @@ bool TutorialApplication::nextLocation(void) {
 
 bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
-    if( state == CALC_AVATAR_PATH){
+    if (state == CALC_AVATAR_PATH) {
 
         //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
         //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
         //printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
- 
-        mAnimationState->setTimePosition(mAnimationState->getLength());
-        Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
-        printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
+
+        // Get all animations
+        Ogre::AnimationStateSet *AnimSSet = mEntity->getAllAnimationStates();
+        Ogre::AnimationStateIterator assIte = AnimSSet->getAnimationStateIterator();
+
+        // Run all animations of the model
+        while (assIte.hasMoreElements()) {
+            mAnimationState = assIte.getNext();
+            //printf("Calculating arc lenght for animation: %s\n", mAnimationState->getAnimationName()->c_str());
+            // Just save the total time lengt for future reference
+            Ogre::Real totalLenght = mAnimationState->getLength();
+            mAnimationState->setEnabled(true);
+            // Clean old frame positions
+            framePositionCollection.clear();
+            
+            // If the current time lenght <= total time lenght 
+            while(mAnimationState->getTimePosition() <= totalLenght){
+                // Get current position
+                Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+                framePositionCollection.push_back(currentPos);
+                mAnimationState->addTime(0.1);
+            }
+            
+            Ogre::Vector3 tmpVect = framePositionCollection.front();
+            Ogre::Real arcLenght = 0;
+            // Calculate the total arclenght
+            while(!framePositionCollection.empty()){
+                framePositionCollection.pop_front();
+                arcLenght += (framePositionCollection.front() - tmpVect).length();
+                tmpVect = framePositionCollection.front(); 
+                
+            }
+            
+            printf("Total ArcLenght is %f\n", arcLenght);
+            
+        }
+        
+        
+        //mAnimationState = mEntity->getAnimationState("andarfrente");
+
+        // Get last animation Position
+//
+//        mAnimationState->setTimePosition(mAnimationState->getLength());
+//        Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+//        printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
+
+
+
+
     }
-    
-    
-    
-//    if (mDirection == Ogre::Vector3::ZERO) {
-//        if (nextLocation()) {
-//            // Set walking animation
-//            switch (MODEL) {
-//                case 0:
-//                    mAnimationState = mEntity->getAnimationState("Stagger");
-//                    break;
-//            }
-//
-//			//mEntity->getMesh()->getAnimation(0)->
-//
-//            mAnimationState->setLoop(true);
-//            mAnimationState->setEnabled(true);
-//
-//            isIdle = 0;
-//
-//        }
-//    } else {
-//        Ogre::Real move = mWalkSpeed * evt.timeSinceLastFrame;
-//        mDistance -= move;
-//
-//        if (mDistance <= 0.0f) {
-//            mNode->setPosition(mDestination);
-//            mDirection = Ogre::Vector3::ZERO;
-//
-//            // Set animation based on if the robot has another point to walk to.
-//            if (!nextLocation()) {
-//                // Set Idle animation
-//                switch (MODEL) {
-//                    case 0:
-//                        mAnimationState = mEntity->getAnimationState("Sneak");
-//                        break;
-//                }
-//                mAnimationState->setLoop(true);
-//                mAnimationState->setEnabled(true);
-//
-//                printf("Idle\n");
-//                isIdle = 1;
-//
-//            } else { // if we still have a point to go to, rotate in that direction and go
-//                // Rotation Code will go here later
-//                Ogre::Vector3 src = mNode->getOrientation() * Ogre::Vector3::UNIT_X;
-//                if ((1.0f + src.dotProduct(mDirection)) < 0.0001f) {
-//                    mNode->yaw(Ogre::Degree(180));
-//                } else {
-//                    Ogre::Quaternion quat = src.getRotationTo(mDirection);
-//                    mNode->rotate(quat);
-//                }
-//                printf("Rotating\n");
-//            }//else
-//
-//            //TODO: path synthesis
-//			//error = TutorialApplication::errorFunc(w, e);
-//
-//        } else {// model is in the middle of a translation
-//            //mNode->translate(mDirection * move);
-//			
-//					
-//			// make camera look at the model
-//			//mCamera->lookAt(mNode->getPosition());
-//
-//        } // else
-//
-//        // lmiranda
-//        // if is not idle, save coordinates
-//        if (isIdle) {
-//            printf("Entity is idle\n");
-//            
-//            // TODO: Detectar que a entidade terminou o caminho definido pelo user
-//            // Se a entidade estiver "isIdle" então é porque o caminho terminou.           
-//
-//            // TODO: Para cada coordenada em frameRootCoordinates (corresponde a um frame??) escolher uma nova coordenada random que não exceda o erro
-//            // (estas coordenadas random, seriam um movimento da animação vinda do grafo)
-//
-//
-//        } else {
-//            printf("Entity is not idle\n");
-//            // Get root coordinates
-//            Ogre::Vector3 currentPos = mNode->getPosition();
-//            // Save root coordinates on every frame
-//            frameRootCoordinates.push_back(currentPos);
-//            printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
-//            printf("Distance from start: (%4.2f, %4.2f, %4.2f)\n", frameRootCoordinates.at(0).x - currentPos.x,
-//                                                                   frameRootCoordinates.at(0).y - currentPos.y,
-//                                                                   frameRootCoordinates.at(0).z - currentPos.z);
-//
-//            // add point to draw the lines
-//            currentPos.y++;
-//            lines_path_done->addPoint(currentPos);
-//            lines_path_done->update();
-//        }
-//    } 
+
+
+
 
     mAnimationState->addTime(evt.timeSinceLastFrame);
     return BaseApplication::frameRenderingQueued(evt);

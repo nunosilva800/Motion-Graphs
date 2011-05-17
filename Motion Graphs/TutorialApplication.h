@@ -53,9 +53,9 @@ private:
     MotionPath * mPath;
     Ogre::SimpleSpline *spline;
     DynamicLines *lines;
-	DynamicLines *lines_path_done;
+    DynamicLines *lines_path_done;
     Ogre::SceneNode *linesNode;
-	Ogre::SceneNode *linesNode_path_done;
+    Ogre::SceneNode *linesNode_path_done;
 
     int MODEL; // the model identifier
 
@@ -63,7 +63,7 @@ private:
     Ogre::Vector3 mDirection; // The direction the object is moving
     Ogre::Vector3 mDestination; // The destination the object is moving towards
 
-    Ogre::AnimationState *mAnimationState; // The current animation state of the object
+    Ogre::AnimationState *mAnimationState; /* The current animation state of the object */
 
     Ogre::Entity *mEntity; // The Entity we are animating
     Ogre::SceneNode *mNode; // The SceneNode that the Entity is attached to
@@ -74,6 +74,7 @@ private:
     // lmiranda
     //
     int state;
+    std::deque<Ogre::Vector3> framePositionCollection;
 
 };
 
