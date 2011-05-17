@@ -24,9 +24,11 @@ This source file is part of the
 #include <OgreSimpleSpline.h>
 #include <deque>
 
-#define SET_USER_PATH    0
-#define CALC_AVATAR_PATH 1
-#define SHOW_AVATAR_PATH 2
+#define SET_USER_PATH   	0
+#define CALC_AVATAR_PATH	1
+#define SHOW_AVATAR_PATH	2
+#define AVATAR_ANIM_IN_CALC	3
+#define AVATAR_ANIM_DONE	4
 
 class TutorialApplication : public BaseApplication {
 public:
@@ -64,6 +66,9 @@ private:
     Ogre::Vector3 mDestination; // The destination the object is moving towards
 
     Ogre::AnimationState *mAnimationState; /* The current animation state of the object */
+	Ogre::AnimationStateSet *AnimSSet;
+	Ogre::AnimationStateIterator *assIte;
+	Ogre::Real totalLenght ;
 
     Ogre::Entity *mEntity; // The Entity we are animating
     Ogre::SceneNode *mNode; // The SceneNode that the Entity is attached to
@@ -74,7 +79,11 @@ private:
     // lmiranda
     //
     int state;
+	int anim_state;
     std::deque<Ogre::Vector3> framePositionCollection;
+
+
+
 
 };
 

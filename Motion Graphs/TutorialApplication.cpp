@@ -197,22 +197,34 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
     return true;
 }
 
+
 bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 
     if (arg.key == OIS::KC_SPACE) // toggle visibility of advanced frame stats
     {
 
         state = CALC_AVATAR_PATH;
+		anim_state = AVATAR_ANIM_IN_CALC;
 
         // TODO: Aceder aqui ao grafo 
         mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
         //mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");        
         mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");
         mNode->attachObject(mEntity);
-        mAnimationState = mEntity->getAnimationState("andarfrente");
-        mAnimationState->setLoop(true);
-        mAnimationState->setEnabled(true);
+        //mAnimationState = mEntity->getAnimationState("andarfrente");
+        //mAnimationState->setLoop(true);
+        //mAnimationState->setEnabled(true);
 
+		// Get all animations
+        AnimSSet = mEntity->getAllAnimationStates();
+        assIte = &AnimSSet->getAnimationStateIterator();
+
+		mAnimationState = assIte->getNext();
+		totalLenght = mAnimationState->getLength();
+        mAnimationState->setEnabled(true);
+		mAnimationState->setLoop(false);
+        // Clean old frame positions
+        framePositionCollection.clear();
     }
 
     return BaseApplication::keyPressed(arg);
@@ -276,66 +288,54 @@ bool TutorialApplication::nextLocation(void) {
 
 bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
-    if (state == CALC_AVATAR_PATH) {
-
-        //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
-        //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
-        //printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
-
-        // Get all animations
-        Ogre::AnimationStateSet *AnimSSet = mEntity->getAllAnimationStates();
-        Ogre::AnimationStateIterator assIte = AnimSSet->getAnimationStateIterator();
+    if (state == CALC_AVATAR_PATH) 
+	{
 
         // Run all animations of the model
-        while (assIte.hasMoreElements()) {
-            mAnimationState = assIte.getNext();
-            //printf("Calculating arc lenght for animation: %s\n", mAnimationState->getAnimationName()->c_str());
-            // Just save the total time lengt for future reference
-            Ogre::Real totalLenght = mAnimationState->getLength();
-            mAnimationState->setEnabled(true);
-            // Clean old frame positions
-            framePositionCollection.clear();
-            
-            // If the current time lenght <= total time lenght 
-            while(mAnimationState->getTimePosition() <= totalLenght){
-                // Get current position
-                Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
-                framePositionCollection.push_back(currentPos);
-                mAnimationState->addTime(0.1);
-            }
-            
-            Ogre::Vector3 tmpVect = framePositionCollection.front();
-            Ogre::Real arcLenght = 0;
-            // Calculate the total arclenght
-            while(!framePositionCollection.empty()){
-                framePositionCollection.pop_front();
-                arcLenght += (framePositionCollection.front() - tmpVect).length();
-                tmpVect = framePositionCollection.front(); 
-                
-            }
-            
-            printf("Total ArcLenght is %f\n", arcLenght);
-            
+           
+        // If the current time lenght <= total time lenght 
+        if(mAnimationState->getTimePosition() < totalLenght)
+		{
+            // Get current position
+            Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+            framePositionCollection.push_back(currentPos);
+            mAnimationState->addTime(evt.timeSinceLastFrame);
+			//force animation update
+			mEntity->_updateAnimation();
         }
-        
-        
-        //mAnimationState = mEntity->getAnimationState("andarfrente");
 
-        // Get last animation Position
-//
-//        mAnimationState->setTimePosition(mAnimationState->getLength());
-//        Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
-//        printf("Control Point (%4.2f, %4.2f, %4.2f)\n", currentPos.x, currentPos.y, currentPos.z);
+        if(mAnimationState->getTimePosition() == totalLenght)
+		{ 
+			Ogre::Vector3 tmpVect = framePositionCollection.front();
+			Ogre::Real arcLenght = 0;
+			// Calculate the total arclenght
+			while(!framePositionCollection.empty()){
+				framePositionCollection.pop_front();
+				arcLenght += (framePositionCollection.front() - tmpVect).length();
+				tmpVect = framePositionCollection.front(); 
+			}
+			printf("Total ArcLenght is %f\n", arcLenght);
+			anim_state = AVATAR_ANIM_DONE;
+        }
+		
+		if(anim_state == AVATAR_ANIM_DONE)
+		{
+			if (assIte->hasMoreElements())
+			{
+				// get next animation 
+				mAnimationState = assIte->getNext();
+				mAnimationState->setEnabled(true);
+				mAnimationState->setLoop(FALSE);
+				framePositionCollection.clear();
+				totalLenght = mAnimationState->getLength();
+				anim_state = AVATAR_ANIM_IN_CALC;
+			}
+			else state = SHOW_AVATAR_PATH;
+		}
+	
+	}            
 
-
-
-
-    }
-
-
-
-
-    mAnimationState->addTime(evt.timeSinceLastFrame);
+	//mAnimationState->addTime(evt.timeSinceLastFrame);
     return BaseApplication::frameRenderingQueued(evt);
 }
 
