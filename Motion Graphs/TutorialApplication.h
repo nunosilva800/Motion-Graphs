@@ -69,6 +69,7 @@ private:
 	Ogre::AnimationStateSet *AnimSSet;
 	Ogre::AnimationStateIterator *assIte;
 	Ogre::Real totalLenght ;
+	Ogre::Real currentArcLenght;
 
     Ogre::Entity *mEntity; // The Entity we are animating
     Ogre::SceneNode *mNode; // The SceneNode that the Entity is attached to
