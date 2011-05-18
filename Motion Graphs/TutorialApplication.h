@@ -85,7 +85,7 @@ private:
 	std::pair<Ogre::AnimationState*, Ogre::Real> choosenAnimation;	
 
 	// the set if animations for the entire path
-	std::vector<Ogre::AnimationState* > * animationPath;
+	std::vector< Ogre::AnimationState* > * animationPath;
 
     //
     // lmiranda

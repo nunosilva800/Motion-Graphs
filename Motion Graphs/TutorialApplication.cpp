@@ -75,7 +75,7 @@ void TutorialApplication::createScene(void) {
     // create the light
     Ogre::Light *light = mSceneMgr->createLight("Light1");
     light->setType(Ogre::Light::LT_POINT);
-    light->setPosition(Ogre::Vector3(0, 250, 0));
+    light->setPosition(Ogre::Vector3(0, 50, 0));
     light->setDiffuseColour(Ogre::ColourValue::White);
     light->setSpecularColour(Ogre::ColourValue::White);
 
@@ -195,6 +195,19 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
 
 bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 
+	// reset program
+	if (arg.key == OIS::KC_RETURN)
+	{
+		state = SET_USER_PATH ;
+
+		mWalkList.clear();
+		mPath->clear();
+		lines->clear();
+		lines_path_done->clear();
+
+		mPath->add(Ogre::Vector3(0, 1, 0));
+
+	}
     if (arg.key == OIS::KC_SPACE) // toggle visibility of advanced frame stats
     {
 
@@ -207,8 +220,30 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
         AnimSSet = mEntity->getAllAnimationStates();
 		assIte = new Ogre::AnimationStateIterator(AnimSSet->getAnimationStateIterator());
 
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+		assIte->moveNext();
+
 		mAnimationState = assIte->getNext();
-		totalLenght = mAnimationState->getLength();
+		//totalLenght = mAnimationState->getLength();
         mAnimationState->setEnabled(true);
 		mAnimationState->setLoop(false);
         // Clean old frame positions
@@ -216,17 +251,20 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 
 		// update how many animations we have done
 		animationStep = 1;
-		currentAnimationError = MAXDWORD;
+		currentAnimationError = 0xffffffff;
 		// get the arc lenght of the user defined path
 		arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
 
 		// initialize the animation that will be for the user defined path
 		choosenAnimation.first = assIte->getNext();
-		choosenAnimation.second = 0;
+		choosenAnimation.second = 0xFFFFFFFF;
 		
 		Ogre::String str = "Current animation is ";
 		str.append(mAnimationState->getAnimationName());
 		mInfoLabel->setCaption(str);
+
+		// initialize the animationPath
+		animationPath = new std::vector< Ogre::AnimationState* >;
     }
 
     return BaseApplication::keyPressed(arg);
@@ -295,18 +333,17 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
         // Run all animations of the model
            
         // If the current time lenght <= total time lenght 
-        if(mAnimationState->getTimePosition() < totalLenght)
+        if(mAnimationState->getTimePosition() < mAnimationState->getLength() )
 		{
             // Get current position
             Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
             framePositionCollection.push_back(currentPos);
             mAnimationState->addTime(evt.timeSinceLastFrame);
-			//mAnimationState->addTime(1);
 			//force animation update
 			mEntity->_updateAnimation();
         }
 
-        if(mAnimationState->getTimePosition() == totalLenght)
+        if(mAnimationState->getTimePosition() == mAnimationState->getLength() )
 		{ 
 			currentArcLenght = 0;
 			// Calculate the total arclenght
@@ -320,26 +357,18 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				currentArcLenght += (v2 - v1).length();
 				
 			}
-			printf("Total ArcLenght is %f\n", currentArcLenght);
-			char str[25];
-			sprintf(str, "Arc Lenght: %f", currentArcLenght);
+			printf("Total ArcLenght of %s is %f\n", mAnimationState->getAnimationName(), currentArcLenght);
+			char str[50];
+			sprintf(str, "Arc Lenght: %.3f", currentArcLenght);
 			mInfoLabel2->setCaption(str);
 			anim_state = AVATAR_ANIM_DONE;
 
-			if(currentArcLenght <= arcLenghtLinesPath)
+			// search for the vector in user defined path with the arcLenght 
+			if(mWalkList.size() > animationStep)
 			{
-				s = mWalkList[animationStep-1];
-				e = mWalkList[animationStep];
-				Ogre::Vector3 v = e-s;
-				v.normalise();
-				m = s + currentArcLenght*v;
-
-				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
-			}
-			else
-			{
-				// search for the vector in user defined path with the arcLenght 
+			
 				int vectIt = animationStep;
+				
 				s = mWalkList[vectIt-1];
 				e = mWalkList[vectIt];
 				Ogre::Vector3 v = e-s;
@@ -363,9 +392,10 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				m = s + dp*v;
 
 				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
+				
 			}
 
-			char str2[25];
+			char str2[50];
 			sprintf(str2, "Anim Error: %f", currentAnimationError);
 			mInfoLabel3->setCaption(str2);
         }
@@ -378,16 +408,19 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				// check is this animation's arc lenght is a good match
 				if(currentAnimationError <= choosenAnimation.second)
 				{
-					choosenAnimation.first = assIte->getNext();
+					choosenAnimation.first = mEntity->getAnimationState(assIte->current()->second->getAnimationName());
 					choosenAnimation.second = currentAnimationError;
+					
 				}
 
 				// get next animation 
+				mAnimationState->setEnabled(false);
+				mAnimationState->destroyBlendMask();
 				mAnimationState = assIte->getNext();
 				mAnimationState->setEnabled(true);
 				mAnimationState->setLoop(false);
 				framePositionCollection.clear();
-				totalLenght = mAnimationState->getLength();
+				//totalLenght = mAnimationState->getLength();
 				anim_state = AVATAR_ANIM_IN_CALC;
 				
 				Ogre::String stra = "Current animation is ";
@@ -398,20 +431,95 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			}
 			else
 			{
-				state = SHOW_AVATAR_PATH;
+				
 				// update how many animations we have done
 				animationStep++;
 				// get the arc lenght of the user defined path for the next couple of points
-				if(mWalkList.size() < animationStep)
-					arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
+				//if(mWalkList.size() < animationStep)
+				//	arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
 
-				// commit this animation to the set
-				animationPath->push_back( mAnimationState );
+				// commit the best animation to the set
+				animationPath->push_back( choosenAnimation.first );
 
+				// move avatar to the end of animation so that we can set the node to that position
+				mAnimationState = choosenAnimation.first;
+				mAnimationState->setEnabled(true);
+				mAnimationState->setLoop(false);
+				mAnimationState->addTime(mAnimationState->getLength());
+				mEntity->_updateAnimation();
+				mNode->setPosition(mEntity->getSkeleton()->getRootBone()->getPosition() );
+
+				// if user defined path has all been "animated" we must prepare to show the motion
+				if( mWalkList.size() == animationStep )
+				{
+					state = SHOW_AVATAR_PATH;
+					mAnimationState->setEnabled(false);
+					mAnimationState->destroyBlendMask();
+
+					// set the animation state to the 1st
+					mAnimationState = animationPath->back();
+					animationPath->pop_back();
+					mAnimationState->setLoop(false);
+					mAnimationState->setEnabled(true);
+					mAnimationState->setTimePosition(0);
+
+					Ogre::String strb = "Showing calculated motion path: ";
+					strb.append(mAnimationState->getAnimationName());
+					mInfoLabel->setCaption(strb);
+					mInfoLabel2->hide();
+					mInfoLabel3->hide();
+					return true;
+				}
 			}
 		}
-	
-	}            
+	}
+
+	// if user defined path has all been "animated"
+	//if()
+	//{
+	//	state = SHOW_AVATAR_PATH;
+	//}
+
+	if (state == SHOW_AVATAR_PATH) 
+	{
+
+		// if this animation reaches the end, start the next one
+		if(mAnimationState->getTimePosition() == mAnimationState->getLength())
+		{
+			mAnimationState->setEnabled(false);
+			mAnimationState->destroyBlendMask();
+			
+			// we still have animations in to run
+			if(animationPath->size())
+			{
+				// update avatar's position
+				mEntity->_updateAnimation();
+				mNode->setPosition(mEntity->getSkeleton()->getRootBone()->getPosition() );
+
+				// set the next one
+				mAnimationState = animationPath->back();
+				animationPath->pop_back();
+				mAnimationState->setEnabled(true);
+				mAnimationState->setLoop(false);
+				mAnimationState->setTimePosition(0);
+				
+
+				Ogre::String strc = "Showing calculated motion path: ";
+				strc.append(mAnimationState->getAnimationName());
+				mInfoLabel->setCaption(strc);
+			}
+			else
+			{
+				mInfoLabel->setCaption("Calculated Motion Path has ended");
+			}
+		}
+
+
+
+		mAnimationState->addTime(evt.timeSinceLastFrame);
+	}
+
+
 
 	//mAnimationState->addTime(evt.timeSinceLastFrame);
     return BaseApplication::frameRenderingQueued(evt);
@@ -455,6 +563,7 @@ extern "C" {
 #ifdef __cplusplus
 }
 #endif
+
 
 
 
