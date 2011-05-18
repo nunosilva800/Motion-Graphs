@@ -58,7 +58,7 @@ void TutorialApplication::createScene(void) {
     //noCulling->setFOVy(Ogre::Radian(360));
     //mCamera->setCullingFrustum(noCulling);
 
-    mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
+    mSceneMgr->setAmbientLight(Ogre::ColourValue(1, 1, 1));
 
 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));
     //mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");        
@@ -74,8 +74,8 @@ void TutorialApplication::createScene(void) {
 
     // create the light
     Ogre::Light *light = mSceneMgr->createLight("Light1");
-    light->setType(Ogre::Light::LT_POINT);
-    light->setPosition(Ogre::Vector3(0, 50, 0));
+	light->setType(Ogre::Light::LT_POINT);
+    light->setPosition(Ogre::Vector3(0, 100, 0));
     light->setDiffuseColour(Ogre::ColourValue::White);
     light->setSpecularColour(Ogre::ColourValue::White);
 
@@ -357,8 +357,8 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				currentArcLenght += (v2 - v1).length();
 				
 			}
-			printf("Total ArcLenght of %s is %f\n", mAnimationState->getAnimationName(), currentArcLenght);
-			char str[50];
+			//printf("Total ArcLenght of %s is %f\n", mAnimationState->getAnimationName(), currentArcLenght);
+			char str[50] = "";
 			sprintf(str, "Arc Lenght: %.3f", currentArcLenght);
 			mInfoLabel2->setCaption(str);
 			anim_state = AVATAR_ANIM_DONE;
