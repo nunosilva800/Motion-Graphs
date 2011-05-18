@@ -4,6 +4,7 @@
  * Construtores
  */
 Motion::Motion(){
+	this->nClouds = 0;
 	map_clouds = new std::map<Ogre::Real,PointCloud*>();
 }
 

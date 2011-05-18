@@ -57,7 +57,7 @@ gNode *Graph::getNode(int node){
 
 
 void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCoincidents){
-	if(nMotions = 0) return;
+	if(nMotions == 0) return;
 
 	this->initIndexes(motions,nMotions);
 	
@@ -83,8 +83,8 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 
 		int m1 = -1, m2 = -1;
 		for(i = 0, it = motions->begin() ; it != motions->end() && (m1 == -1 || m2 == -1) ; it++,i++){
-			if(it->second->getLabel().compare(map.relations[i][0]) == 0) m1 = i;
-			if(it->second->getLabel().compare(map.relations[i][1]) == 0) m2 = i;
+			if(it->second->getLabel().compare(*map.relations[i][0]) == 0) m1 = i;
+			if(it->second->getLabel().compare(*map.relations[i][1]) == 0) m2 = i;
 		}
 
 		int nTransitionPoints = map.getMinimuns(i,pts1,pts2);
@@ -97,8 +97,8 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 				this->indexes[m2][pts2[i]] = this->addNode(new gNode());
 			
 			//Liga a transacção
-			this->createTransition(map.relations[i][0], this->indexes[m1][pts1[i]], pts1[i],
-								   map.relations[i][1], this->indexes[m2][pts2[i]], pts2[i], j, nCoincidents);
+			this->createTransition(*map.relations[i][0], this->indexes[m1][pts1[i]], pts1[i],
+								   *map.relations[i][1], this->indexes[m2][pts2[i]], pts2[i], j, nCoincidents);
 		}
 	}
 

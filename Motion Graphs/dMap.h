@@ -34,7 +34,7 @@ class dMap{
 	private:
 		Ninja motions;
 		float ***differenceMap;
-		std::string **relations;
+		std::string ***relations;
 		int nRelations;
 		int maxRelations;
 		float threshold;

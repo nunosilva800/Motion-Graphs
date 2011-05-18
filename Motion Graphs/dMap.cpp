@@ -9,7 +9,7 @@ dMap::dMap(){
 
 dMap::dMap(int nMotions){
 	this->differenceMap = (float***)malloc(sizeof(float**) * nMotions * nMotions * 2);
-	this->relations = (std::string**)malloc(sizeof(std::string*) * nMotions * nMotions * 2);
+	this->relations = (std::string***)malloc(sizeof(std::string**) * nMotions * nMotions * 2);
 	this->maxRelations = nMotions * nMotions * 2;
 	this->nRelations = 0;
 	this->motions = NULL;
@@ -27,22 +27,22 @@ void dMap::duplicateSpace(){
 	int nRel = this->nRelations;
 	int maxRel = this->maxRelations * 2;
 	float ***difMap = (float***)malloc(sizeof(float**) * maxRel);
-	std::string **rel = (std::string**)malloc(sizeof(std::string*) * maxRel);
+	std::string ***rel = (std::string***)malloc(sizeof(std::string**) * maxRel);
 
 
 	for(int i = 0 ; i < nRel ; i++){
-		rel[i] = (std::string*)malloc(sizeof(std::string) * 2);
+		rel[i] = (std::string**)malloc(sizeof(std::string*) * 2);
 		rel[i][0] = this->relations[i][0];
 		rel[i][1] = this->relations[i][1];
 		
-		float **map = (float**)malloc(sizeof(float*) * (this->motions->at(rel[i][0])->getNPointClouds()));
+		float **map = (float**)malloc(sizeof(float*) * (this->motions->at(*rel[i][0])->getNPointClouds()));
 
-		for(int j = 0 ; j < this->motions->at(rel[i][0])->getNPointClouds() ; j++){
-			map[j] = (float*)malloc(sizeof(float) * this->motions->at(rel[i][1])->getNPointClouds());
+		for(int j = 0 ; j < this->motions->at(*rel[i][0])->getNPointClouds() ; j++){
+			map[j] = (float*)malloc(sizeof(float) * this->motions->at(*rel[i][1])->getNPointClouds());
 		}
 
-		for(int c = 0 ; c < this->motions->at(rel[i][0])->getNPointClouds() ; c++){
-			for(int l = 0 ; l < this->motions->at(rel[i][1])->getNPointClouds() ; l++){
+		for(int c = 0 ; c < this->motions->at(*rel[i][0])->getNPointClouds() ; c++){
+			for(int l = 0 ; l < this->motions->at(*rel[i][1])->getNPointClouds() ; l++){
 				map[l][c] = this->differenceMap[i][l][c];
 			}
 		}
@@ -58,8 +58,8 @@ int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
 
 	if(level >= this->nRelations) return 0;
 
-	np1 = this->motions->at(this->relations[level][0])->getNPointClouds();
-	np2 = this->motions->at(this->relations[level][1])->getNPointClouds();
+	np1 = this->motions->at(*this->relations[level][0])->getNPointClouds();
+	np2 = this->motions->at(*this->relations[level][1])->getNPointClouds();
 
 	for(int i = 0 ; i < np1 ; i++){
 		for(int j = 0 ; j < np2 ; j++){
@@ -107,9 +107,9 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 
 	if(this->nRelations > (int)((float)this->maxRelations * 0.75)) this->duplicateSpace();
 
-	this->relations[this->nRelations] = (std::string*)malloc(sizeof(std::string) * 2);
-	this->relations[this->nRelations][0] = m1->getLabel();
-	this->relations[this->nRelations][1] = m2->getLabel();
+	this->relations[this->nRelations] = (std::string**)malloc(sizeof(std::string*) * 2);
+	this->relations[this->nRelations][0] = &m1->getLabel();
+	this->relations[this->nRelations][1] = &m2->getLabel();
 
 	map = (float**)malloc(sizeof(float*) * m1->getNPointClouds());
 
