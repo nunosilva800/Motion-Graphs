@@ -81,8 +81,11 @@ private:
     std::deque<Ogre::Vector3> mWalkList; // The list of points we are walking to
     Ogre::Real mWalkSpeed; // The speed at which the object is moving
 
-	// the animation we will use 
+	// the animation we will use <animation, error>
 	std::pair<Ogre::AnimationState*, Ogre::Real> choosenAnimation;	
+
+	// the set if animations for the entire path
+	std::vector<Ogre::AnimationState* > * animationPath;
 
     //
     // lmiranda

@@ -220,9 +220,13 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		// get the arc lenght of the user defined path
 		arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
 
+		// initialize the animation that will be for the user defined path
 		choosenAnimation.first = assIte->getNext();
 		choosenAnimation.second = 0;
 		
+		Ogre::String str = "Current animation is ";
+		str.append(mAnimationState->getAnimationName());
+		mInfoLabel->setCaption(str);
     }
 
     return BaseApplication::keyPressed(arg);
@@ -331,16 +335,39 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				m = s + currentArcLenght*v;
 
 				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
-				
-
 			}
 			else
 			{
+				// search for the vector in user defined path with the arcLenght 
+				int vectIt = animationStep;
+				s = mWalkList[vectIt-1];
+				e = mWalkList[vectIt];
+				Ogre::Vector3 v = e-s;
+				Ogre::Real normaV = v.length();
+				while(currentArcLenght > normaV )
+				{
+					vectIt++;
+					if( vectIt == mWalkList.size() ) break;
+					s = mWalkList[vectIt-1];
+					e = mWalkList[vectIt];
+					v = e-s;
+					normaV += v.length();
+				}
 
+				// calculate any differences
+				Ogre::Real dx, dp;
+				dx = normaV - currentArcLenght;
+				dp = v.length() - dx;
+
+				v.normalise();
+				m = s + dp*v;
+
+				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
 			}
 
-			sprintf(str, "Anim Error: %f", currentAnimationError);
-			mInfoLabel3->setCaption(str);
+			char str2[25];
+			sprintf(str2, "Anim Error: %f", currentAnimationError);
+			mInfoLabel3->setCaption(str2);
         }
 		
 		if(anim_state == AVATAR_ANIM_DONE)
@@ -363,9 +390,9 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				totalLenght = mAnimationState->getLength();
 				anim_state = AVATAR_ANIM_IN_CALC;
 				
-				Ogre::String str = "Current animation is ";
-				str.append(mAnimationState->getAnimationName());
-				mInfoLabel->setCaption(str);
+				Ogre::String stra = "Current animation is ";
+				stra.append(mAnimationState->getAnimationName());
+				mInfoLabel->setCaption(stra);
 
 				
 			}
@@ -377,6 +404,10 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				// get the arc lenght of the user defined path for the next couple of points
 				if(mWalkList.size() < animationStep)
 					arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
+
+				// commit this animation to the set
+				animationPath->push_back( mAnimationState );
+
 			}
 		}
 	
