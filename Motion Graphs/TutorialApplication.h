@@ -53,11 +53,15 @@ protected:
 private:
     Ogre::Plane * mPlane;
     MotionPath * mPath;
+
     Ogre::SimpleSpline *spline;
     DynamicLines *lines;
     DynamicLines *lines_path_done;
     Ogre::SceneNode *linesNode;
     Ogre::SceneNode *linesNode_path_done;
+
+	Ogre::Real arcLenghtLinesPath; // the arc lenght of the user defined path
+	int animationStep;	//how many animations we have done so far 
 
     int MODEL; // the model identifier
 
@@ -70,13 +74,15 @@ private:
 	Ogre::AnimationStateIterator *assIte;
 	Ogre::Real totalLenght ;
 	Ogre::Real currentArcLenght;
+	Ogre::Real currentAnimationError;
 
     Ogre::Entity *mEntity; // The Entity we are animating
     Ogre::SceneNode *mNode; // The SceneNode that the Entity is attached to
     std::deque<Ogre::Vector3> mWalkList; // The list of points we are walking to
     Ogre::Real mWalkSpeed; // The speed at which the object is moving
 
-	
+	// the animation we will use 
+	std::pair<Ogre::AnimationState*, Ogre::Real> choosenAnimation;	
 
     //
     // lmiranda
@@ -86,6 +92,9 @@ private:
     std::deque<Ogre::Vector3> framePositionCollection;
 
 
+	Ogre::Vector3 s;
+	Ogre::Vector3 e;
+	Ogre::Vector3 m;
 
 
 };

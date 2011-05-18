@@ -33,7 +33,7 @@ void TutorialApplication::createCamera(void) {
     // create the camera
     mCamera = mSceneMgr->createCamera("PlayerCam");
     // set its position, direction  
-    mCamera->setPosition(Ogre::Vector3(0, 10, 500));
+    mCamera->setPosition(Ogre::Vector3(0, 25, 50));
     mCamera->lookAt(Ogre::Vector3(0, 0, 0));
     // set the near clip distance
     mCamera->setNearClipDistance(5);
@@ -60,10 +60,11 @@ void TutorialApplication::createScene(void) {
 
     mSceneMgr->setAmbientLight(Ogre::ColourValue(0.5, 0.5, 0.5));
 
-	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode");
+	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));
     //mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");        
     mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");
     mNode->attachObject(mEntity);
+	
     //mAnimationState = mEntity->getAnimationState("andarfrente");
     //mAnimationState->setLoop(true);
     //mAnimationState->setEnabled(true);
@@ -79,7 +80,7 @@ void TutorialApplication::createScene(void) {
     light->setSpecularColour(Ogre::ColourValue::White);
 
     // Create the scene cam node
-    node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode1", Ogre::Vector3(10, 50, 0));
+    node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode1");
 
     // Make it look towards the model
     node->yaw(Ogre::Degree(-45));
@@ -92,7 +93,7 @@ void TutorialApplication::createScene(void) {
     // create a plane (the ground)
     mPlane = new Ogre::Plane(Ogre::Vector3::UNIT_Y, 0);
     Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
-            *mPlane, 1500, 1500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+            *mPlane, 500, 500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
 
     Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
     mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
@@ -212,6 +213,16 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		mAnimationState->setLoop(false);
         // Clean old frame positions
         framePositionCollection.clear();
+
+		// update how many animations we have done
+		animationStep = 1;
+		currentAnimationError = MAXDWORD;
+		// get the arc lenght of the user defined path
+		arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
+
+		choosenAnimation.first = assIte->getNext();
+		choosenAnimation.second = 0;
+		
     }
 
     return BaseApplication::keyPressed(arg);
@@ -306,16 +317,44 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				
 			}
 			printf("Total ArcLenght is %f\n", currentArcLenght);
-			char s[25];
-			sprintf(s, "Arc Lenght: %f", currentArcLenght);
-			mInfoLabel2->setCaption(s);
+			char str[25];
+			sprintf(str, "Arc Lenght: %f", currentArcLenght);
+			mInfoLabel2->setCaption(str);
 			anim_state = AVATAR_ANIM_DONE;
+
+			if(currentArcLenght <= arcLenghtLinesPath)
+			{
+				s = mWalkList[animationStep-1];
+				e = mWalkList[animationStep];
+				Ogre::Vector3 v = e-s;
+				v.normalise();
+				m = s + currentArcLenght*v;
+
+				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
+				
+
+			}
+			else
+			{
+
+			}
+
+			sprintf(str, "Anim Error: %f", currentAnimationError);
+			mInfoLabel3->setCaption(str);
         }
 		
 		if(anim_state == AVATAR_ANIM_DONE)
 		{
 			if (assIte->hasMoreElements())
 			{
+				
+				// check is this animation's arc lenght is a good match
+				if(currentAnimationError <= choosenAnimation.second)
+				{
+					choosenAnimation.first = assIte->getNext();
+					choosenAnimation.second = currentAnimationError;
+				}
+
 				// get next animation 
 				mAnimationState = assIte->getNext();
 				mAnimationState->setEnabled(true);
@@ -327,8 +366,18 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				Ogre::String str = "Current animation is ";
 				str.append(mAnimationState->getAnimationName());
 				mInfoLabel->setCaption(str);
+
+				
 			}
-			else state = SHOW_AVATAR_PATH;
+			else
+			{
+				state = SHOW_AVATAR_PATH;
+				// update how many animations we have done
+				animationStep++;
+				// get the arc lenght of the user defined path for the next couple of points
+				if(mWalkList.size() < animationStep)
+					arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
+			}
 		}
 	
 	}            

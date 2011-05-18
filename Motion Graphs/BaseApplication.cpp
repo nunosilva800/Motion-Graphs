@@ -119,11 +119,13 @@ void BaseApplication::createFrameListener(void)
     //mTrayMgr->hideCursor();
 
 	mInfoLabel = mTrayMgr->createLabel(OgreBites::TL_TOP, "TInfo", "", 350);
-	mInfoLabel2 = mTrayMgr->createLabel(OgreBites::TL_TOPRIGHT, "TInfoError", "", 250);
+	mInfoLabel2 = mTrayMgr->createLabel(OgreBites::TL_TOPRIGHT, "TInfoArcLen", "", 250);
+	mInfoLabel3 = mTrayMgr->createLabel(OgreBites::TL_TOPRIGHT, "TInfoError", "", 250);
 	// defining position for label
 	//mTrayMgr->moveWidgetToTray(mInfoLabel, OgreBites::TL_TOP, 0);
 	mInfoLabel->show();
 	mInfoLabel2->show();
+	mInfoLabel3->show();
 
     // create a params panel for displaying sample details
     Ogre::StringVector items;
