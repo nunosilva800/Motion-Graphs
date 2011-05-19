@@ -1,6 +1,6 @@
 #ifndef _MOTIONGRAPH
 #define _MOTIONGRAPH
-
+#include "stdafx.h"
 #include "stdafx.h"
 #include "Motion.h"
 #include "Graph.h"

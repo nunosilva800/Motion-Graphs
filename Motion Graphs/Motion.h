@@ -1,6 +1,6 @@
 #ifndef _MOTION
 #define _MOTION
-
+#include "stdafx.h"
 #include "PointCloud.h"
 #include <map>
 #include "stdafx.h"

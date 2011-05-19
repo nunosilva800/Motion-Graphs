@@ -1,6 +1,6 @@
 #ifndef _EDGE
 #define _EDGE
-
+#include "stdafx.h"
 #include "Motion.h"
 
 class gNode;

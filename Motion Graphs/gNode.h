@@ -1,6 +1,6 @@
 #ifndef _GNODE
 #define _GNODE
-
+#include "stdafx.h"
 #include "Edge.h"
 
 using namespace std;

@@ -94,6 +94,81 @@ void TutorialApplication::createScene(void)
 
 	_timeController = 0.0;
 
+
+
+
+	/*** from path sysnthesis ***/
+
+
+	// this node is for the rest of the objects
+    Ogre::SceneNode *node;
+
+    // create the light
+	/*
+    Ogre::Light *light = mSceneMgr->createLight("Light1");
+	light->setType(Ogre::Light::LT_POINT);
+    light->setPosition(Ogre::Vector3(0, 100, 0));
+    light->setDiffuseColour(Ogre::ColourValue::White);
+    light->setSpecularColour(Ogre::ColourValue::White);
+	*/
+
+    // Create the scene cam node
+    //node = mSceneMgr->getRootSceneNode()->createChildSceneNode("CamNode1");
+
+    //// Make it look towards the model
+    //node->yaw(Ogre::Degree(-45));
+
+    //// Create the pitch node
+    //node = node->createChildSceneNode("PitchNode1");
+    //node->attachObject(mCamera);
+
+    //// create a plane (the ground)
+    mPlane = new Ogre::Plane(Ogre::Vector3::UNIT_Y, 0);
+    Ogre::MeshManager::getSingleton().createPlane("ground", Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
+            *mPlane, 500, 500, 20, 20, true, 1, 5, 5, Ogre::Vector3::UNIT_Z);
+
+    Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
+    mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
+
+    //entGround->setMaterialName("Examples/Rockwall");
+    //entGround->setCastShadows(false);
+
+
+
+	/*** Path Synthesis specific stuff starts here ***/
+
+	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));      
+    mEntity = mSceneMgr->createEntity("Blake", "BodyMesh.mesh");
+    mNode->attachObject(mEntity);
+
+    // Set initial point on the user defined path
+	mWalkList.push_back(Ogre::Vector3(0, 1, 0));
+
+    // define a spline
+    // http://www.ogre3d.org/docs/api/html/classOgre_1_1SimpleSpline.html#_details
+    //spline = new Ogre::SimpleSpline();
+
+    //create a line to show the desired path
+    lines = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+    for (int i = 0; i < mWalkList.size(); i++) {
+        lines->addPoint(mWalkList[i]);
+    }
+    lines->update();
+    Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
+    linesNode->attachObject(lines);
+
+    // create a line to show the path done by the char
+    lines_path_done = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+
+    //TODO change color of the line
+    /*lines_path_done->getMaterial()->setAmbient(Ogre::ColourValue(1,0,0));
+    lines_path_done->getMaterial()->setDiffuse(Ogre::ColourValue(1,0,0));
+    lines_path_done->getMaterial()->setCullingMode(Ogre::CullingMode::CULL_NONE);*/
+
+    lines_path_done->update();
+    Ogre::SceneNode *linesNode_path_done = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines_path_done");
+    linesNode_path_done->attachObject(lines_path_done);
+
 }
 
 void BaseApplication::_frameRenderingQueued(const Ogre::FrameEvent& evt) 

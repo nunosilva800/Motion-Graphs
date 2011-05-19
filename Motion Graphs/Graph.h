@@ -1,6 +1,6 @@
 #ifndef _GRAPH
 #define _GRAPH
-
+#include "stdafx.h"
 #include "gNode.h"
 #include "dMap.h"
 #include <sstream>

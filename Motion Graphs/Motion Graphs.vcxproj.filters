@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Lines">
+      <UniqueIdentifier>{9146aae2-5af2-49bf-a3ff-7a87b32afb67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Lines">
+      <UniqueIdentifier>{15ec0ab0-d9bb-48cc-8d43-6147a6cb499d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseApplication.cpp">
@@ -51,6 +57,12 @@
     <ClCompile Include="_prepareAssets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Lines\DynamicRenderable.cpp">
+      <Filter>Source Files\Lines</Filter>
+    </ClCompile>
+    <ClCompile Include="Lines\DynamicLines.cpp">
+      <Filter>Source Files\Lines</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h">
@@ -85,6 +97,12 @@
     </ClInclude>
     <ClInclude Include="Point3D.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Lines\DynamicRenderable.h">
+      <Filter>Header Files\Lines</Filter>
+    </ClInclude>
+    <ClInclude Include="Lines\DynamicLines.h">
+      <Filter>Header Files\Lines</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

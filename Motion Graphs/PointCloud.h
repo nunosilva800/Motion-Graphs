@@ -1,6 +1,6 @@
 #ifndef _POINTCLOUD
 #define _POINTCLOUD
-
+#include "stdafx.h"
 #include <stdio.h>
 #include "Point3D.h"
 

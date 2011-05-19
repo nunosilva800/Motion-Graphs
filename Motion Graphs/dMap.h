@@ -1,6 +1,6 @@
 #ifndef _DMAP
 #define _DMAP
-
+#include "stdafx.h"
 #include "Motion.h"
 
 //using namespace std;
