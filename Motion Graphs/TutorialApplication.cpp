@@ -89,7 +89,7 @@ void TutorialApplication::createScene(void) {
 
 	/*** Path Synthesis Stuff starts here ***/
 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));      
-    mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");
+    mEntity = mSceneMgr->createEntity("Blake", "BodyMesh.mesh");
     mNode->attachObject(mEntity);
 
     // Set initial point on the user defined path
