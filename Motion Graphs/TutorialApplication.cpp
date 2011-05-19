@@ -220,7 +220,7 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
         AnimSSet = mEntity->getAllAnimationStates();
 		assIte = new Ogre::AnimationStateIterator(AnimSSet->getAnimationStateIterator());
 
-		assIte->moveNext();
+		// skip some animations 
 		assIte->moveNext();
 		assIte->moveNext();
 		assIte->moveNext();
