@@ -1,52 +1,25 @@
 \documentclass[a4paper]{article}
-%\documentclass[twocolumn]{article}
-\setlength{\columnsep}{5mm}
 
-%\usepackage[portuges]{babel}
+\usepackage[portuges,english]{babel}
 \usepackage[latin1]{inputenc}
-
-\usepackage{url}
-\usepackage{alltt}
-\usepackage{listings}
 \usepackage{fancyvrb}
 \usepackage{graphicx}
-\usepackage{algorithmic}
-\usepackage[lined,algonl,boxed]{algorithm2e}
-\usepackage{aeguill}  % usefull for pdflatex
 \usepackage[a4paper,left=20mm,right=20mm,bottom=20mm,top=15mm]{geometry}
-\usepackage{amsmath}
-\usepackage{indentfirst}
-
-\lstset{
-	language=C,
-	basicstyle=\footnotesize,
-	%numbers=left,
-	%stepnumber=2,
-	%numberstyle=\footnotesize, 
-	showtabs=false,
-	tabsize=2,
-	breaklines=true,
-	morecomment=[l]{//}
-	}
-
-\usepackage{hyperref}
-\hypersetup{colorlinks,
-            citecolor=black,
-            filecolor=black,
-            linkcolor=black,
-            urlcolor=black,
-            pdftex}
+\usepackage{moreverb}
+\usepackage{amsthm}
+\usepackage{listings}
 
 
-\title{ Motion Graphs \\ Path Synthesis \\
-\small MSc in Informatics Engineering \\
-\small University of Minho - Portugal
-	 }
+\title{Precomputing Avatar Behaviour From Human Motion Data}
+
+\date{\today}
+
+\newtheorem{constr}{CONSTRAINT}
 
 \author{
-Nuno A. Silva\\ \small pg17455@alunos.uminho.pt \\
+Nuno A. Silva\\ \small pg17455@alunos.uminho.pt \\ Universidade do Minho
 \and
-Luis Miranda\\ \small pgXXXXX@alunos.uminho.pt \\
+Luis Miranda\\ \small pg14439@alunos.uminho.pt \\ Universidade do Minho
 }
 
 \begin{document}
@@ -70,23 +43,55 @@ The OGRE engine will be used as the basis for the entire project. A scene with a
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Implementation details}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
+The implementation can be divided in three  different parts, step one, where the user define the path, step two, were the animations are chosen and step three, where the animation that follows the user path is showed. Each one is a fundamental operation off the whole system. The whole process works as one can see on the following workflow on picture ~\ref{fig:work}.
+\\
+\begin{figure}[hbtp]
+\begin{center}
+\includegraphics[scale=0.8]{Images/fluxograma.png} 
+\caption{\textit{Workflow}}
+\label{fig:work}
+\end{center}
+\end{figure}
+
+User path definition (step 1 in picture ~\ref{fig:work}) is the step where the user defines a simple path which the avatar would ideally travel.   The user defined path is a sequence of vectors between points chosen by the user in the application screen (picture ~\ref{fig:uapath}). The user, using the mouse, can define a set of points in a plane. This points will be used in the construction of a line that passes trough them. Ideally this line should be a spline (picture ~\ref{fig:uapath}), but in the current state, our work only supports a straight path between each pair of points. 
+\\
+\begin{figure}[hbtp]
+\begin{center}
+\includegraphics[scale=0.8]{Images/UserPathVSAvatarPath.png} 
+\caption{\textit{User defined path(bold line) and avatar path(dot line)}}
+\label{fig:uapath}
+\end{center}
+\end{figure}
+
+In picture ~\ref{fig:uapath}, one can see as example, in bold, the user defined path, and in dot line a path that an avatar could in effectively follow.  
+\\
+
+After the path is defined, the user can press the space key (step 3 in picture ~\ref{fig:work}), so the next phase, where the animations are evaluated for error, starts.
+\\
+
+To make an animation that runs along the path defined by the user, a set of animations from motion capture data must be chosen.  However, not all animations are suitable to fit in a path defined by the user. This arises the question, how to choose animations that fit the path defined by the user? The answer to this question is to associate to each animation, an error. This error will depend of the path followed by the animation, and it will be great if the animation deviates largely from the user defined path and smaller, if the animation, follows a path that is similar to the one defined by the user. 
+\\
+\begin{figure}[hbtp]
+\begin{center}
+\includegraphics[scale=0.8]{Images/error.png} 
+\caption{\textit{Error definition}}
+\label{fig:error}
+\end{center}
+\end{figure}
+
+First a segment from the path P defined by the user is selected. For this segment, before the error can be calculated, the software must load and display the animations, so the path travelled by each one of them can be measured. This operation is done following Ogre\textquoteright s method for displaying animations. To start, all the animations available for the current avatar are loaded. Then, for each one of this animation, we start by running it (P\textquoteright on figure ~\ref{fig:error}). After the animation reaches the end, we can start to calculate the error (steps 8, 9 and 9 in figure ~\ref{fig:error}). The error can be defined as the distance between the arclength of the point where the animation ends, in the animation path (P\textquoteright) and the point at the same arclength in the user defined path (P).  
+\\
+
+We start by projecting the arclength of P\textquoteright in P, so we can discover the point in P that corresponds to the point with the same arclength of the endpoint in P\textquoteright. From this, the arclength is smaller than the path P or greater than the path P.  If the arclength is smaller, one can simple calculate the point recurring to the parametric equation of a line in 3D space.  If the arclength is greater than the length of P , the error is calculated using the end point of P. 
+\\
+
+We then choose the animation with a smaller error, which is the one that will follow a path similar to the one defined by the user. 
+\\
+
+After this, the process is repeated for all animations in each segment of the user defined path. 
 
 
 
-
-
-
-
-
-The error function:
-\[
-g(w,e) = \sum_{i=1}^{n}\left \| P'(s(e_{i}))-P(s(e_{i})) \right \|^{2}
-\]
-w is the frame
-e is the error
-P is the defined path
-P' is the generated path
-s is the arc-length distance
 
 
 
