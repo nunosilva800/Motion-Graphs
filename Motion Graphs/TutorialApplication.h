@@ -19,7 +19,7 @@ This source file is part of the
 
 #include "stdafx.h"
 #include "BaseApplication.h"
-#include "MotionPath.h"
+
 #include "DynamicLines.h"
 #include <OgreSimpleSpline.h>
 #include <deque>
@@ -42,17 +42,15 @@ protected:
     virtual void createViewports(void);
 
     virtual void createFrameListener(void);
-    virtual bool nextLocation(void);
     virtual bool frameRenderingQueued(const Ogre::FrameEvent &evt);
 
     // needed for user input
     virtual bool mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id);
     virtual bool keyPressed( const OIS::KeyEvent &arg );
-    //double TutorialApplication::errorFunc(double w, double e);
 
 private:
     Ogre::Plane * mPlane;
-    MotionPath * mPath;
+	std::vector<Ogre::Vector3> * mPath;
 
     Ogre::SimpleSpline *spline;
     DynamicLines *lines;
@@ -62,8 +60,6 @@ private:
 
 	Ogre::Real arcLenghtLinesPath; // the arc lenght of the user defined path
 	int animationStep;	//how many animations we have done so far 
-
-    int MODEL; // the model identifier
 
     Ogre::Real mDistance; // The distance the object has left to travel
     Ogre::Vector3 mDirection; // The direction the object is moving
@@ -84,7 +80,7 @@ private:
 	// the animation we will use <animation, error>
 	std::pair<Ogre::AnimationState*, Ogre::Real> choosenAnimation;	
 
-	// the set if animations for the entire path
+	// the set of animations that wil be used for the entire path
 	std::vector< Ogre::AnimationState* > * animationPath;
 
     //
@@ -92,7 +88,7 @@ private:
     //
     int state;
 	int anim_state;
-    std::deque<Ogre::Vector3> framePositionCollection;
+    std::deque<Ogre::Vector3> framePositionCollection;	// positions of the root bone of the model at each frame
 
 
 	Ogre::Vector3 s;

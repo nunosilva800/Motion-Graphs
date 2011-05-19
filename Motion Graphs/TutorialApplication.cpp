@@ -53,23 +53,9 @@ void TutorialApplication::createViewports(void) {
 
 void TutorialApplication::createScene(void) {
 
-    // TODO: disable frustum culling
-    //Ogre::Frustum * noCulling = mCamera->getCullingFrustum()->;
-    //noCulling->setFOVy(Ogre::Radian(360));
-    //mCamera->setCullingFrustum(noCulling);
-
     mSceneMgr->setAmbientLight(Ogre::ColourValue(1, 1, 1));
 
-	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));
-    //mEntity = mSceneMgr->createEntity("Jaiqua", "jaiqua.mesh");        
-    mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");
-    mNode->attachObject(mEntity);
-	
-    //mAnimationState = mEntity->getAnimationState("andarfrente");
-    //mAnimationState->setLoop(true);
-    //mAnimationState->setEnabled(true);
-
-    // this node if for the rest of the objects
+    // this node is for the rest of the objects
     Ogre::SceneNode *node;
 
     // create the light
@@ -84,7 +70,6 @@ void TutorialApplication::createScene(void) {
 
     // Make it look towards the model
     node->yaw(Ogre::Degree(-45));
-    //node->pitch(Ogre::Degree(-90));
 
     // Create the pitch node
     node = node->createChildSceneNode("PitchNode1");
@@ -101,21 +86,14 @@ void TutorialApplication::createScene(void) {
     entGround->setMaterialName("Examples/Rockwall");
     entGround->setCastShadows(false);
 
-    //manually define a path
-    mPath = new MotionPath();
 
-    // Set initial point
-    mPath->add(Ogre::Vector3(0, 1, 0));
-    //    mPath->add(Ogre::Vector3(0, 1, 0));
-    //    mPath->add(Ogre::Vector3(5, 1, 0));
-    //    mPath->add(Ogre::Vector3(5, 1, 5));
-    //    mPath->add(Ogre::Vector3(0, 1, 5));
-    //    mPath->add(Ogre::Vector3(0, 1, 0));
+	/*** Path Synthesis Stuff starts here ***/
+	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));      
+    mEntity = mSceneMgr->createEntity("Jaiqua", "BodyMesh.mesh");
+    mNode->attachObject(mEntity);
 
-    // add the path to the walklist
-    for (int i = 0; i < mPath->size(); i++) {
-        mWalkList.push_back(mPath->get(i));
-    }
+    // Set initial point on the user defined path
+	mWalkList.push_back(Ogre::Vector3(0, 1, 0));
 
     // define a spline
     // http://www.ogre3d.org/docs/api/html/classOgre_1_1SimpleSpline.html#_details
@@ -123,8 +101,8 @@ void TutorialApplication::createScene(void) {
 
     //create a line to show the desired path
     lines = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
-    for (int i = 0; i < mPath->size(); i++) {
-        lines->addPoint(mPath->get(i));
+    for (int i = 0; i < mWalkList.size(); i++) {
+        lines->addPoint(mWalkList[i]);
     }
     lines->update();
     Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
@@ -176,10 +154,10 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
 
             printf("Mouse pressed\n");
             printf("X: %f  Y: %f  Z: %f\n", point.x, point.y++, point.z);
-            mPath->add(point);
+
             //spline->addPoint(point);
             mWalkList.push_back(point);
-            // splines->update();
+            //splines->update();
             lines->addPoint(point);
             lines->update();
         }
@@ -201,26 +179,25 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		state = SET_USER_PATH ;
 
 		mWalkList.clear();
-		mPath->clear();
 		lines->clear();
 		lines_path_done->clear();
 
-		mPath->add(Ogre::Vector3(0, 1, 0));
+		mWalkList.push_back(Ogre::Vector3(0, 1, 0));
 
 	}
     if (arg.key == OIS::KC_SPACE) // toggle visibility of advanced frame stats
     {
-
         state = CALC_AVATAR_PATH;
 		anim_state = AVATAR_ANIM_IN_CALC;
 		
-        // TODO: Aceder aqui ao grafo 
-        
-		// Get all animations
+        // TODO: Aceder aqui ao grafo    
+		// Get all animations and get an iterator
         AnimSSet = mEntity->getAllAnimationStates();
 		assIte = new Ogre::AnimationStateIterator(AnimSSet->getAnimationStateIterator());
 
-		// skip some animations 
+		// skip some animations just to speed up 
+		assIte->moveNext();
+		assIte->moveNext();
 		assIte->moveNext();
 		assIte->moveNext();
 		assIte->moveNext();
@@ -243,27 +220,29 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		assIte->moveNext();
 
 		mAnimationState = assIte->getNext();
-		//totalLenght = mAnimationState->getLength();
         mAnimationState->setEnabled(true);
 		mAnimationState->setLoop(false);
+
         // Clean old frame positions
         framePositionCollection.clear();
 
-		// update how many animations we have done
+		// update what animation we are current doing
 		animationStep = 1;
 		currentAnimationError = 0xffffffff;
+
 		// get the arc lenght of the user defined path
 		arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
 
 		// initialize the animation that will be for the user defined path
-		choosenAnimation.first = assIte->getNext();
+		choosenAnimation.first = assIte->current()->second;
 		choosenAnimation.second = 0xFFFFFFFF;
 		
+		// print on screen what we are doing
 		Ogre::String str = "Current animation is ";
 		str.append(mAnimationState->getAnimationName());
 		mInfoLabel->setCaption(str);
 
-		// initialize the animationPath
+		// initialize the animation Path, 
 		animationPath = new std::vector< Ogre::AnimationState* >;
     }
 
@@ -273,65 +252,12 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 
 void TutorialApplication::createFrameListener(void) {
     BaseApplication::createFrameListener();
-
-    // Set default values for variables
-    //    mWalkSpeed = 100.0f;
-    //    mDirection = Ogre::Vector3::ZERO;
-    //
-    //    // Set idle animation
-    //    switch (MODEL) {
-    //        case 0:
-    //            mAnimationState = mEntity->getAnimationState("Sneak");
-    //            break;
-    //    }
-    //
-    //    mAnimationState->setLoop(true);
-    //    mAnimationState->setEnabled(true);
-
-}
-
-//double TutorialApplication::errorFunc(double w, double e)
-//{
-//	// P			-> defined path (our mPath)
-//	// P'			-> actual path
-//	// w[i]			-> ith frame
-//	// s(w[i])		-> arc-length of frame i
-//	// P(s(w[i]))	-> point in P at arc-length of frame i
-//	// error function is the sum of the squared distances over all frames :
-//
-//	//    for(int i = 0; i < nframes; i++)
-//	//    {
-//	//            error += pow ( P'(s(e[i])) - P(s(e[i])) , 2 );
-//	//
-//	//    }
-//
-//
-//
-//
-//
-//}
-
-// checks if the walklist has points to go to
-
-bool TutorialApplication::nextLocation(void) {
-    if (mWalkList.empty()) return false;
-
-    mDestination = mWalkList.front(); // this gets the front of the deque
-    mWalkList.pop_front(); // this removes the front of the deque
-
-    mDirection = mDestination - mNode->getPosition();
-    mDistance = mDirection.normalise();
-
-    return true;
 }
 
 bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
-    if (state == CALC_AVATAR_PATH) 
+    if (state == CALC_AVATAR_PATH)	// Run all animations of the model
 	{
-
-        // Run all animations of the model
-           
         // If the current time lenght <= total time lenght 
         if(mAnimationState->getTimePosition() < mAnimationState->getLength() )
 		{
@@ -343,6 +269,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			mEntity->_updateAnimation();
         }
 
+		// if the current animation has ended
         if(mAnimationState->getTimePosition() == mAnimationState->getLength() )
 		{ 
 			currentArcLenght = 0;
@@ -355,9 +282,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				Ogre::Vector3 v2 = framePositionCollection.front();
 
 				currentArcLenght += (v2 - v1).length();
-				
 			}
-			//printf("Total ArcLenght of %s is %f\n", mAnimationState->getAnimationName(), currentArcLenght);
 			char str[50] = "";
 			sprintf(str, "Arc Lenght: %.3f", currentArcLenght);
 			mInfoLabel2->setCaption(str);
@@ -366,7 +291,6 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			// search for the vector in user defined path with the arcLenght 
 			if(mWalkList.size() > animationStep)
 			{
-			
 				int vectIt = animationStep;
 				
 				s = mWalkList[vectIt-1];
@@ -392,25 +316,23 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				m = s + dp*v;
 
 				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
-				
 			}
 
 			char str2[50];
 			sprintf(str2, "Anim Error: %f", currentAnimationError);
 			mInfoLabel3->setCaption(str2);
         }
-		
-		if(anim_state == AVATAR_ANIM_DONE)
+
+		//this animation has ended, must check if there is another one to test
+		if(anim_state == AVATAR_ANIM_DONE)	
 		{
 			if (assIte->hasMoreElements())
 			{
-				
-				// check is this animation's arc lenght is a good match
+				// check is this animation's arc lenght is a better match
 				if(currentAnimationError <= choosenAnimation.second)
 				{
-					choosenAnimation.first = mEntity->getAnimationState(assIte->current()->second->getAnimationName());
+					choosenAnimation.first = assIte->current()->second;
 					choosenAnimation.second = currentAnimationError;
-					
 				}
 
 				// get next animation 
@@ -420,23 +342,16 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				mAnimationState->setEnabled(true);
 				mAnimationState->setLoop(false);
 				framePositionCollection.clear();
-				//totalLenght = mAnimationState->getLength();
 				anim_state = AVATAR_ANIM_IN_CALC;
 				
 				Ogre::String stra = "Current animation is ";
 				stra.append(mAnimationState->getAnimationName());
 				mInfoLabel->setCaption(stra);
-
-				
 			}
 			else
 			{
-				
 				// update how many animations we have done
 				animationStep++;
-				// get the arc lenght of the user defined path for the next couple of points
-				//if(mWalkList.size() < animationStep)
-				//	arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
 
 				// commit the best animation to the set
 				animationPath->push_back( choosenAnimation.first );
@@ -463,7 +378,7 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 					mAnimationState->setEnabled(true);
 					mAnimationState->setTimePosition(0);
 
-					Ogre::String strb = "Showing calculated motion path: ";
+					Ogre::String strb = "Showing animation: ";
 					strb.append(mAnimationState->getAnimationName());
 					mInfoLabel->setCaption(strb);
 					mInfoLabel2->hide();
@@ -474,15 +389,9 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 		}
 	}
 
-	// if user defined path has all been "animated"
-	//if()
-	//{
-	//	state = SHOW_AVATAR_PATH;
-	//}
-
+	// finally render the synthesized motion path
 	if (state == SHOW_AVATAR_PATH) 
 	{
-
 		// if this animation reaches the end, start the next one
 		if(mAnimationState->getTimePosition() == mAnimationState->getLength())
 		{
@@ -494,17 +403,17 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			{
 				// update avatar's position
 				mEntity->_updateAnimation();
-				mNode->setPosition(mEntity->getSkeleton()->getRootBone()->getPosition() );
+				Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
+				mNode->setPosition(v.x, 0, v.z);
 
-				// set the next one
+				// prepare the next animation to show
 				mAnimationState = animationPath->back();
 				animationPath->pop_back();
 				mAnimationState->setEnabled(true);
 				mAnimationState->setLoop(false);
 				mAnimationState->setTimePosition(0);
-				
 
-				Ogre::String strc = "Showing calculated motion path: ";
+				Ogre::String strc = "Showing animation: ";
 				strc.append(mAnimationState->getAnimationName());
 				mInfoLabel->setCaption(strc);
 			}
@@ -514,14 +423,9 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			}
 		}
 
-
-
 		mAnimationState->addTime(evt.timeSinceLastFrame);
 	}
 
-
-
-	//mAnimationState->addTime(evt.timeSinceLastFrame);
     return BaseApplication::frameRenderingQueued(evt);
 }
 
