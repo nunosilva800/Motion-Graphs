@@ -29,7 +29,7 @@ class dMap{
 		int getNSteps(){return this->nSteps;}
 		
 
-		int getMinimuns(int level, std::vector<int> m1, std::vector<int> m2);
+		int getMinimuns(int level, std::vector<int> *m1, std::vector<int> *m2);
 
 	private:
 		Ninja motions;

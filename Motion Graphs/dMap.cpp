@@ -52,7 +52,7 @@ void dMap::duplicateSpace(){
 	
 }
 
-int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
+int dMap::getMinimuns(int level, std::vector<int> *m1, std::vector<int> *m2){
 	int nPts = 0;
 	int np1,np2;
 
@@ -61,21 +61,26 @@ int dMap::getMinimuns(int level, std::vector<int> m1, std::vector<int> m2){
 	np1 = this->motions->at(*this->relations[level][0])->getNPointClouds();
 	np2 = this->motions->at(*this->relations[level][1])->getNPointClouds();
 
+	std::string s1 = *this->relations[level][0];
+	std::string s2 = *this->relations[level][1];
+
+
 	for(int i = 0 ; i < np1 ; i++){
 		for(int j = 0 ; j < np2 ; j++){
+			if(level == 3) 
+				float aux = this->differenceMap[level][i][j];
+			;
 			if(this->differenceMap[level][i][j] < this->threshold){
 				if((np1 - i) >= this->nSteps && (np2 - j) >= this->nSteps ){
 					bool ok = true;
-					for(int l = i ; l < i + this->nSteps && ok ; l++){
-						for(int c = j ; c < j + this->nSteps && ok; c++){
-							if(this->differenceMap[level][l][c] >= this->threshold) 
-								ok = false;
-						}
+					for(int l = 0 ; l < this->nSteps && ok ; l++){
+						if(this->differenceMap[level][i+l][j+l] >= this->threshold) 
+							ok = false;
 					}
 
 					if(ok){
-						m1.push_back(i);
-						m2.push_back(j+this->nSteps);
+						m1->push_back(i);
+						m2->push_back(j+this->nSteps);
 						nPts++;
 					}
 				}
@@ -108,8 +113,8 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 	if(this->nRelations > (int)((float)this->maxRelations * 0.75)) this->duplicateSpace();
 
 	this->relations[this->nRelations] = (std::string**)malloc(sizeof(std::string*) * 2);
-	this->relations[this->nRelations][0] = &m1->getLabel();
-	this->relations[this->nRelations][1] = &m2->getLabel();
+	this->relations[this->nRelations][0] = m1->getLabelPtr();
+	this->relations[this->nRelations][1] = m2->getLabelPtr();
 
 	map = (float**)malloc(sizeof(float*) * m1->getNPointClouds());
 
@@ -120,13 +125,25 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 	std::map<Ogre::Real,PointCloud*>::iterator it1, it2;
 	int i,j;
 
+	FILE *fp;
+
+	std::stringstream ss;
+	ss << m1->getLabel() << "_" << m2->getLabel();
+	std::string label = ss.str();
+
+	if((fp = fopen(label.data(),"w")) == NULL)
+		printf("coisas\n");
+
 	it1 = m1->map_clouds->begin();
 	it2 = m2->map_clouds->begin();
 	for(it1 = m1->map_clouds->begin(), i = 0 ; it1 != m1->map_clouds->end() ; i++, it1++){
 		for(it2 = m2->map_clouds->begin(), j = 0 ; it2 != m2->map_clouds->end() ; j++, it2++){
 			map[i][j] = this->compareFrames(it1->second, it2->second);
+			fprintf(fp,"%.5f ",map[i][j]);
 		}
+		fprintf(fp,"\n");
 	}
+	fclose(fp);
 
 	this->differenceMap[this->nRelations] = map;
 

@@ -28,8 +28,8 @@ Graph::~Graph(){
  * Adiciona o novo nodo ao grafo
  */
 int Graph::addNode(gNode *node){
-	this->nodes.push_back(*node);
 	node->setID(this->nNodes);
+	this->nodes.push_back(*node);
 	this->nNodes++;
 	return node->getID();
 }
@@ -62,7 +62,7 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 	this->initIndexes(motions,nMotions);
 	
 	sNinja::iterator it;
-	int i;
+	int i,j;
 
 	for(i = 0, it = motions->begin() ; it != motions->end() ; it++,i++){
 		this->indexes[i][0] = this->addNode(new gNode());
@@ -82,23 +82,31 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 		std::vector<int> pts2;
 
 		int m1 = -1, m2 = -1;
-		for(i = 0, it = motions->begin() ; it != motions->end() && (m1 == -1 || m2 == -1) ; it++,i++){
-			if(it->second->getLabel().compare(*map.relations[i][0]) == 0) m1 = i;
-			if(it->second->getLabel().compare(*map.relations[i][1]) == 0) m2 = i;
+		for(j = 0, it = motions->begin() ; it != motions->end() && (m1 == -1 || m2 == -1) ; it++,j++){
+			if(it->second->getLabel().compare(*map.relations[i][0]) == 0) m1 = j;
+			if(it->second->getLabel().compare(*map.relations[i][1]) == 0) m2 = j;
 		}
 
-		int nTransitionPoints = map.getMinimuns(i,pts1,pts2);
+		std::string s1 = *map.relations[i][0];
+		std::string s2 = *map.relations[i][1];
 
-		for(int j = 0 ; j < nTransitionPoints ; j++){
+		int nTransitionPoints = map.getMinimuns(i,&pts1,&pts2);
+
+		for(j = 0 ; j < nTransitionPoints ; j++){
 			//Cria os nodos
-			if(this->indexes[m1][pts1[i]] == -1) 
-				this->indexes[m1][pts1[i]] = this->addNode(new gNode());
-			if(this->indexes[m2][pts2[i]] == -1)
-				this->indexes[m2][pts2[i]] = this->addNode(new gNode());
+			if(this->indexes[m1][pts1[j]] == -1){
+				gNode *aux = new gNode();
+				this->indexes[m1][pts1[j]] = this->addNode(new gNode());
+			}
+				
+			if(this->indexes[m2][pts2[j]] == -1){
+				this->indexes[m2][pts2[j]] = this->addNode(new gNode());
+			}
+				
 			
 			//Liga a transacção
-			this->createTransition(*map.relations[i][0], this->indexes[m1][pts1[i]], pts1[i],
-								   *map.relations[i][1], this->indexes[m2][pts2[i]], pts2[i], j, nCoincidents);
+			this->createTransition(*map.relations[i][0], this->indexes[m1][pts1[j]], pts1[j],
+								   *map.relations[i][1], this->indexes[m2][pts2[j]], pts2[j], j, nCoincidents);
 		}
 	}
 
@@ -107,7 +115,7 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 			int sep = 1;
 			if(this->indexes[i][j] != -1){
 				for(int jj = j+1 ; jj < it->second->getNPointClouds() ; jj++){
-					if(this->indexes[i][j] != -1){
+					if(this->indexes[i][jj] != -1){
 						//TODO criar ninja a partir de motions[i] da frame i a j
 						this->splitAnimation(it->first,sep,this->indexes[i][j],j,this->indexes[i][jj],jj);
 						sep++;
@@ -132,6 +140,7 @@ void Graph::splitAnimation(std::string name, int separation,
 	this->getNode(node1)->addEdge(new Edge(this->getNode(node2),label));
 
 	//TODO split animations
+	/*
 	Ogre::Animation *animation = this->entity->getSkeleton()->getAnimation(name);
 	
 	float length = animation->getLength();
@@ -148,8 +157,8 @@ void Graph::splitAnimation(std::string name, int separation,
 	//????
 	newAnimation->destroyAllTracks();
 	
-	int numBones = this->entity->getSkeleton()->getNumBones();
-	for(int i = 0 ; i < numBones ; i++){
+	//int numBones = this->entity->getSkeleton()->getNumBones();
+	for(int i = 0 ; i < animation->getNumNodeTracks() ; i++){
 		//TODO só isto?
 		newAnimation->createNodeTrack(i,animation->getNodeTrack(i)->getAssociatedNode());
 	
@@ -169,7 +178,7 @@ void Graph::splitAnimation(std::string name, int separation,
 		}
 		
 	}
-
+	*/
 }
 
 
