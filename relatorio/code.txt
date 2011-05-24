@@ -1,0 +1,344 @@
+bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseButtonID id) {
+    // left mouse button pressed
+    if (id == OIS::MB_Left) {
+
+        // get window height and width
+        Ogre::Real screenWidth = Ogre::Root::getSingleton().getAutoCreatedWindow()->getWidth();
+        Ogre::Real screenHeight = Ogre::Root::getSingleton().getAutoCreatedWindow()->getHeight();
+
+        // convert to 0-1 offset
+        Ogre::Real offsetX = arg.state.X.abs / screenWidth;
+        Ogre::Real offsetY = arg.state.Y.abs / screenHeight;
+
+        // set up the ray
+        Ogre::Ray mouseRay = mCamera->getCameraToViewportRay(offsetX, offsetY);
+
+        // check if the ray intersects our plane
+        // intersects() will return whether it intersects or not (the bool value) and
+        // what distance (the Real value) along the ray the intersection is
+        std::pair<bool, Ogre::Real> result = mouseRay.intersects(*mPlane);
+
+        if (result.first) {
+            // if the ray intersect the plane, we have a distance value
+            // telling us how far from the ray origin the intersection occurred.
+            // the last thing we need is the point of the intersection.
+            // Ray provides us getPoint() function which returns a point
+            // along the ray, supplying it with a distance value.
+
+            // get the point where the intersection is
+            Ogre::Vector3 point = mouseRay.getPoint(result.second);
+
+            printf("Mouse pressed\n");
+            printf("X: %f  Y: %f  Z: %f\n", point.x, point.y++, point.z);
+
+            //spline->addPoint(point);
+            mWalkList.push_back(point);
+            //splines->update();
+            lines->addPoint(point);
+            lines->update();
+        }
+    }
+    if (mTrayMgr->injectMouseDown(arg, id)) return true;
+    mCameraMan->injectMouseDown(arg, id);
+
+    return true;
+}
+
+bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
+
+	// reset program
+	if (arg.key == OIS::KC_RETURN)
+	{
+		state = SET_USER_PATH ;
+
+		mWalkList.clear();
+		lines->clear();
+		lines_path_done->clear();
+
+		mWalkList.push_back(Ogre::Vector3(0, 1, 0));
+
+	}
+	// redo calculated motion path
+	if (arg.key == OIS::KC_R) 
+	{
+		state = SHOW_AVATAR_PATH ;
+
+		//animationPath_copy->clear();
+		//for(int i=0; i<animationPath->size(); i++)
+		//	animationPath_copy[i] = animationPath[i];
+
+		//// update avatar's position 
+		//mNode->setPosition(0, 0, 0);
+
+		//// prepare the next animation to show
+		//mAnimationState = animationPath_copy->back();
+		//animationPath_copy->pop_back();
+		//mAnimationState->setEnabled(true);
+		//mAnimationState->setLoop(false);
+		//mAnimationState->setTimePosition(0);
+
+		//Ogre::String strc = "Showing animation: ";
+		//strc.append(mAnimationState->getAnimationName());
+		//mInfoLabel->setCaption(strc);
+
+	}
+    if (arg.key == OIS::KC_SPACE) // toggle visibility of advanced frame stats
+    {
+        state = CALC_AVATAR_PATH;
+		anim_state = AVATAR_ANIM_IN_CALC;
+		
+        // TODO: Aceder aqui ao grafo    
+		// Get all animations and get an iterator
+        AnimSSet = mEntity->getAllAnimationStates();
+		assIte = new Ogre::AnimationStateIterator(AnimSSet->getAnimationStateIterator());
+
+		mAnimationState = assIte->getNext();
+        mAnimationState->setEnabled(true);
+		mAnimationState->setLoop(false);
+
+        // Clean old frame positions
+        framePositionCollection.clear();
+
+		// update what animation we are current doing
+		animationStep = 1;
+		currentAnimationError = 0xffffffff;
+
+		// get the arc lenght of the user defined path
+		arcLenghtLinesPath = (mWalkList[animationStep] - mWalkList[animationStep-1]).length();
+
+		// initialize the animation that will be for the user defined path
+		choosenAnimation.first = assIte->current()->second;
+		choosenAnimation.second = 0xFFFFFFFF;
+		
+		// print on screen what we are doing
+		Ogre::String str = "Current animation is ";
+		str.append(mAnimationState->getAnimationName());
+		mInfoLabel->setCaption(str);
+
+		// initialize the animation Path, 
+		animationPath = new std::vector< Ogre::AnimationState* >;
+    }
+
+    return BaseApplication::keyPressed(arg);
+
+}
+
+bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
+
+    if (state == CALC_AVATAR_PATH)	// Run all animations of the model
+	{
+        // If the current time lenght <= total time lenght of the animation
+        if(mAnimationState->getTimePosition() < mAnimationState->getLength() )
+		{
+            // Get current position
+            Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+			// project onto floor
+			currentPos.y = 0;
+            framePositionCollection.push_back(currentPos);
+            mAnimationState->addTime(evt.timeSinceLastFrame);
+			//force animation update
+			mEntity->_updateAnimation();
+        }
+
+		// if the current animation has ended
+        if(mAnimationState->getTimePosition() == mAnimationState->getLength() )
+		{ 
+			currentArcLenght = 0;
+			// Calculate the total arclenght
+			while(framePositionCollection.size() > 1)
+			{
+				// get two points, but only discard the 1st
+				Ogre::Vector3 v1 = framePositionCollection.front();
+				framePositionCollection.pop_front();
+				Ogre::Vector3 v2 = framePositionCollection.front();
+
+				currentArcLenght += (v2 - v1).length();
+			}
+			char str[50] = "";
+			sprintf(str, "Arc Lenght: %.3f", currentArcLenght);
+			mInfoLabel2->setCaption(str);
+			anim_state = AVATAR_ANIM_DONE;
+
+			// search for the vector in user defined path with the arcLenght 
+			// if the number of points in the defined path is lower than the number os animations done
+			if(mWalkList.size() > animationStep)
+			{
+				int vectIt = animationStep;
+				
+				s = mWalkList[vectIt-1];
+				e = mWalkList[vectIt];
+				Ogre::Vector3 v = e-s;
+				Ogre::Real normaV = v.length();
+				while(currentArcLenght > normaV )
+				{
+					vectIt++;
+					if( vectIt == mWalkList.size() ) break;
+					s = mWalkList[vectIt-1];
+					e = mWalkList[vectIt];
+					v = e-s;
+					normaV += v.length();
+				}
+
+				// calculate any differences
+				Ogre::Real dx, dp;
+				dx = normaV - currentArcLenght;
+				dp = v.length() - dx;
+
+				v.normalise();
+				m = s + dp*v;
+
+				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
+			}
+
+			char str2[50];
+			sprintf(str2, "Anim Error: %f", currentAnimationError);
+			mInfoLabel3->setCaption(str2);
+        }
+
+		//this animation has ended, must check if there is another one to test
+		if(anim_state == AVATAR_ANIM_DONE)	
+		{
+			if (assIte->hasMoreElements())
+			{
+				// check is this animation's arc lenght is a better match
+				if(currentAnimationError <= choosenAnimation.second)
+				{
+					choosenAnimation.first = assIte->current()->second;
+					choosenAnimation.second = currentAnimationError;
+				}
+
+				// get next animation 
+				mAnimationState->setEnabled(false);
+				mAnimationState->destroyBlendMask();
+				mAnimationState = assIte->getNext();
+				mAnimationState->setEnabled(true);
+				mAnimationState->setLoop(false);
+				framePositionCollection.clear();
+				anim_state = AVATAR_ANIM_IN_CALC;
+				
+				Ogre::String stra = "Current animation is ";
+				stra.append(mAnimationState->getAnimationName());
+				mInfoLabel->setCaption(stra);
+			}
+			else
+			{
+				// update how many animations we have done
+				animationStep++;
+
+				// commit the best animation to the set
+				animationPath->push_back( choosenAnimation.first );
+
+				// move avatar to the end of animation so that we can set the node to that position
+				mAnimationState = choosenAnimation.first;
+				mAnimationState->setEnabled(true);
+				mAnimationState->setLoop(false);
+				mAnimationState->addTime(mAnimationState->getLength());
+				mEntity->_updateAnimation();
+				
+				Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
+				mNode->setPosition(v.x, 0, v.z);
+				
+				// if user defined path has all been "animated" we must prepare to show the motion
+				if( mWalkList.size() == animationStep )
+				{
+					//state = SHOW_AVATAR_PATH;
+					mAnimationState->setEnabled(false);
+					mAnimationState->destroyBlendMask();
+
+					// set the animation state to the 1st
+					mAnimationState = animationPath->back();
+					animationPath->pop_back();
+					mAnimationState->setLoop(false);
+					mAnimationState->setEnabled(true);
+					mAnimationState->setTimePosition(0);
+
+
+					Ogre::String strb = "Showing animation: ";
+					strb.append(mAnimationState->getAnimationName());
+					mInfoLabel->setCaption(strb);
+					mInfoLabel2->hide();
+					mInfoLabel3->hide();
+					return true;
+				}
+			}
+		}
+	}
+
+	// finally render the synthesized motion path
+	if (state == SHOW_AVATAR_PATH) 
+	{
+		// if this animation reaches the end, start the next one
+		if(mAnimationState->getTimePosition() == mAnimationState->getLength())
+		{
+			mAnimationState->setEnabled(false);
+			mAnimationState->destroyBlendMask();
+			
+			// we still have animations in to run
+			if(animationPath->size())
+			{
+				// update avatar's position to the position where the animation ended
+				mEntity->_updateAnimation();
+				Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
+				mNode->setPosition(v.x, 0, v.z);
+
+				// prepare the next animation to show
+				mAnimationState = animationPath->back();
+				animationPath->pop_back();
+				mAnimationState->setEnabled(true);
+				mAnimationState->setLoop(false);
+				mAnimationState->setTimePosition(0);
+
+				Ogre::String strc = "Showing animation: ";
+				strc.append(mAnimationState->getAnimationName());
+				mInfoLabel->setCaption(strc);
+			}
+			else
+			{
+				mInfoLabel->setCaption("Calculated Motion Path has ended, r to replay.");
+			}
+		}
+
+		mAnimationState->addTime(evt.timeSinceLastFrame);
+	}
+
+    return BaseApplication::frameRenderingQueued(evt);
+}
+
+void TutorialApplication::createScene(void)
+{
+	/*...*/
+	/*** Path Synthesis specific stuff starts here ***/
+
+	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));      
+    mEntity = mSceneMgr->createEntity("Blake", "BodyMesh.mesh");
+    mNode->attachObject(mEntity);
+
+    // Set initial point on the user defined path
+	mWalkList.push_back(Ogre::Vector3(0, 1, 0));
+
+    // define a spline
+    // http://www.ogre3d.org/docs/api/html/classOgre_1_1SimpleSpline.html#_details
+    //spline = new Ogre::SimpleSpline();
+
+    //create a line to show the desired path
+    lines = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+    for (int i = 0; i < mWalkList.size(); i++) {
+        lines->addPoint(mWalkList[i]);
+    }
+    lines->update();
+    Ogre::SceneNode *linesNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines");
+    linesNode->attachObject(lines);
+
+    // create a line to show the path done by the char
+    lines_path_done = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
+
+    //TODO change color of the line
+    /*lines_path_done->getMaterial()->setAmbient(Ogre::ColourValue(1,0,0));
+    lines_path_done->getMaterial()->setDiffuse(Ogre::ColourValue(1,0,0));
+    lines_path_done->getMaterial()->setCullingMode(Ogre::CullingMode::CULL_NONE);*/
+
+    lines_path_done->update();
+    Ogre::SceneNode *linesNode_path_done = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines_path_done");
+    linesNode_path_done->attachObject(lines_path_done);
+
+}
