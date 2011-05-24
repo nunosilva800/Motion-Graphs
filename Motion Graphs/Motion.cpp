@@ -23,3 +23,8 @@ PointCloud *Motion::getPointCloud(int i){
 
 	return &this->clouds[i];
 }
+
+void Motion::addPointCloud(PointCloud *p){
+	this->clouds.push_back(*p);
+
+}

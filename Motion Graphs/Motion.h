@@ -19,6 +19,7 @@ class Motion{
 		void setPointClouds(std::vector<PointCloud> pClouds, int nClouds){this->clouds = pClouds;this->nClouds = nClouds;}
 		void setNClouds(int nClouds){this->nClouds = nClouds;}
 		void setLabel(std::string label){this->label = label;}
+		void addPointCloud(PointCloud *p);
 
 
 	//private:

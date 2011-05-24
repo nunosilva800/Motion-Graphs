@@ -68,9 +68,6 @@ int dMap::getMinimuns(int level, std::vector<int> *m1, std::vector<int> *m2){
 
 	for(int i = 0 ; i < np1 ; i++){
 		for(int j = 0 ; j < np2 ; j++){
-			if(level == 3) 
-				float aux = this->differenceMap[level][i][j];
-			;
 			if(this->differenceMap[level][i][j] < this->threshold){
 				if((np1 - i) >= this->nSteps && (np2 - j) >= this->nSteps ){
 					bool ok = true;
@@ -129,7 +126,7 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 	FILE *fp;
 
 	std::stringstream ss;
-	ss << m1->getLabel() << "_" << m2->getLabel();
+	ss << m1->getLabel() << "_" << m2->getLabel() << ".txt";
 	std::string label = ss.str();
 
 	if((fp = fopen(label.data(),"w")) == NULL)
@@ -137,8 +134,8 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 
 	it1 = m1->map_clouds->begin();
 	it2 = m2->map_clouds->begin();
-	for(it1 = m1->map_clouds->begin(), i = 0 ; it1 != m1->map_clouds->end() ; i++, it1++){
-		for(it2 = m2->map_clouds->begin(), j = 0 ; it2 != m2->map_clouds->end() ; j++, it2++){
+	for(it1 = m1->map_clouds->begin(), i = 0 ; it1 != m1->map_clouds->end() ; it1++, i++){
+		for(it2 = m2->map_clouds->begin(), j = 0 ; it2 != m2->map_clouds->end(); it2++, j++){
 			map[i][j] = this->compareFrames(it1->second, it2->second);
 			fprintf(fp,"%.5f ",map[i][j]);
 		}
@@ -155,15 +152,45 @@ float dMap::compareFrames(PointCloud *s1, PointCloud *s2){
 	float x0 = 0,z0 = 0,teta = 0;
 	double error = 0;
 
+	/*FILE *fp2;
+	
+	std::stringstream ss2;
+	ss2 << "m1" << "_" << "m2" << ".txt";
+	std::string label2 = ss2.str();
+
+	if((fp2 = fopen(label2.data(),"w")) == NULL)
+		printf("coisas\n");
+
+	for(int k = 0 ; k < NPOINTS ; k++){
+		fprintf(fp2,"(%.2f,%.2f,%.2f)\t - (%.2f,%.2f,%.2f)\n",s1->getPoint(k)->getX(),s1->getPoint(k)->getY(),s1->getPoint(k)->getZ(),
+									 s2->getPoint(k)->getX(),s2->getPoint(k)->getY(),s2->getPoint(k)->getZ());
+	}*/
+
 	this->calculateTransformation(s1,s2,&teta,&x0,&z0);
 
-	s2->translate(x0,0,z0);
-	s2->rotate(1,teta);
-	
+	PointCloud *s3 = s2->clone();
+
+	s3->rotate(1,teta);
+	s3->translate(x0,0,z0);
+
+	//fprintf(fp2,"\nteta: %.4f\nx0: %.4f\nz0: %.4f\n\n",teta,x0,z0);
+
+	float aux;
+
 	for(int i = 0 ; i < NPOINTS ; i++){
-		error += s1->getPoint(i)->getWeight() * pow((double)(this->difference(s1->getPoint(i),s2->getPoint(i))),2);
+		aux = s1->getPoint(i)->getWeight() * 
+					pow((double)(this->difference(s1->getPoint(i),s3->getPoint(i))),2);
+		//fprintf(fp2,"(%.2f,%.2f,%.2f)\t - (%.2f,%.2f,%.2f)\t - %.4f\n",s1->getPoint(i)->getX(),s1->getPoint(i)->getY(),s1->getPoint(i)->getZ(),
+		//							 s3->getPoint(i)->getX(),s3->getPoint(i)->getY(),s3->getPoint(i)->getZ(),aux);
+		error += aux;//s1->getPoint(i)->getWeight() * pow((double)(this->difference(s1->getPoint(i),s2->getPoint(i))),2);
 	}
 
+
+	/*fprintf(fp2,"erro: %.5f ",error);
+
+	fclose(fp2);*/
+
+	free(s3);
 	return (float)error;
 }
 
@@ -215,8 +242,8 @@ float dMap::calculateTeta1(PointCloud *s1, PointCloud *s2){
 
 	for(int i = 0 ; i < NPOINTS ; i++){
 		result += s1->getPoint(i)->getWeight() * (
-													(s1->getPoint(i)->getX() * s2->getPoint(i)->getX()) +
-													(s1->getPoint(i)->getZ() * s2->getPoint(i)->getZ())
+													(s1->getPoint(i)->getX() * s2->getPoint(i)->getZ()) -
+													(s2->getPoint(i)->getX() * s1->getPoint(i)->getZ())
 												 );
 	}
 
@@ -232,8 +259,8 @@ float dMap::calculateTeta3(PointCloud *s1, PointCloud *s2){
 
 	for(int i = 0 ; i < NPOINTS ; i++){
 		result += s1->getPoint(i)->getWeight() * (
-													(s1->getPoint(i)->getX() * s2->getPoint(i)->getZ()) -
-													(s2->getPoint(i)->getX() * s1->getPoint(i)->getZ())
+													(s1->getPoint(i)->getX() * s2->getPoint(i)->getX()) +
+													(s1->getPoint(i)->getZ() * s2->getPoint(i)->getZ())
 												 );
 	}
 

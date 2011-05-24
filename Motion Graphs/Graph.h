@@ -7,6 +7,7 @@
 #include "stdafx.h"
 #include <OgreEntity.h>
 #include <OgreAnimation.h>
+#include <exception>
 
 class MotionGraph;
 
@@ -24,6 +25,8 @@ class Graph{
 
 		int getNNodes(){return this->nNodes;}
 		gNode* getNode(int node);
+
+		void printGraph(char *path);
 
 	private:
 		Ogre::Entity *entity;

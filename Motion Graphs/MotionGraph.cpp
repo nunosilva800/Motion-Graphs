@@ -37,11 +37,12 @@ void MotionGraph::constructGraph(float threshold, int nCoincidents){
 
 	this->graph->constructGraph(this->motions,this->animCount,threshold,nCoincidents);
 
+	this->graph->printGraph("graph.dot");
 	Ogre::StringVector strv = this->entity->getAnimableValueNames();
 
 	for(unsigned int i = 0 ; i < strv.size() ; i++){
 		this->animCount++;
-		this->animNames->push_back(strv[0]);
+		this->animNames->push_back(strv[i]);
 	}
 
 }
@@ -56,9 +57,11 @@ void MotionGraph::insertPointCloud(std::string animation,Ogre::Real indexFrame,P
 
 	//if (m->map_clouds->find(indexFrame) == m->map_clouds->end()){
 		m->map_clouds->insert(pair<Ogre::Real,PointCloud*>(indexFrame,new PointCloud()));
+		
 	//}
 
 	m->nClouds++;
 	m->map_clouds->at(indexFrame) = pt;
+	m->addPointCloud(pt);
 	m->setLabel(animation);
 }

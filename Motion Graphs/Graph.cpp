@@ -90,13 +90,14 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 
 		std::string s1 = *map.relations[i][0];
 		std::string s2 = *map.relations[i][1];
+		pts1.clear();
+		pts2.clear();
 
 		int nTransitionPoints = map.getMinimuns(i,&pts1,&pts2);
 
 		for(j = 0 ; j < nTransitionPoints ; j++){
 			//Cria os nodos
 			if(this->indexes[m1][pts1[j]] == -1){
-				gNode *aux = new gNode();
 				this->indexes[m1][pts1[j]] = this->addNode(new gNode());
 			}
 				
@@ -235,4 +236,65 @@ void Graph::initIndexes(Ninja motions, int nMotions){
 			this->indexes[i][j] = -1;
 		}
 	}
+}
+
+void Graph::printGraph(char *path){
+	FILE *fp = NULL;
+	Edge* eAux;
+	gNode* gAux;
+	if((fp = fopen(path,"w")) == NULL) return ;
+
+	fprintf(fp,"digraph G {\n");
+	fprintf(fp,"subgraph cluster0{\n");
+	fprintf(fp,"style=filled;\n");
+	fprintf(fp,"color= red;\n");
+	fprintf(fp,"node [ fillcolor =white color = black  style=filled  shape = hexagon] ; \n");
+
+	for(int i = 0 ; i < this->nNodes ; i++){
+		gAux = this->getNode(i);
+		if(gAux){
+			for(int j = 0 ; j < gAux->getNEdges() ; j++){
+				eAux = gAux->getEdge(j);
+				if(eAux){
+					int id = gAux->getID();
+					int idDest = 0;
+					gNode *gDest = eAux->getDestionation();
+					std::string anim = eAux->getLabel();
+					const char *name = NULL;
+					
+					if(id < 0){
+						id = -10101010101;
+					}
+					if(!gDest){
+						idDest = -10101010101;
+					}
+					else{
+						try{
+						idDest = gDest->getID();
+						}
+						catch (exception &e){
+							idDest = -1;
+						}
+						if(idDest < 0){
+							idDest = -10101010101;
+						}
+					}
+					if(anim.size() > 0){
+						name = anim.data();
+					}
+					else name = "NONAMENONAMENONAMENONAME";
+					fprintf(fp,"\t\"%d\" -> \"%d\" [label = \"%s\"];\n",id,idDest,name);
+																		//gAux->getID(),
+																		//(eAux->getDestionation()) ? eAux->getDestionation()->getID() : -10101010101,
+																		//eAux->getLabel().data());
+																		//this->nodes[i].getID(),
+																		//this->nodes[i].getEdge(j)->getDestionation()->getID(),
+																		//this->nodes[i].getEdge(j)->getLabel().data());
+				}
+			}
+		}
+	}
+	fprintf(fp,"}\n");
+
+	fclose(fp);
 }

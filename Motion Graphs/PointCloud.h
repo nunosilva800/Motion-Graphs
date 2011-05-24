@@ -23,6 +23,7 @@ class PointCloud{
 			points.push_back(Point3D(xx,yy,zz));
 		}
 
+		PointCloud *clone();
 	private:
 		std::vector<Point3D> points;
 		//int nPoints; // = NPOINTS?

@@ -7,8 +7,8 @@ void TutorialApplication:: loadAnimationNames(){
 
 	_assets->animNames = new std::vector<std::string>();
 
-	_assets->animNames->push_back("idle");_assets->animCount++;
-	_assets->animNames->push_back("frenteetras");_assets->animCount++;
+	//_assets->animNames->push_back("idle");_assets->animCount++;
+	//_assets->animNames->push_back("frenteetras");_assets->animCount++;
 	//_assets->animNames->push_back("acenar");_assets->animCount++;
 	//_assets->animNames->push_back("andaracenar");_assets->animCount++;
 	//_assets->animNames->push_back("andarptras");_assets->animCount++;
@@ -24,7 +24,7 @@ void TutorialApplication:: loadAnimationNames(){
 	//_assets->animNames->push_back("direitaacenar");_assets->animCount++;
 	//_assets->animNames->push_back("apanharchao");_assets->animCount++;
 	//_assets->animNames->push_back("andarfrente2");_assets->animCount++;
-	//_assets->animNames->push_back("viraresqrapido");_assets->animCount++;
+	_assets->animNames->push_back("viraresqrapido");_assets->animCount++;
 	//_assets->animNames->push_back("trasdirrapdirlento");_assets->animCount++;
 	//_assets->animNames->push_back("diagonal");_assets->animCount++;
 	//_assets->animNames->push_back("diagonal2");_assets->animCount++;
@@ -201,6 +201,7 @@ void BaseApplication::_frameRenderingQueued(const Ogre::FrameEvent& evt)
 	}
 	else {
 		//itera as animaçoes
+		
 		_assets->_currentAnimation++;
 		if 	(_assets->_currentAnimation == 	_assets->animNames->end()){
 			printf("All Done!!\n");

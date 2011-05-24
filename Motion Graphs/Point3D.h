@@ -1,6 +1,8 @@
 #ifndef _POINT
 #define _POINT
 #include "stdafx.h"
+#include "stdafx.h"
+
 class Point3D{
 	public:
 		Point3D();
