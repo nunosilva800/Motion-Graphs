@@ -298,3 +298,20 @@ void Graph::printGraph(char *path){
 
 	fclose(fp);
 }
+
+
+
+bool Graph::removeNode(int i)
+{
+	nodes.erase( nodes.begin() + i);
+	nNodes--;
+
+	return true;
+}
+
+bool Graph::changeNode(int i, gNode *node)
+{
+	nodes[i] = *node;
+
+	return true;
+}

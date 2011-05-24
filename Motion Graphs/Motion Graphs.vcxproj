@@ -99,6 +99,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Tarjan.cpp" />
     <ClCompile Include="TutorialApplication.cpp" />
     <ClCompile Include="_prepareAssets.cpp" />
   </ItemGroup>
@@ -115,6 +116,7 @@
     <ClInclude Include="Point3D.h" />
     <ClInclude Include="PointCloud.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="Tarjan.h" />
     <ClInclude Include="TutorialApplication.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

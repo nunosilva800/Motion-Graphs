@@ -47,3 +47,11 @@ Edge *gNode::getEdge(int e){
 
 	return edges;
 }*/
+
+bool gNode::removeEdge(int i)
+{
+	this->edges.erase( edges.begin() + i );
+	nEdges--;
+
+	return true;
+}

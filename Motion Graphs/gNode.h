@@ -19,6 +19,7 @@ class gNode{
 
 		void setID(int id){nodeID = id;}
 		int getID(){return nodeID;}
+		bool removeEdge(int i);
 		
 	private:
 		int nodeID;

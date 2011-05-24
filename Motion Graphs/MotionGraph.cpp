@@ -37,6 +37,8 @@ void MotionGraph::constructGraph(float threshold, int nCoincidents){
 
 	this->graph->constructGraph(this->motions,this->animCount,threshold,nCoincidents);
 
+	this->graph = this->prune();
+
 	this->graph->printGraph("graph.dot");
 	Ogre::StringVector strv = this->entity->getAnimableValueNames();
 
@@ -64,4 +66,16 @@ void MotionGraph::insertPointCloud(std::string animation,Ogre::Real indexFrame,P
 	m->map_clouds->at(indexFrame) = pt;
 	m->addPointCloud(pt);
 	m->setLabel(animation);
+}
+
+
+Graph *MotionGraph::prune(){
+	// Aplicar o algoritmo de Tarjan ao Grafo
+	Tarjan scc(this->graph);
+
+	Graph * subGraph;
+	scc.subGraph( subGraph );
+	return subGraph;
+
+
 }

@@ -22,9 +22,11 @@ class Graph{
 		int addNode(gNode *node);
 		//void addEdge(gNode);
 		gNode* existNode(gNode *node);
-
+		
 		int getNNodes(){return this->nNodes;}
 		gNode* getNode(int node);
+		bool changeNode(int i, gNode *node);
+		bool removeNode(int i);
 
 		void printGraph(char *path);
 

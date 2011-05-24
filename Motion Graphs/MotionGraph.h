@@ -1,9 +1,11 @@
 #ifndef _MOTIONGRAPH
 #define _MOTIONGRAPH
-#include "stdafx.h"
+
+#include "Tarjan.h"
 #include "stdafx.h"
 #include "Motion.h"
 #include "Graph.h"
+
 
 #include <OgreEntity.h>
 
@@ -36,7 +38,7 @@ class MotionGraph{
 		void insertPointCloud(std::string animation,Ogre::Real indexFrame,PointCloud* pt);
 
 		bool assetsPrepared(){return this->_prepare_assets_done;}
-
+		Graph *prune();
 
 	//private:
 		Graph *graph;

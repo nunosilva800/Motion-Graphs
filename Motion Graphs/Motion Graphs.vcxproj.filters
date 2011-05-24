@@ -63,6 +63,9 @@
     <ClCompile Include="Lines\DynamicLines.cpp">
       <Filter>Source Files\Lines</Filter>
     </ClCompile>
+    <ClCompile Include="Tarjan.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseApplication.h">
@@ -103,6 +106,9 @@
     </ClInclude>
     <ClInclude Include="Lines\DynamicLines.h">
       <Filter>Header Files\Lines</Filter>
+    </ClInclude>
+    <ClInclude Include="Tarjan.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
