@@ -88,6 +88,8 @@ private:
 
 	// the set of animations that wil be used for the entire path
 	std::vector< Ogre::AnimationState* > * animationPath;
+	// a copy
+	std::vector< Ogre::AnimationState* > * animationPath_copy;
 
     int state;
 	int anim_state;

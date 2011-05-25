@@ -282,7 +282,7 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	if (!(_assets->assetsPrepared())) _frameRenderingQueued(evt);
 	else{
 
-		_assets->constructGraph(1.0,30);
+		//_assets->constructGraph(1.0,30);
 		printf("done\n");
 	}
 
@@ -343,29 +343,6 @@ bool BaseApplication::keyPressed( const OIS::KeyEvent &arg )
         Ogre::MaterialManager::getSingleton().setDefaultAnisotropy(aniso);
         mDetailsPanel->setParamValue(9, newVal);
     }
-    else if (arg.key == OIS::KC_R)   // cycle polygon rendering mode
-    {
-        Ogre::String newVal;
-        Ogre::PolygonMode pm;
-
-        switch (mCamera->getPolygonMode())
-        {
-        case Ogre::PM_SOLID:
-            newVal = "Wireframe";
-            pm = Ogre::PM_WIREFRAME;
-            break;
-        case Ogre::PM_WIREFRAME:
-            newVal = "Points";
-            pm = Ogre::PM_POINTS;
-            break;
-        default:
-            newVal = "Solid";
-            pm = Ogre::PM_SOLID;
-        }
-
-        mCamera->setPolygonMode(pm);
-        mDetailsPanel->setParamValue(10, newVal);
-    }
     else if(arg.key == OIS::KC_F5)   // refresh all textures
     {
         Ogre::TextureManager::getSingleton().reloadAll();
@@ -391,6 +368,12 @@ bool BaseApplication::keyReleased( const OIS::KeyEvent &arg )
 
 bool BaseApplication::mouseMoved( const OIS::MouseEvent &arg )
 {
+	// set mouse position
+	//CEGUI::Point mousePos = CEGUI::MouseCursor::getSingleton().getPosition();
+	OIS::MouseState &mutableMouseState = const_cast<OIS::MouseState &>(mMouse->getMouseState());
+	mutableMouseState.X.abs = mCamera->getViewport()->getActualWidth() / 2;
+	mutableMouseState.Y.abs = mCamera->getViewport()->getActualHeight() / 2;
+
     if (mTrayMgr->injectMouseMove(arg)) return true;
     mCameraMan->injectMouseMove(arg);
     return true;

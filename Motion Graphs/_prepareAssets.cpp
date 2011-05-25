@@ -130,8 +130,8 @@ void TutorialApplication::createScene(void)
     Ogre::Entity* entGround = mSceneMgr->createEntity("GroundEntity", "ground");
     mSceneMgr->getRootSceneNode()->createChildSceneNode()->attachObject(entGround);
 
-    //entGround->setMaterialName("Examples/Rockwall");
-    //entGround->setCastShadows(false);
+    entGround->setMaterialName("Examples/Rockwall");
+    entGround->setCastShadows(false);
 
 
 
@@ -165,9 +165,9 @@ void TutorialApplication::createScene(void)
     lines_path_done->getMaterial()->setDiffuse(Ogre::ColourValue(1,0,0));
     lines_path_done->getMaterial()->setCullingMode(Ogre::CullingMode::CULL_NONE);*/
 
-    lines_path_done->update();
-    Ogre::SceneNode *linesNode_path_done = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines_path_done");
-    linesNode_path_done->attachObject(lines_path_done);
+    //lines_path_done->update();
+    //Ogre::SceneNode *linesNode_path_done = mSceneMgr->getRootSceneNode()->createChildSceneNode("lines_path_done");
+    //linesNode_path_done->attachObject(lines_path_done);
 
 }
 
