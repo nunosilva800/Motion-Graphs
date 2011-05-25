@@ -32,7 +32,7 @@ int gNode::addEdge(Edge *edge){
 }
 
 Edge *gNode::getEdge(int e){
-	if(e >= this->nEdges) return NULL;
+	if(e >= this->nEdges || e < 0) return NULL;
 
 	return &this->edges[e];
 }

@@ -26,7 +26,7 @@ Graph::~Graph(){
  */
 
 /**
- * Adiciona o novo nodo ao grafo
+ * Adiciona o novo nodo ao grafo e atribui-lhe um ID (incremental)
  */
 int Graph::addNode(gNode *node){
 	node->setID(this->nNodes);
@@ -51,9 +51,8 @@ gNode* Graph::existNode(gNode *node){
  * retorna o nodo na posicao pretendida ou nulo caso essa posicao nao exista
  */
 gNode *Graph::getNode(int node){
-	if(node >= this->nNodes) return NULL;
-
-	return &this->nodes[node];
+	if(node >= this->nNodes || node < 0) return NULL;
+	else return &this->nodes.at(node);
 }
 
 
@@ -65,62 +64,71 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 	sNinja::iterator it;
 	int i,j;
 
-	for(i = 0, it = motions->begin() ; it != motions->end() ; it++,i++){
-		this->indexes[i][0] = this->addNode(new gNode());
-		this->indexes[i][it->second->getNPointClouds()-1] = this->addNode(new gNode());
-		this->getNode(this->indexes[i][0])->addEdge(new Edge(
-			this->getNode(this->indexes[i][it->second->getNPointClouds()-1]), it->second->getLabel()));
-	}
+	for(it = motions->begin() , i = 0 ; it != motions->end() ; it++, i++){
+		gNode *n1 = new gNode();
+		
+		gNode *n2 = new gNode();
+		
+		Edge *e = new Edge(n2,it->first);
+		n1->addEdge(e);
 
+		int lastPos = it->second->getNPointClouds()-1;
+		this->indexes[i][0] = this->addNode(n1);
+		this->indexes[i][lastPos] = this->addNode(n2);
+	}
+	
 	dMap map = dMap(nMotions);
 	map.setNSteps(nCoincidents);
 	map.setThreshold(threshold);
 
 	map.constructMap(motions, nMotions);
 
-	for(int i = 0 ; i < map.getNRelations() ; i++){
-		std::vector<int> pts1;
-		std::vector<int> pts2;
+	for(i = 0 ; i < map.getNRelations() ; i++){
+		std::string m1 = *map.relations[i][0];
+		std::string m2 = *map.relations[i][1];
 
-		int m1 = -1, m2 = -1;
-		for(j = 0, it = motions->begin() ; it != motions->end() && (m1 == -1 || m2 == -1) ; it++,j++){
-			if(it->second->getLabel().compare(*map.relations[i][0]) == 0) m1 = j;
-			if(it->second->getLabel().compare(*map.relations[i][1]) == 0) m2 = j;
+		int index1 = -1, index2 = -1;
+
+		for(it = motions->begin(), j = 0 ; it != motions->end() ; it++, j++){
+			if(it->first.compare(m1) == 0) index1 = j;
+			if(it->first.compare(m2) == 0) index2 = j;
 		}
 
-		std::string s1 = *map.relations[i][0];
-		std::string s2 = *map.relations[i][1];
-		pts1.clear();
-		pts2.clear();
+		if(index1 != -1 && index2 != -1){
 
-		int nTransitionPoints = map.getMinimuns(i,&pts1,&pts2);
+			std::vector<int> min1,min2;
 
-		for(j = 0 ; j < nTransitionPoints ; j++){
-			//Cria os nodos
-			if(this->indexes[m1][pts1[j]] == -1){
-				this->indexes[m1][pts1[j]] = this->addNode(new gNode());
+			int nRelations = map.getMinimuns(i,&min1,&min2);
+
+			for(j = 0 ; j < nRelations ; j++){
+				if(this->indexes[i][min1[j]] < 0 || this->indexes[i][min1[j]] > this->nNodes){
+					gNode *n = new gNode();
+					this->indexes[i][min1[j]] = this->addNode(n);
+				}
+
+				if(this->indexes[i][min2[j]] < 0 || this->indexes[i][min2[j]] > this->nNodes){
+					gNode *n = new gNode();
+					this->indexes[i][min2[j]] = this->addNode(n);
+				}
+
+				this->createTransition(m1,this->indexes[i][min1[j]],min1[j],
+									   m2,this->indexes[i][min2[j]],min2[j],j,map.getNSteps());
 			}
-				
-			if(this->indexes[m2][pts2[j]] == -1){
-				this->indexes[m2][pts2[j]] = this->addNode(new gNode());
-			}
-				
-			
-			//Liga a transacção
-			this->createTransition(*map.relations[i][0], this->indexes[m1][pts1[j]], pts1[j],
-								   *map.relations[i][1], this->indexes[m2][pts2[j]], pts2[j], j, nCoincidents);
 		}
 	}
 
-	for(i = 0, it = motions->begin() ; it != motions->end() ; it++, i++){
-		for(int j = 0 ; j < it->second->getNPointClouds() ; j++){
-			int sep = 1;
+	int k;
+
+	for(it = motions->begin(), i = 0 ; it != motions->end() ; it++, i++){
+		int sep = 1;
+		for(j = 0 ; j < it->second->getNPointClouds() ; j++){
 			if(this->indexes[i][j] != -1){
-				for(int jj = j+1 ; jj < it->second->getNPointClouds() ; jj++){
-					if(this->indexes[i][jj] != -1){
-						//TODO criar ninja a partir de motions[i] da frame i a j
-						this->splitAnimation(it->first,sep,this->indexes[i][j],j,this->indexes[i][jj],jj);
+				bool done = false;
+				for(k = j + 1 ; k < it->second->getNPointClouds() && !done ; k++){
+					if(this->indexes[i][k] != -1){
+						this->splitAnimation(it->first,sep,this->indexes[i][j],j,this->indexes[i][k],k);
 						sep++;
+						done = true;
 					}
 				}
 			}
@@ -136,10 +144,11 @@ void Graph::splitAnimation(std::string name, int separation,
 							int node2, int frame2){
 	
 	std::stringstream ss;
-	ss << name << "_" << separation << "1";
+	ss << name << "_" << separation;
 	std::string label = ss.str();
 						   
-	this->getNode(node1)->addEdge(new Edge(this->getNode(node2),label));
+	Edge *e = new Edge(this->getNode(node2),label);
+	this->getNode(node1)->addEdge(e);
 
 	//TODO split animations
 	/*
@@ -203,7 +212,16 @@ void Graph::createTransition(std::string m1, int node1, int frame1,
 	ss << m2 << "_" << transiction;
 	std::string newName = ss.str();
 
-	this->getNode(node1)->addEdge(new Edge(this->getNode(node2),newName));
+	if(node1 > 0  && node2 > 0 && node2 < this->nNodes){
+		gNode *n1 = this->getNode(node1);
+		gNode *n2 = this->getNode(node2);
+
+		if(n1 && n2){
+			Edge *e = new Edge(n2,newName);
+			n1->addEdge(e);
+			this->changeNode(node1,n1);
+		}
+	}
 
 	//TODO criar animação com o newName entre frame1 de m1 e frame2 de m2
 	/*
@@ -224,7 +242,7 @@ void Graph::initIndexes(Ninja motions, int nMotions){
 		if(it->second->getNPointClouds() > maxFrames)
 			maxFrames = it->second->getNPointClouds();
 	}
-
+	maxFrames *= 1.5;
 	this->indexes = (int**)malloc(sizeof(int*) * nMotions);
 	
 	for(int i = 0 ; i < nMotions ; i++){
@@ -244,7 +262,7 @@ void Graph::printGraph(char *path){
 	gNode* gAux;
 	if((fp = fopen(path,"w")) == NULL) return ;
 
-	fprintf(fp,"digraph G {\n");
+ 	fprintf(fp,"digraph G {\n");
 	fprintf(fp,"subgraph cluster0{\n");
 	fprintf(fp,"style=filled;\n");
 	fprintf(fp,"color= red;\n");
@@ -263,10 +281,10 @@ void Graph::printGraph(char *path){
 					const char *name = NULL;
 					
 					if(id < 0){
-						id = -10101010101;
+						id = -101010101;
 					}
 					if(!gDest){
-						idDest = -10101010101;
+						idDest = -101010101;
 					}
 					else{
 						try{
@@ -276,7 +294,7 @@ void Graph::printGraph(char *path){
 							idDest = -1;
 						}
 						if(idDest < 0){
-							idDest = -10101010101;
+							idDest = -101010101;
 						}
 					}
 					if(anim.size() > 0){
