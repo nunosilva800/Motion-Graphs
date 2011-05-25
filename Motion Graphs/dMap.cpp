@@ -111,8 +111,10 @@ void dMap::compareMotions(Motion *m1, Motion *m2){
 	if(this->nRelations > (int)((float)this->maxRelations * 0.75)) this->duplicateSpace();
 
 	this->relations[this->nRelations] = (std::string**)malloc(sizeof(std::string*) * 2);
-	this->relations[this->nRelations][0] = m1->getLabelPtr();
+
+    this->relations[this->nRelations][0] = m1->getLabelPtr();
 	this->relations[this->nRelations][1] = m2->getLabelPtr();
+
 
 	map = (float**)malloc(sizeof(float*) * m1->getNPointClouds());
 

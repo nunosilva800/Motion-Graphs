@@ -5,8 +5,6 @@
 
 //using namespace std;
 
-
-
 class Graph;
 
 class dMap{
@@ -19,7 +17,7 @@ class dMap{
 		void constructMap(Ninja motions, int nMotion);
 		void compareMotions(Motion *m1, Motion *m2);
 		float compareFrames(PointCloud *s1, PointCloud *s2);
-		void calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, float *x0, float *z0);
+	    void calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, float *x0, float *z0);
 
 		void setNRelations(int r){this->nRelations = r;}
 		int getNRelations(){return this->nRelations;}

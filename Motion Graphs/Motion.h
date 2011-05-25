@@ -14,7 +14,9 @@ class Motion{
 		int getNPointClouds(){return this->nClouds;}
 		PointCloud *getPointCloud(int i);
 		std::string getLabel(){return this->label;}
-		std::string *getLabelPtr(){return &this->label;}
+
+        std::string *getLabelPtr(){return &this->label;}
+
 
 		void setPointClouds(std::vector<PointCloud> pClouds, int nClouds){this->clouds = pClouds;this->nClouds = nClouds;}
 		void setNClouds(int nClouds){this->nClouds = nClouds;}

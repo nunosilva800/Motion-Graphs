@@ -142,56 +142,52 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 void Graph::splitAnimation(std::string name, int separation,
 							int node1, int frame1,
 							int node2, int frame2){
-	
-	std::stringstream ss;
-	ss << name << "_" << separation;
-	std::string label = ss.str();
-						   
-	Edge *e = new Edge(this->getNode(node2),label);
-	this->getNode(node1)->addEdge(e);
 
-	//TODO split animations
-	/*
-	Ogre::Animation *animation = this->entity->getSkeleton()->getAnimation(name);
-	
-	float length = animation->getLength();
-	int totalFrames = animation->getNodeTrack(0)->getNumKeyFrames();
-	float tInit = ((float)((float)frame1 * length)) / ((float)totalFrames);
-	float tEnd = ((float)((float)frame2 * length)) / ((float)totalFrames);
-	float newDuration = tEnd - tInit;
-	
+        std::stringstream ss;
+        ss << name << "_" << separation << "1";
+        std::string label = ss.str();
 
-	this->entity->getSkeleton()->createAnimation(label,newDuration);
+        this->getNode(node1)->addEdge(new Edge(this->getNode(node2),label));
 
-	Ogre::Animation *newAnimation = animation->clone(label);//this->entity->getSkeleton()->getAnimation(label);
-	
-	//????
-	newAnimation->destroyAllTracks();
-	
-	//int numBones = this->entity->getSkeleton()->getNumBones();
-	for(int i = 0 ; i < animation->getNumNodeTracks() ; i++){
-		//TODO só isto?
-		newAnimation->createNodeTrack(i,animation->getNodeTrack(i)->getAssociatedNode());
-	
-		//copiar todas as keyframes do bone
-		for(int j = frame1, ac = 0 ; j < (frame1 + (frame2 - frame1)) ; j++, ac++){
-			newAnimation->getNodeTrack(i)->createNodeKeyFrame(
-				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getTime() - 
-				animation->getNodeTrack(i)->getNodeKeyFrame(frame1)->getTime());
+        //TODO split animations
 
-			newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setRotation(
-				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation());
-			newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setScale(
-				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getScale());
-			newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setTranslate(
-				animation->getNodeTrack(i)->getNodeKeyFrame(j)->getTranslate());
+        Ogre::Animation *animation = this->entity->getSkeleton()->getAnimation(name);
 
-		}
-		
-	}
-	*/
+        float length = animation->getLength();
+        int totalFrames = animation->getNodeTrack(0)->getNumKeyFrames();
+        float tInit = ((float)((float)frame1 * length)) / ((float)totalFrames);
+        float tEnd = ((float)((float)frame2 * length)) / ((float)totalFrames);
+        float newDuration = tEnd - tInit;
+
+
+        this->entity->getSkeleton()->createAnimation(label,newDuration);
+
+        Ogre::Animation *newAnimation = animation->clone(label);//this->entity->getSkeleton()->getAnimation(label);
+
+        //guess so
+        newAnimation->destroyAllTracks();
+
+        //int numBones = this->entity->getSkeleton()->getNumBones();
+        for(int i = 0 ; i < animation->getNumNodeTracks() ; i++){
+            //TODO só isto?
+            newAnimation->createNodeTrack(i,animation->getNodeTrack(i)->getAssociatedNode());
+
+            //copiar todas as keyframes do bone (será q esta certo isto? f1 + (f2 - f1) ?)
+            for(int j = frame1, ac = 0 ; j < (frame1 + (frame2 - frame1)) ; j++, ac++){
+                newAnimation->getNodeTrack(i)->createNodeKeyFrame(
+                    animation->getNodeTrack(i)->getNodeKeyFrame(j)->getTime() - 
+                    animation->getNodeTrack(i)->getNodeKeyFrame(frame1)->getTime());
+
+                newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setRotation(
+                    animation->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation());
+                newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setScale(
+                    animation->getNodeTrack(i)->getNodeKeyFrame(j)->getScale());
+                newAnimation->getNodeTrack(i)->getNodeKeyFrame(ac)->setTranslate(
+                    animation->getNodeTrack(i)->getNodeKeyFrame(j)->getTranslate());
+
+            }
+        }
 }
-
 
 
 /*
@@ -207,28 +203,71 @@ void Graph::createTransition(std::string m1, int node1, int frame1,
 							 std::string m2, int node2, int frame2,
 							 int transiction,int range){
 
-	std::stringstream ss;
-	ss << m1 << "_" ;
-	ss << m2 << "_" << transiction;
-	std::string newName = ss.str();
+        std::stringstream ss;
+        ss << m1 << "_" ;
+        ss << m2 << "_" << transiction;
+        std::string newName = ss.str();
 
-	if(node1 > 0  && node2 > 0 && node2 < this->nNodes){
-		gNode *n1 = this->getNode(node1);
-		gNode *n2 = this->getNode(node2);
+        this->getNode(node1)->addEdge(new Edge(this->getNode(node2),newName));
+        
+        //get animations to start blending
+        Ogre::Animation *animation1_ptr = this->entity->getSkeleton()->getAnimation(m1);
+        Ogre::Animation *animation2_ptr = this->entity->getSkeleton()->getAnimation(m2);
 
-		if(n1 && n2){
-			Edge *e = new Edge(n2,newName);
-			n1->addEdge(e);
-			this->changeNode(node1,n1);
-		}
-	}
+        //apply 2D transformation to second motion (is this the best way to do it?)
+        //no... but its the only one we got (NOT DONE)
+        Ogre::Animation * animation2_trans2d = animation2_ptr->clone(m2);
+        
+        for(int i=0;i < animation2_ptr->getNumNodeTracks(); i++)
+        {
+            for(int j = 0; j <= animation2_ptr->getNodeTrack(i)->getNumKeyFrames(); j++)
+            {
+                //get point clouds from original animation in the key frame
+                PointCloud * p1 = new PointCloud();
+                PointCloud * p2 = new PointCloud();
 
-	//TODO criar animação com o newName entre frame1 de m1 e frame2 de m2
-	/*
-		true,this->motionGraph->getMotion(
-		&motions->at(map.relations[i][0]),&motions->at(map.relations[i][0]),
-		pts1[j],pts2[j]-nCoincidents,pts1[j] + nCoincidents,pts2[j])));
-	*/
+                //TODO: animation2_ptr->getNodeTrack(i)->getnode
+            }
+
+        }
+
+        //create a new raw animation
+        Ogre::Animation *newAnimation = animation1_ptr->clone(newName); //use m1 or m2 i guess
+        newAnimation->destroyAllTracks();
+
+        //blend anim1 with anim2_trans2d and output the result to newAnimation
+        //should we be careful about the animation times ?
+
+        for(int i=0;i < animation1_ptr->getNumNodeTracks(); i++)
+        {
+            newAnimation->createNodeTrack(i,animation1_ptr->getNodeTrack(i)->getAssociatedNode());
+
+            //iterate through each keyframe in animation1 and blend it with animation2
+            for(int j = frame1, aux = 0; j <= frame2; j++, aux++)
+            {
+                //create new nodetrack in new animation
+                animation1_ptr->getNodeTrack(i)->createNodeKeyFrame(
+                    animation1_ptr->getNodeTrack(i)->getNodeKeyFrame(j)->getTime() - 
+                    animation1_ptr->getNodeTrack(i)->getNodeKeyFrame(frame1)->getTime());
+
+                //get rotations and slerp them to new animatons
+
+                Ogre::Quaternion quat1 = animation1_ptr->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation();
+                Ogre::Quaternion quat2 = animation2_ptr->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation();
+
+                newAnimation->getNodeTrack(i)->getNodeKeyFrame(aux)->setRotation(Ogre::Quaternion::Slerp(1,quat1,quat2)); //what is this first value? weight?
+
+
+            }
+        }
+
+
+        //TODO criar animação com o newName entre frame1 de m1 e frame2 de m2
+        /*
+        true,this->motionGraph->getMotion(
+        &motions->at(map.relations[i][0]),&motions->at(map.relations[i][0]),
+        pts1[j],pts2[j]-nCoincidents,pts1[j] + nCoincidents,pts2[j])));
+        */
 
 }
 
