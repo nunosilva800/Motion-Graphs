@@ -201,12 +201,12 @@ void dMap::calculateTransformation(PointCloud *s1, PointCloud *s2, float *teta, 
 	int i = 0;
 	float p1 = 0, p2 = 0, p3 = 0, p4 = 0;
 
-	this->calculateSums(s1,s2,&x1_,&x2_,&z1_,&z2_,&weights);
+	dMap::calculateSums(s1,s2,&x1_,&x2_,&z1_,&z2_,&weights);
     
-	p1 = this->calculateTeta1(s1,s2);
-	p2 = this->calculateTeta2(x1_,x2_,z1_,z2_,weights);
-	p3 = this->calculateTeta3(s1,s2);
-	p4 = this->calculateTeta4(x1_,x2_,z1_,z2_,weights);
+	p1 = dMap::calculateTeta1(s1,s2);
+	p2 = dMap::calculateTeta2(x1_,x2_,z1_,z2_,weights);
+	p3 = dMap::calculateTeta3(s1,s2);
+	p4 = dMap::calculateTeta4(x1_,x2_,z1_,z2_,weights);
 
 	*teta = atan( ((p1 - p2) / (p3 - p4)));
 	

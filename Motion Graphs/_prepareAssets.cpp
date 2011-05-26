@@ -23,8 +23,8 @@ void TutorialApplication:: loadAnimationNames(){
 	//_assets->animNames->push_back("muitotempofalar");_assets->animCount++;
 	//_assets->animNames->push_back("direitaacenar");_assets->animCount++;
 	//_assets->animNames->push_back("apanharchao");_assets->animCount++;
-	//_assets->animNames->push_back("andarfrente2");_assets->animCount++;
-	_assets->animNames->push_back("viraresqrapido");_assets->animCount++;
+	_assets->animNames->push_back("andarfrente2");_assets->animCount++;
+	//_assets->animNames->push_back("viraresqrapido");_assets->animCount++;
 	//_assets->animNames->push_back("trasdirrapdirlento");_assets->animCount++;
 	//_assets->animNames->push_back("diagonal");_assets->animCount++;
 	//_assets->animNames->push_back("diagonal2");_assets->animCount++;
@@ -44,6 +44,9 @@ void TutorialApplication:: loadAnimationNames(){
 	//_assets->animNames->push_back("volta4");_assets->animCount++;
 	////_assets->animNames->push_back("frentetras2");_assets->animCount++;
 	//_assets->animNames->push_back("esquerda2");_assets->animCount++;
+
+    //jaiqua stuff
+    //_assets->animNames->push_back("Sneak");_assets->animCount++;
 
 	_assets->_currentAnimation = _assets->animNames->begin();
 
@@ -79,9 +82,15 @@ void TutorialApplication::createScene(void)
 	mainlight->setCastShadows(true);
 
  	_assets = new MotionGraph();
+
  	_assets->meshName = "BodyMesh.mesh";
  	_assets->entityName = "BodyMesh";
 	_assets->sceneName = "blake.scene";
+
+ //   _assets->meshName = "jaiqua.mesh";
+ //	_assets->entityName = "jaiqua";
+	//_assets->sceneName = "jaiqua.scene";
+
 	//_assets->_currentAnimation = "camfrente180";
 
 	loadAnimationNames();
@@ -138,7 +147,7 @@ void TutorialApplication::createScene(void)
 	/*** Path Synthesis specific stuff starts here ***/
 
 	mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode("ModelNode", Ogre::Vector3(0,0,0));      
-    mEntity = mSceneMgr->createEntity("Blake", "BodyMesh.mesh");
+    mEntity = mSceneMgr->createEntity("blake", "BodyMesh.mesh");
     mNode->attachObject(mEntity);
 
     // Set initial point on the user defined path

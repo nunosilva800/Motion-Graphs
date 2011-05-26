@@ -282,7 +282,7 @@ bool BaseApplication::frameRenderingQueued(const Ogre::FrameEvent& evt)
 	if (!(_assets->assetsPrepared())) _frameRenderingQueued(evt);
 	else{
 
-		//_assets->constructGraph(1.0,30);
+		_assets->constructGraph(1.0,30);
 		printf("done\n");
 	}
 

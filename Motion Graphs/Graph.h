@@ -43,10 +43,9 @@ class Graph{
 							int node2, int frame2);
 		void createTransition(std::string m1, int node1, int frame1,
 							  std::string m2, int node2, int frame2,
-							  int transiction,int range);
+							  int transiction,int range, Ninja motions);
 
 		int **indexes;
-		
 		void initIndexes(Ninja motions, int nMotions);
 };
 

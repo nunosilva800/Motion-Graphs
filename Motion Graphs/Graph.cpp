@@ -2,19 +2,19 @@
 #include "Graph.h"
 
 /*
- * Contructors and Destructors
- */
+* Contructors and Destructors
+*/
 
 Graph::Graph(){
-	this->entity = NULL;
-	this->indexes = NULL;
-	this->nNodes = 0;
+    this->entity = NULL;
+    this->indexes = NULL;
+    this->nNodes = 0;
 }
 
 Graph::Graph(Ogre::Entity *e){
-	this->entity = e;
-	this->indexes = NULL;
-	this->nNodes = 0;
+    this->entity = e;
+    this->indexes = NULL;
+    this->nNodes = 0;
 }
 
 Graph::~Graph(){
@@ -22,131 +22,124 @@ Graph::~Graph(){
 }
 
 /*
- * Methods
- */
+* Methods
+*/
 
 /**
- * Adiciona o novo nodo ao grafo e atribui-lhe um ID (incremental)
- */
+* Adiciona o novo nodo ao grafo e atribui-lhe um ID (incremental)
+*/
 int Graph::addNode(gNode *node){
-	node->setID(this->nNodes);
-	this->nodes.push_back(node);
-	this->nNodes++;
-	return node->getID();
+    node->setID(this->nNodes);
+    this->nodes.push_back(node);
+    this->nNodes++;
+    return node->getID();
 }
 
 /**
- * Verifica se aquele nodo já está introduzido no grafo
- * @return NULL caso não exista ou retorna o próprio nodo
- *
-gNode* Graph::existNode(gNode *node){
-	for(int i = 0 ; i < this->nNodes ; i++){
-		if(node->getID() == this->nodes[i].getID()) return this->getNode(i);
-	}
-	
-	return NULL;
-}
+* Verifica se aquele nodo já está introduzido no grafo
+* @return NULL caso não exista ou retorna o próprio nodo
+*/
+//gNode* Graph::existNode(gNode *node){
+//	for(int i = 0 ; i < this->nNodes ; i++){
+//		if(node->getID() == this->nodes[i].getID()) return this->getNode(i);
+//	}
+//	
+//	return NULL;
+//}
 
 /**
- * retorna o nodo na posicao pretendida ou nulo caso essa posicao nao exista
- */
+* retorna o nodo na posicao pretendida ou nulo caso essa posicao nao exista
+*/
 gNode *Graph::getNode(int node){
-	if(node >= this->nNodes || node < 0) return NULL;
-	else return this->nodes.at(node);
+    if(node >= this->nNodes || node < 0) return NULL;
+    else return this->nodes.at(node);
 }
 
 
 void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCoincidents){
-	if(nMotions == 0) return;
+    if(nMotions == 0) return;
 
-	this->initIndexes(motions,nMotions);
-	
-	sNinja::iterator it;
-	int i,j;
+    this->initIndexes(motions,nMotions);
 
-	for(it = motions->begin() , i = 0 ; it != motions->end() ; it++, i++){
-		gNode *n1 = new gNode();
-		
-		gNode *n2 = new gNode();
-		
-		Edge *e = new Edge(n2,it->first);
-		n1->addEdge(e);
+    sNinja::iterator it;
+    int i,j;
 
-		int lastPos = it->second->getNPointClouds()-1;
-		this->indexes[i][0] = this->addNode(n1);
-		this->indexes[i][lastPos] = this->addNode(n2);
-	}
-	
-	dMap map = dMap(nMotions);
-	map.setNSteps(nCoincidents);
-	map.setThreshold(threshold);
+    for(it = motions->begin() , i = 0 ; it != motions->end() ; it++, i++){
+        gNode *n1 = new gNode();
 
-	map.constructMap(motions, nMotions);
+        gNode *n2 = new gNode();
 
-	for(i = 0 ; i < map.getNRelations() ; i++){
-		std::string m1 = *map.relations[i][0];
-		std::string m2 = *map.relations[i][1];
+        Edge *e = new Edge(n2,it->first);
+        n1->addEdge(e);
 
-		int index1 = -1, index2 = -1;
+        int lastPos = it->second->getNPointClouds()-1;
+        this->indexes[i][0] = this->addNode(n1);
+        this->indexes[i][lastPos] = this->addNode(n2);
+    }
 
-		for(it = motions->begin(), j = 0 ; it != motions->end() ; it++, j++){
-			if(it->first.compare(m1) == 0) index1 = j;
-			if(it->first.compare(m2) == 0) index2 = j;
-		}
+    dMap map = dMap(nMotions);
+    map.setNSteps(nCoincidents);
+    map.setThreshold(threshold);
 
-		if(index1 != -1 && index2 != -1){
+    map.constructMap(motions, nMotions);
 
-			std::vector<int> min1,min2;
+    for(i = 0 ; i < map.getNRelations() ; i++){
+        std::string m1 = *map.relations[i][0];
+        std::string m2 = *map.relations[i][1];
 
-			int nRelations = map.getMinimuns(i,&min1,&min2);
+        int index1 = -1, index2 = -1;
 
-			for(j = 0 ; j < nRelations ; j++){
-				if(this->indexes[i][min1[j]] < 0 || this->indexes[i][min1[j]] > this->nNodes){
-					gNode *n = new gNode();
-					this->indexes[i][min1[j]] = this->addNode(n);
-				}
+        for(it = motions->begin(), j = 0 ; it != motions->end() ; it++, j++){
+            if(it->first.compare(m1) == 0) index1 = j;
+            if(it->first.compare(m2) == 0) index2 = j;
+        }
 
-				if(this->indexes[i][min2[j]] < 0 || this->indexes[i][min2[j]] > this->nNodes){
-					gNode *n = new gNode();
-					this->indexes[i][min2[j]] = this->addNode(n);
-				}
+        if(index1 != -1 && index2 != -1){
 
-				this->createTransition(m1,this->indexes[i][min1[j]],min1[j],
-									   m2,this->indexes[i][min2[j]],min2[j],j,map.getNSteps());
-			}
-		}
-	}
+            std::vector<int> min1,min2;
 
-	int k;
-	FILE *f;
-	if((f = fopen("indexes.txt","w")) == NULL) return;
-	
-	for(it = motions->begin(), i = 0 ; it != motions->end() ; it++, i++){
-		int sep = 1;
-		for(j = 0 ; j < it->second->getNPointClouds() ; j++){
-			fprintf(f,"%d, ",this->indexes[i][j]);
-			if(this->indexes[i][j] != -1){
-				bool done = false;
-				for(k = j + 1 ; k < it->second->getNPointClouds() && !done ; k++){
-					if(this->indexes[i][k] != -1){
-						this->splitAnimation(it->first,sep,this->indexes[i][j],j,this->indexes[i][k],k);
-						sep++;
-						done = true;
-					}
-				}
-			}
-		}
-		fprintf(f,"\n");
-	}
-	fclose(f);
+            int nRelations = map.getMinimuns(i,&min1,&min2);
+
+            for(j = 0 ; j < nRelations ; j++){
+                if(this->indexes[i][min1[j]] < 0 || this->indexes[i][min1[j]] > this->nNodes){
+                    gNode *n = new gNode();
+                    this->indexes[i][min1[j]] = this->addNode(n);
+                }
+
+                if(this->indexes[i][min2[j]] < 0 || this->indexes[i][min2[j]] > this->nNodes){
+                    gNode *n = new gNode();
+                    this->indexes[i][min2[j]] = this->addNode(n);
+                }
+
+                this->createTransition(m1,this->indexes[i][min1[j]],min1[j],
+                    m2,this->indexes[i][min2[j]],min2[j],j,map.getNSteps(),motions);
+            }
+        }
+    }
+
+    int k;
+
+    for(it = motions->begin(), i = 0 ; it != motions->end() ; it++, i++){
+        int sep = 1;
+        for(j = 0 ; j < it->second->getNPointClouds() ; j++){
+            if(this->indexes[i][j] != -1){
+                bool done = false;
+                for(k = j + 1 ; k < it->second->getNPointClouds() && !done ; k++){
+                    if(this->indexes[i][k] != -1){
+                        this->splitAnimation(it->first,sep,this->indexes[i][j],j,this->indexes[i][k],k);
+                        sep++;
+                        done = true;
+                    }
+                }
+            }
+        }
+    }
 }
 
 
-
-
 void Graph::splitAnimation(std::string name, int separation,
-							int node1, int frame1,
-							int node2, int frame2){
+    int node1, int frame1,
+    int node2, int frame2){
 
         std::stringstream ss;
         ss << name << "_" << separation << "1";
@@ -177,8 +170,8 @@ void Graph::splitAnimation(std::string name, int separation,
             //TODO só isto?
             newAnimation->createNodeTrack(i,animation->getNodeTrack(i)->getAssociatedNode());
 
-            //copiar todas as keyframes do bone (será q esta certo isto? f1 + (f2 - f1) ?)
-            for(int j = frame1, ac = 0 ; j < (frame1 + (frame2 - frame1)) ; j++, ac++){
+            //copiar todas as keyframes do bone
+            for(int j = frame1, ac = 0 ; j < frame2 ; j++, ac++){
                 newAnimation->getNodeTrack(i)->createNodeKeyFrame(
                     animation->getNodeTrack(i)->getNodeKeyFrame(j)->getTime() - 
                     animation->getNodeTrack(i)->getNodeKeyFrame(frame1)->getTime());
@@ -196,17 +189,17 @@ void Graph::splitAnimation(std::string name, int separation,
 
 
 /*
-		e1					   e3		e4
- 1-------------->2			1----->5------->2
-					---->		    \ e7
-								     \
- 3-------------->4			3-------->6---->4
-		e2						e5		e6
+e1					   e3		e4
+1-------------->2			1----->5------->2
+---->		    \ e7
+\
+3-------------->4			3-------->6---->4
+e2						e5		e6
 */
 
 void Graph::createTransition(std::string m1, int node1, int frame1,
-							 std::string m2, int node2, int frame2,
-							 int transiction,int range){
+    std::string m2, int node2, int frame2,
+    int transiction,int range, Ninja motions){
 
         std::stringstream ss;
         ss << m1 << "_" ;
@@ -214,7 +207,7 @@ void Graph::createTransition(std::string m1, int node1, int frame1,
         std::string newName = ss.str();
 
         this->getNode(node1)->addEdge(new Edge(this->getNode(node2),newName));
-        
+
         //get animations to start blending
         Ogre::Animation *animation1_ptr = this->entity->getSkeleton()->getAnimation(m1);
         Ogre::Animation *animation2_ptr = this->entity->getSkeleton()->getAnimation(m2);
@@ -222,14 +215,25 @@ void Graph::createTransition(std::string m1, int node1, int frame1,
         //apply 2D transformation to second motion (is this the best way to do it?)
         //no... but its the only one we got (NOT DONE)
         Ogre::Animation * animation2_trans2d = animation2_ptr->clone(m2);
-        
-        for(int i=0;i < animation2_ptr->getNumNodeTracks(); i++)
+
+        int nodeTrackNum = animation2_ptr->getNumNodeTracks();
+        for(int i=0; i < nodeTrackNum; i++)
         {
-            for(int j = 0; j <= animation2_ptr->getNodeTrack(i)->getNumKeyFrames(); j++)
+            int frameNum = animation2_ptr->getNodeTrack(i)->getNumKeyFrames();
+            for(int j = 0; j < frameNum; j++)
             {
                 //get point clouds from original animation in the key frame
-                PointCloud * p1 = new PointCloud();
-                PointCloud * p2 = new PointCloud();
+                PointCloud * p1 = motions->at(m1)->getPointCloud(frame1 + j );
+                PointCloud * p2 = motions->at(m2)->getPointCloud(frame2 - frameNum + j);
+
+                float teta,x0,z0;
+                dMap::calculateTransformation(p1,p2,&teta,&x0,&z0);
+
+                Ogre::Vector3 vec3 = animation2_trans2d->getNodeTrack(i)->getNodeKeyFrame(j)->getTranslate();
+
+                //set rotations and translations
+                animation2_trans2d->getNodeTrack(i)->getNodeKeyFrame(j)->setTranslate(Ogre::Vector3((float)x0 +vec3.x, vec3.y,(float) vec3.z + z0));
+                animation2_trans2d->getNodeTrack(i)->getNodeKeyFrame(j)->setRotation(Ogre::Quaternion(teta,0,1,0));
 
                 //TODO: animation2_ptr->getNodeTrack(i)->getnode
             }
@@ -260,11 +264,12 @@ void Graph::createTransition(std::string m1, int node1, int frame1,
                 Ogre::Quaternion quat2 = animation2_trans2d->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation();
 
                 float alpha = 2 * powf(((i+1)/(frame2-frame1)),3) - 3* powf(((i+1)/(frame2-frame1)),2) + 1;
-                newAnimation->getNodeTrack(i)->getNodeKeyFrame(aux)->setRotation(Ogre::Quaternion::Slerp(alpha,quat1,quat2)); //what is this first value? weight? alpha?
+                Ogre::Quaternion quat = Ogre::Quaternion::Slerp(alpha,quat1,quat2);
+                newAnimation->getNodeTrack(i)->getNodeKeyFrame(aux)->setRotation(quat); //what is this first value? weight? alpha?
 
                 //get root position and interpolate it linearly
-                float ix,iy,iz; // where is root ?!?! need to find it...
-                int root = 0;
+                float ix,iy,iz; // where is root bone?!?! need to find it...
+                int root = 0; //supposing its index is 0
 
                 Ogre::Vector3 vec1 = animation1_ptr->getNodeTrack(root)->createNodeKeyFrame(j)->getTranslate();
                 Ogre::Vector3 vec2 = animation2_trans2d->getNodeTrack(root)->createNodeKeyFrame(j)->getTranslate();
@@ -277,125 +282,106 @@ void Graph::createTransition(std::string m1, int node1, int frame1,
 
             }
         }
-
-
-        //TODO criar animação com o newName entre frame1 de m1 e frame2 de m2
-        /*
-        true,this->motionGraph->getMotion(
-        &motions->at(map.relations[i][0]),&motions->at(map.relations[i][0]),
-        pts1[j],pts2[j]-nCoincidents,pts1[j] + nCoincidents,pts2[j])));
-        */
-
 }
 
 
 void Graph::initIndexes(Ninja motions, int nMotions){
-	int maxFrames = -1;
+    int maxFrames = -1;
 
-	sNinja::iterator it;
+    sNinja::iterator it;
 
-	for(it = motions->begin() ; it != motions->end() ; it++){
-		if(it->second->getNPointClouds() > maxFrames)
-			maxFrames = it->second->getNPointClouds();
-	}
-	maxFrames *= 1.5;
-	this->indexes = (int**)malloc(sizeof(int*) * nMotions);
-	
-	for(int i = 0 ; i < nMotions ; i++){
-		this->indexes[i] = (int*)malloc(sizeof(int) * maxFrames);
-	}
+    for(it = motions->begin() ; it != motions->end() ; it++){
+        if(it->second->getNPointClouds() > maxFrames)
+            maxFrames = it->second->getNPointClouds();
+    }
+    maxFrames *= 1.5;
+    this->indexes = (int**)malloc(sizeof(int*) * nMotions);
 
-	for(int i = 0 ; i < nMotions ; i++){
-		for(int j = 0 ; j < maxFrames ; j++){
-			this->indexes[i][j] = -1;
-		}
-	}
+    for(int i = 0 ; i < nMotions ; i++){
+        this->indexes[i] = (int*)malloc(sizeof(int) * maxFrames);
+    }
+
+    for(int i = 0 ; i < nMotions ; i++){
+        for(int j = 0 ; j < maxFrames ; j++){
+            this->indexes[i][j] = -1;
+        }
+    }
 }
 
 void Graph::printGraph(char *path){
-	FILE *fp = NULL;
-	FILE *fp2 = NULL;
-	Edge* eAux;
-	gNode* gAux;
-	if((fp = fopen(path,"w")) == NULL) return ;
-	if((fp2 = fopen("cenas.txt","w")) == NULL) return ;
+    FILE *fp = NULL;
+    Edge* eAux;
+    gNode* gAux;
+    if((fp = fopen(path,"w")) == NULL) return ;
 
- 	fprintf(fp,"digraph G {\n");
-	fprintf(fp,"subgraph cluster0{\n");
-	fprintf(fp,"style=filled;\n");
-	fprintf(fp,"color= red;\n");
-	fprintf(fp,"node [ fillcolor =white color = black  style=filled  shape = hexagon] ; \n");
-	int ac = 0;
-	for(int i = 0 ; i < this->nNodes ; i++){
-		ac += this->getNode(i)->getNEdges();
-	}
+    fprintf(fp,"digraph G {\n");
+    fprintf(fp,"subgraph cluster0{\n");
+    fprintf(fp,"style=filled;\n");
+    fprintf(fp,"color= red;\n");
+    fprintf(fp,"node [ fillcolor =white color = black  style=filled  shape = hexagon] ; \n");
 
-	fprintf(fp2,"%d\n%d\n",this->nNodes,ac);
+    for(int i = 0 ; i < this->nNodes ; i++){
+        gAux = this->getNode(i);
+        if(gAux){
+            for(int j = 0 ; j < gAux->getNEdges() ; j++){
+                eAux = gAux->getEdge(j);
+                if(eAux){
+                    int id = gAux->getID();
+                    int idDest = 0;
+                    gNode *gDest = eAux->getDestionation();
+                    std::string anim = eAux->getLabel();
+                    const char *name = NULL;
 
-	for(int i = 0 ; i < this->nNodes ; i++){
-		gAux = this->getNode(i);
-		if(gAux){
-			for(int j = 0 ; j < gAux->getNEdges() ; j++){
-				eAux = gAux->getEdge(j);
-				if(eAux){
-					int id = gAux->getID();
-					int idDest = 0;
-					gNode *gDest = eAux->getDestionation();
-					std::string anim = eAux->getLabel();
-					const char *name = NULL;
-					
-					if(id < 0){
-						id = -101010101;
-					}
-					if(!gDest){
-						idDest = -101010101;
-					}
-					else{
-						try{
-						idDest = gDest->getID();
-						}
-						catch (exception &e){
-							idDest = -1;
-						}
-						if(idDest < 0){
-							idDest = -101010101;
-						}
-					}
-					if(anim.size() > 0){
-						name = anim.data();
-					}
-					else name = "NONAMENONAMENONAMENONAME";
-					fprintf(fp2,"%d %d\n",gAux->getID(),gDest->getID());
-					fprintf(fp,"\t\"%d\" -> \"%d\" [label = \"%s\"];\n",id,idDest,name);
-																		//gAux->getID(),
-																		//(eAux->getDestionation()) ? eAux->getDestionation()->getID() : -10101010101,
-																		//eAux->getLabel().data());
-																		//this->nodes[i].getID(),
-																		//this->nodes[i].getEdge(j)->getDestionation()->getID(),
-																		//this->nodes[i].getEdge(j)->getLabel().data());
-				}
-			}
-		}
-	}
-	fprintf(fp,"}\n");
+                    if(id < 0){
+                        id = -101010101;
+                    }
+                    if(!gDest){
+                        idDest = -101010101;
+                    }
+                    else{
+                        try{
+                            idDest = gDest->getID();
+                        }
+                        catch (exception &e){
+                            idDest = -1;
+                        }
+                        if(idDest < 0){
+                            idDest = -101010101;
+                        }
+                    }
+                    if(anim.size() > 0){
+                        name = anim.data();
+                    }
+                    else name = "NONAMENONAMENONAMENONAME";
+                    fprintf(fp,"\t\"%d\" -> \"%d\" [label = \"%s\"];\n",id,idDest,name);
+                    //gAux->getID(),
+                    //(eAux->getDestionation()) ? eAux->getDestionation()->getID() : -10101010101,
+                    //eAux->getLabel().data());
+                    //this->nodes[i].getID(),
+                    //this->nodes[i].getEdge(j)->getDestionation()->getID(),
+                    //this->nodes[i].getEdge(j)->getLabel().data());
+                }
+            }
+        }
+    }
+    fprintf(fp,"}\n");
 
-	fclose(fp);
-	fclose(fp2);
+    fclose(fp);
 }
 
 
 
 bool Graph::removeNode(int i)
 {
-	nodes.erase( nodes.begin() + i);
-	nNodes--;
+    nodes.erase( nodes.begin() + i);
+    nNodes--;
 
-	return true;
+    return true;
 }
 
 bool Graph::changeNode(int i, gNode *node)
 {
-	nodes[i] = node;
+    nodes[i] = node;
 
-	return true;
+    return true;
 }
