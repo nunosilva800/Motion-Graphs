@@ -251,12 +251,23 @@ void Graph::createTransition(std::string m1, int node1, int frame1,
                     animation1_ptr->getNodeTrack(i)->getNodeKeyFrame(frame1)->getTime());
 
                 //get rotations and slerp them to new animatons
-
                 Ogre::Quaternion quat1 = animation1_ptr->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation();
-                Ogre::Quaternion quat2 = animation2_ptr->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation();
+                Ogre::Quaternion quat2 = animation2_trans2d->getNodeTrack(i)->getNodeKeyFrame(j)->getRotation();
 
-                newAnimation->getNodeTrack(i)->getNodeKeyFrame(aux)->setRotation(Ogre::Quaternion::Slerp(1,quat1,quat2)); //what is this first value? weight?
+                float alpha = 2 * powf(((i+1)/(frame2-frame1)),3) - 3* powf(((i+1)/(frame2-frame1)),2) + 1;
+                newAnimation->getNodeTrack(i)->getNodeKeyFrame(aux)->setRotation(Ogre::Quaternion::Slerp(alpha,quat1,quat2)); //what is this first value? weight? alpha?
 
+                //get root position and interpolate it linearly
+                float ix,iy,iz,root; // where is root ?!?! need to find it...
+
+                Ogre::Vector3 vec1 = animation1_ptr->getNodeTrack(root)->createNodeKeyFrame(j)->getTranslate();
+                Ogre::Vector3 vec2 = animation2_trans2d->getNodeTrack(root)->createNodeKeyFrame(j)->getTranslate();
+
+                ix = vec1.x + (j/(frame2-frame1)) *(vec2.x - vec1.x);
+                iy = vec1.y + (j/(frame2-frame1)) *(vec2.y - vec1.y);
+                iz = vec1.z + (j/(frame2-frame1)) *(vec2.z - vec1.z);
+
+                newAnimation->getNodeTrack(root)->getNodeKeyFrame(j)->setTranslate(Ogre::Vector3(ix,iy,iz));
 
             }
         }

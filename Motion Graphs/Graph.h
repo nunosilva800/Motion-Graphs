@@ -1,5 +1,6 @@
 #ifndef _GRAPH
 #define _GRAPH
+
 #include "stdafx.h"
 #include "gNode.h"
 #include "dMap.h"
@@ -8,6 +9,7 @@
 #include <OgreEntity.h>
 #include <OgreAnimation.h>
 #include <exception>
+
 
 class MotionGraph;
 
