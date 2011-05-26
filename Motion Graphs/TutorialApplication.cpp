@@ -167,7 +167,7 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		assIte->moveNext();assIte->moveNext();
 		assIte->moveNext();assIte->moveNext();
 
-		mAnimationState = assIte->getNext();
+		mAnimationState = assIte->current()->second;
         mAnimationState->setEnabled(true);
 		mAnimationState->setLoop(false);
 
@@ -191,7 +191,8 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		mInfoLabel->setCaption(str);
 
 		// initialize the animation Path, 
-		animationPath = new std::vector< Ogre::AnimationState* >;
+		//animationPath = new std::vector< Ogre::AnimationState* >;
+		animationPath = new std::vector< Ogre::String >;
     }
 
     return BaseApplication::keyPressed(arg);
@@ -262,7 +263,10 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				v.normalise();
 				m = s + dp*v;
 
-				currentAnimationError = (m - mEntity->getSkeleton()->getRootBone()->getPosition()).length();
+				Ogre::Vector3 currentRootPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+
+				currentAnimationError = (m - currentRootPos).length();
+
 			}
 
 			char str2[50];
@@ -295,13 +299,13 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				stra.append(mAnimationState->getAnimationName());
 				mInfoLabel->setCaption(stra);
 			}
-			else
+			else // we have done all animations
 			{
 				// update how many animations we have done
 				animationStep++;
 
 				// commit the best animation to the set
-				animationPath->push_back( choosenAnimation.first );
+				animationPath->push_back( choosenAnimation.first->getAnimationName() );
 
 				// move avatar to the end of animation so that we can set the node to that position
 				mAnimationState = choosenAnimation.first;
@@ -310,29 +314,31 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				mAnimationState->addTime(mAnimationState->getLength());
 				mEntity->_updateAnimation();
 				
+				// move the avatar to the point where the animation ended
 				Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
 				mNode->setPosition(v.x, 0, v.z);
 				
 				// if user defined path has all been "animated" we must prepare to show the motion
-				if( mWalkList.size() == animationStep )
+				//if( mWalkList.size() == animationStep )
+				if(anim_state != AVATAR_ANIM_IN_CALC)
 				{
 					state = SHOW_AVATAR_PATH;
 					mAnimationState->setEnabled(false);
 					mAnimationState->destroyBlendMask();
 
-					// set the animation state to the 1st one on the list
-					mAnimationState = animationPath->back();
-					animationPath->pop_back();
-					mAnimationState->setLoop(false);
+					// reset avatar position
+					mNode->setPosition(0, 0, 0);
+
+					// set the animation state be idle for a moment
+					mAnimationState = mEntity->getAnimationState("idle");
 					mAnimationState->setEnabled(true);
+					mAnimationState->setLoop(false);
 					mAnimationState->setTimePosition(0);
 
-
-					Ogre::String strb = "Showing animation: ";
-					strb.append(mAnimationState->getAnimationName());
-					mInfoLabel->setCaption(strb);
+					mInfoLabel->setCaption("Please hold a moment...");
 					mInfoLabel2->hide();
 					mInfoLabel3->hide();
+					
 					return true;
 				}
 			}
@@ -348,16 +354,15 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			mAnimationState->setEnabled(false);
 			mAnimationState->destroyBlendMask();
 			
-			// we still have animations in to run
+			// we still have animations to run
 			if(animationPath->size())
 			{
 				// update avatar's position to the position where the animation ended
-				mEntity->_updateAnimation();
 				Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
 				mNode->setPosition(v.x, 0, v.z);
 
 				// prepare the next animation to show
-				mAnimationState = animationPath->back();
+				mAnimationState = mEntity->getAnimationState( animationPath->front() );
 				animationPath->pop_back();
 				mAnimationState->setEnabled(true);
 				mAnimationState->setLoop(false);
@@ -369,8 +374,8 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			}
 			else
 			{
-				state = AVATAR_ANIM_DONE;
-				mInfoLabel->setCaption("Calculated Motion Path has ended, r to replay.");
+				state = AVATAR_PATH_DONE;
+				mInfoLabel->setCaption("Calculated Motion Path has ended\n 'r' to replay.");
 			}
 		}
 

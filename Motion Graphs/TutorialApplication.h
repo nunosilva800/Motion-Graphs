@@ -30,7 +30,7 @@ This source file is part of the
 #define SHOW_AVATAR_PATH	2
 #define AVATAR_ANIM_IN_CALC	3
 #define AVATAR_ANIM_DONE	4
-
+#define AVATAR_PATH_DONE	5
 
 class TutorialApplication : public BaseApplication
 {
@@ -87,7 +87,8 @@ private:
 	std::pair<Ogre::AnimationState*, Ogre::Real> choosenAnimation;	
 
 	// the set of animations that wil be used for the entire path
-	std::vector< Ogre::AnimationState* > * animationPath;
+	//std::vector< Ogre::AnimationState* > * animationPath;
+	std::vector< Ogre::String > * animationPath;
 	// a copy
 	std::vector< Ogre::AnimationState* > * animationPath_copy;
 
@@ -99,7 +100,6 @@ private:
 	Ogre::Vector3 s;
 	Ogre::Vector3 e;
 	Ogre::Vector3 m;
-
 
 
 };
