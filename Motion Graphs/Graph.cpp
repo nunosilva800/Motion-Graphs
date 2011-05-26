@@ -30,7 +30,7 @@ Graph::~Graph(){
  */
 int Graph::addNode(gNode *node){
 	node->setID(this->nNodes);
-	this->nodes.push_back(*node);
+	this->nodes.push_back(node);
 	this->nNodes++;
 	return node->getID();
 }
@@ -38,7 +38,7 @@ int Graph::addNode(gNode *node){
 /**
  * Verifica se aquele nodo já está introduzido no grafo
  * @return NULL caso não exista ou retorna o próprio nodo
- */
+ *
 gNode* Graph::existNode(gNode *node){
 	for(int i = 0 ; i < this->nNodes ; i++){
 		if(node->getID() == this->nodes[i].getID()) return this->getNode(i);
@@ -52,7 +52,7 @@ gNode* Graph::existNode(gNode *node){
  */
 gNode *Graph::getNode(int node){
 	if(node >= this->nNodes || node < 0) return NULL;
-	else return &this->nodes.at(node);
+	else return this->nodes.at(node);
 }
 
 
@@ -118,10 +118,13 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 	}
 
 	int k;
-
+	FILE *f;
+	if((f = fopen("indexes.txt","w")) == NULL) return;
+	
 	for(it = motions->begin(), i = 0 ; it != motions->end() ; it++, i++){
 		int sep = 1;
 		for(j = 0 ; j < it->second->getNPointClouds() ; j++){
+			fprintf(f,"%d, ",this->indexes[i][j]);
 			if(this->indexes[i][j] != -1){
 				bool done = false;
 				for(k = j + 1 ; k < it->second->getNPointClouds() && !done ; k++){
@@ -133,7 +136,9 @@ void Graph::constructGraph(Ninja motions, int nMotions, float threshold, int nCo
 				}
 			}
 		}
+		fprintf(f,"\n");
 	}
+	fclose(f);
 }
 
 
@@ -309,15 +314,23 @@ void Graph::initIndexes(Ninja motions, int nMotions){
 
 void Graph::printGraph(char *path){
 	FILE *fp = NULL;
+	FILE *fp2 = NULL;
 	Edge* eAux;
 	gNode* gAux;
 	if((fp = fopen(path,"w")) == NULL) return ;
+	if((fp2 = fopen("cenas.txt","w")) == NULL) return ;
 
  	fprintf(fp,"digraph G {\n");
 	fprintf(fp,"subgraph cluster0{\n");
 	fprintf(fp,"style=filled;\n");
 	fprintf(fp,"color= red;\n");
 	fprintf(fp,"node [ fillcolor =white color = black  style=filled  shape = hexagon] ; \n");
+	int ac = 0;
+	for(int i = 0 ; i < this->nNodes ; i++){
+		ac += this->getNode(i)->getNEdges();
+	}
+
+	fprintf(fp2,"%d\n%d\n",this->nNodes,ac);
 
 	for(int i = 0 ; i < this->nNodes ; i++){
 		gAux = this->getNode(i);
@@ -352,6 +365,7 @@ void Graph::printGraph(char *path){
 						name = anim.data();
 					}
 					else name = "NONAMENONAMENONAMENONAME";
+					fprintf(fp2,"%d %d\n",gAux->getID(),gDest->getID());
 					fprintf(fp,"\t\"%d\" -> \"%d\" [label = \"%s\"];\n",id,idDest,name);
 																		//gAux->getID(),
 																		//(eAux->getDestionation()) ? eAux->getDestionation()->getID() : -10101010101,
@@ -366,6 +380,7 @@ void Graph::printGraph(char *path){
 	fprintf(fp,"}\n");
 
 	fclose(fp);
+	fclose(fp2);
 }
 
 
@@ -380,7 +395,7 @@ bool Graph::removeNode(int i)
 
 bool Graph::changeNode(int i, gNode *node)
 {
-	nodes[i] = *node;
+	nodes[i] = node;
 
 	return true;
 }

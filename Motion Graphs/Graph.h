@@ -35,7 +35,7 @@ class Graph{
 	private:
 		Ogre::Entity *entity;
 		int nNodes;
-		std::vector<gNode> nodes;
+		std::vector<gNode*> nodes;
 
 
 		void splitAnimation(std::string name, int separation,

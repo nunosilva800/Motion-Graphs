@@ -132,16 +132,17 @@ void Tarjan::subGraph(Graph* sGraph)
 	cout << "\nMaior SCC group: " << index << " Total: " << val << "\n\n";
 
 	Graph *graph = new Graph();	
-	gNode aux;
+	
 
 		// Copia apenas os nós do maior grupo SCC
 		for (int i = 0; i < m_numNodes; i++) 
 		{	
-			aux.setID( i );
+			gNode *aux = new gNode();
+			
 			if (m_sccGroupID[i] == index)
 				graph->addNode( m_graph->getNode(i) );
 			else
-				graph->addNode( &aux );
+				graph->addNode( aux );
 		}
 
 		// Remove os death end's (referencias)

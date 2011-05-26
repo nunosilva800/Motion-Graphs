@@ -37,7 +37,7 @@ void MotionGraph::constructGraph(float threshold, int nCoincidents){
 
 	this->graph->constructGraph(this->motions,this->animCount,threshold,nCoincidents);
 
-	//this->graph = this->prune();
+//	this->graph = this->prune();
 
 	this->graph->printGraph("graph.dot");
 	Ogre::StringVector strv = this->entity->getAnimableValueNames();
@@ -73,7 +73,7 @@ Graph *MotionGraph::prune(){
 	// Aplicar o algoritmo de Tarjan ao Grafo
 	Tarjan scc(this->graph);
 
-	Graph * subGraph;
+	Graph * subGraph = new Graph();
 	scc.subGraph( subGraph );
 	return subGraph;
 
