@@ -8,7 +8,7 @@ using namespace std;
 
 #include <vector>
 
-#define NPOINTS 71
+#define NPOINTS 38
 
 class PointCloud{
 	public:
