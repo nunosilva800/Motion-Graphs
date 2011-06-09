@@ -110,7 +110,7 @@ protected:
 
 	Ogre::Real _timeController;
 
-	static const int FPS = 30;
+	static const int FPS = 2;
 	static const int iFPS = 1/FPS;
 
 	void _frameRenderingQueued(const Ogre::FrameEvent& evt);

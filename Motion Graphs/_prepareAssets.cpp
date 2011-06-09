@@ -205,8 +205,7 @@ void BaseApplication::_frameRenderingQueued(const Ogre::FrameEvent& evt)
 
 	_assets->insertPointCloud(*_assets->_currentAnimation,_timeController,pc);
 
-		_timeController+=0.033; // TODO: use the iFPS
-		//_timeController+=evt.timeSinceLastFrame;
+		_timeController+=0.1; // TODO: use the iFPS2		//_timeController+=evt.timeSinceLastFrame;
 	}
 	else {
 		//itera as animaçoes

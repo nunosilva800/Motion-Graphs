@@ -33,17 +33,20 @@ class Graph{
 		void printGraph(char *path);
 
 	private:
+		dMap *map;
 		Ogre::Entity *entity;
 		int nNodes;
 		std::vector<gNode*> nodes;
 
+		void createAnimation(std::string newName, std::string originaAnimation,
+							 int frame1, int frame2, int totalFrames);
 
 		void splitAnimation(std::string name, int separation,
 							int node1, int frame1,
-							int node2, int frame2);
+							int node2, int frame2, int totalFrames);
 		void createTransition(std::string m1, int node1, int frame1,
 							  std::string m2, int node2, int frame2,
-							  int transiction,int range, Ninja motions);
+							  int transiction,int range, int totalFrames1, int totalFrames2);
 
 		int **indexes;
 		void initIndexes(Ninja motions, int nMotions);

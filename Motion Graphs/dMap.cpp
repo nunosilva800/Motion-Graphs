@@ -66,8 +66,8 @@ int dMap::getMinimuns(int level, std::vector<int> *m1, std::vector<int> *m2){
 	std::string s2 = *this->relations[level][1];
 
 
-	for(int i = 0 ; i < np1 ; i++){
-		for(int j = 0 ; j < np2 ; j++){
+	for(int i = 0 ; i < np1 - this->nSteps ; i++){
+		for(int j = this->nSteps ; j < np2 ; j++){
 			if(this->differenceMap[level][i][j] < this->threshold){
 				if((i + this->nSteps) < np1 && (j + this->nSteps) < np2){//(np1 - i) >= this->nSteps && (np2 - j) >= this->nSteps ){
 					bool ok = true;
