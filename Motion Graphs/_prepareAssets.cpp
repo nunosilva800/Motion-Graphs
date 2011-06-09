@@ -169,6 +169,8 @@ void TutorialApplication::createScene(void)
     // create a line to show the path done by the char
     lines_path_done = new DynamicLines(Ogre::RenderOperation::OT_LINE_STRIP);
 
+	state = SET_USER_PATH;
+
     //TODO change color of the line
     /*lines_path_done->getMaterial()->setAmbient(Ogre::ColourValue(1,0,0));
     lines_path_done->getMaterial()->setDiffuse(Ogre::ColourValue(1,0,0));

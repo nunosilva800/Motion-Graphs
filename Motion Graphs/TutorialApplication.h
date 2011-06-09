@@ -53,6 +53,7 @@ protected:
 	
 	void _loadEntityNames();
 
+	void TutorialApplication::initPathSynthesis();
 
 private:
     Ogre::Plane * mPlane;
