@@ -184,41 +184,41 @@ void BaseApplication::_frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
 	//_assets->_anims->getAnimationState(*_assets->_currentAnimation)->addTime(evt.timeSinceLastFrame);
 	
-	PointCloud* pc = new PointCloud();
-	// time controler usado para iterar o tempo, para cada animaçao vai correr a animaçao ate ao fim com timesteps
-	//	de 1/fps 
-	if (_timeController <= _assets->getAnimationState(*_assets->_currentAnimation)->getLength()){ 	
-	
-	_assets->getAnimationState(*_assets->_currentAnimation)->setTimePosition(_timeController);
+	//PointCloud* pc = new PointCloud();
+	//// time controler usado para iterar o tempo, para cada animaçao vai correr a animaçao ate ao fim com timesteps
+	////	de 1/fps 
+	//if (_timeController <= _assets->getAnimationState(*_assets->_currentAnimation)->getLength()){ 	
+	//
+	//_assets->getAnimationState(*_assets->_currentAnimation)->setTimePosition(_timeController);
 
-	Ogre::Skeleton::BoneIterator _i= _assets->getSkeleton()->getBoneIterator();
- 	for ( ; _i.hasMoreElements(); )
- 	{
- 		Ogre::Bone* bone=_i.getNext();
-		// calcula as posiçoes no mundo, TODO: verificar se ta coerente
-		const Ogre::Vector3& rp = _assets->mNode->_getDerivedPosition() + _assets->mNode->_getDerivedOrientation() * _assets->mNode->_getDerivedScale() * bone->_getDerivedPosition();
+	//Ogre::Skeleton::BoneIterator _i= _assets->getSkeleton()->getBoneIterator();
+ //	for ( ; _i.hasMoreElements(); )
+ //	{
+ //		Ogre::Bone* bone=_i.getNext();
+	//	// calcula as posiçoes no mundo, TODO: verificar se ta coerente
+	//	const Ogre::Vector3& rp = _assets->mNode->_getDerivedPosition() + _assets->mNode->_getDerivedOrientation() * _assets->mNode->_getDerivedScale() * bone->_getDerivedPosition();
 
- 		//const Ogre::Vector3& rp = bone->getPosition();
- 		pc->addPoint(rp.x,rp.y,rp.z);
- 
- 	}
+ //		//const Ogre::Vector3& rp = bone->getPosition();
+ //		pc->addPoint(rp.x,rp.y,rp.z);
+ //
+ //	}
 
-	_assets->insertPointCloud(*_assets->_currentAnimation,_timeController,pc);
+	//_assets->insertPointCloud(*_assets->_currentAnimation,_timeController,pc);
 
-		_timeController+=0.1; // TODO: use the iFPS2		//_timeController+=evt.timeSinceLastFrame;
-	}
-	else {
-		//itera as animaçoes
-		
-		_assets->_currentAnimation++;
-		if 	(_assets->_currentAnimation == 	_assets->animNames->end()){
-			printf("All Done!!\n");
-			_assets->_prepare_assets_done = true;
-		}
-		else {
-			_assets->getAnimationState(*_assets->_currentAnimation)->setEnabled(true);
-			_assets->getAnimationState(*_assets->_currentAnimation)->setLoop(true);
-			_timeController=0;
-		}	
-	}
+	//	_timeController+=0.1; // TODO: use the iFPS2		//_timeController+=evt.timeSinceLastFrame;
+	//}
+	//else {
+	//	//itera as animaçoes
+	//	
+	//	_assets->_currentAnimation++;
+	//	if 	(_assets->_currentAnimation == 	_assets->animNames->end()){
+	//		printf("All Done!!\n");
+	//		_assets->_prepare_assets_done = true;
+	//	}
+	//	else {
+	//		_assets->getAnimationState(*_assets->_currentAnimation)->setEnabled(true);
+	//		_assets->getAnimationState(*_assets->_currentAnimation)->setLoop(true);
+	//		_timeController=0;
+	//	}	
+	//}
 }

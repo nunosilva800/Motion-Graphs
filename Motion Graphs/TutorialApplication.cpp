@@ -167,6 +167,7 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		assIte->moveNext();assIte->moveNext();
 		assIte->moveNext();assIte->moveNext();
 
+
 		mAnimationState = assIte->current()->second;
         mAnimationState->setEnabled(true);
 		mAnimationState->setLoop(false);
@@ -290,6 +291,9 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				mAnimationState->setEnabled(false);
 				mAnimationState->destroyBlendMask();
 				mAnimationState = assIte->getNext();
+				if(mAnimationState->getAnimationName() == "volta")
+					mAnimationState = assIte->getNext();
+
 				mAnimationState->setEnabled(true);
 				mAnimationState->setLoop(false);
 				framePositionCollection.clear();
@@ -328,7 +332,8 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 
 					// reset avatar position
 					mNode->setPosition(0, 0, 0);
-
+					lastRootBonePos.x = lastRootBonePos.y = lastRootBonePos.z = 0;
+					
 					// set the animation state be idle for a moment
 					mAnimationState = mEntity->getAnimationState("idle");
 					mAnimationState->setEnabled(true);
@@ -358,8 +363,9 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			if(animationPath->size())
 			{
 				// update avatar's position to the position where the animation ended
-				Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
-				mNode->setPosition(v.x, 0, v.z);
+				//Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
+				//mNode->setPosition(v.x, 0, v.z);
+				mNode->setPosition(lastRootBonePos.x, 0, lastRootBonePos.z);
 
 				// prepare the next animation to show
 				mAnimationState = mEntity->getAnimationState( animationPath->front() );
@@ -378,8 +384,17 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				mInfoLabel->setCaption("Calculated Motion Path has ended\n 'r' to replay.");
 			}
 		}
+		Ogre::Real x1, x2, z1, z2;
 
+		x1 = mEntity->getSkeleton()->getRootBone()->getPosition().x;
+		z1 = mEntity->getSkeleton()->getRootBone()->getPosition().z;
 		mAnimationState->addTime(evt.timeSinceLastFrame);
+		mEntity->_updateAnimation();
+		x2 = mEntity->getSkeleton()->getRootBone()->getPosition().x;
+		z2 = mEntity->getSkeleton()->getRootBone()->getPosition().z;
+
+		lastRootBonePos.x += x2-x1;
+		lastRootBonePos.z += z2-z1;
 	}
 
     return BaseApplication::frameRenderingQueued(evt);

@@ -101,6 +101,7 @@ private:
 	Ogre::Vector3 e;
 	Ogre::Vector3 m;
 
+	Ogre::Vector3 lastRootBonePos;
 
 };
 
