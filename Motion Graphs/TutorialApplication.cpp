@@ -101,9 +101,6 @@ bool TutorialApplication::mousePressed(const OIS::MouseEvent &arg, OIS::MouseBut
 
 void TutorialApplication::initPathSynthesis()
 {
-	state = CALC_AVATAR_PATH;
-	anim_state = AVATAR_ANIM_IN_CALC;
-		
     // TODO: Aceder aqui ao grafo    
 	// Get all animations and get an iterator
     AnimSSet = mEntity->getAllAnimationStates();
@@ -125,12 +122,14 @@ void TutorialApplication::initPathSynthesis()
 	assIte->moveNext();assIte->moveNext();
 	assIte->moveNext();assIte->moveNext();
 	assIte->moveNext();assIte->moveNext();
-	assIte->moveNext();
-
+	assIte->moveNext();assIte->moveNext();
+	assIte->moveNext();assIte->moveNext();
+	assIte->moveNext();assIte->moveNext();
 
 	mAnimationState = assIte->current()->second;
     mAnimationState->setEnabled(true);
 	mAnimationState->setLoop(false);
+	mAnimationState->setTimePosition(0);
 
     // Clean old frame positions
     framePositionCollection.clear();
@@ -168,77 +167,55 @@ bool TutorialApplication::keyPressed(const OIS::KeyEvent &arg) {
 		lines->addPoint(Ogre::Vector3(0, 1, 0));
 		lines->update();
 
+		// initialize the animation Path, 
+		animationPath = new std::vector< Ogre::String >;
 	}
-	// redo calculated motion path
-	if (arg.key == OIS::KC_R) 
-	{
-		state = SHOW_AVATAR_PATH ;
-
-		//animationPath_copy->clear();
-		//for(int i=0; i<animationPath->size(); i++)
-		//	animationPath_copy[i] = animationPath[i];
-
-		//// update avatar's position 
-		//mNode->setPosition(0, 0, 0);
-
-		//// prepare the next animation to show
-		//mAnimationState = animationPath_copy->back();
-		//animationPath_copy->pop_back();
-		//mAnimationState->setEnabled(true);
-		//mAnimationState->setLoop(false);
-		//mAnimationState->setTimePosition(0);
-
-		//Ogre::String strc = "Showing animation: ";
-		//strc.append(mAnimationState->getAnimationName());
-		//mInfoLabel->setCaption(strc);
-
-	}
+	
     if (arg.key == OIS::KC_SPACE) // toggle visibility of advanced frame stats
     {
-        
 		initPathSynthesis();
 
+		state = CALC_AVATAR_PATH;
+		anim_state = AVATAR_ANIM_IN_CALC;
+
 		// initialize the animation Path, 
-		//animationPath = new std::vector< Ogre::AnimationState* >;
 		animationPath = new std::vector< Ogre::String >;
+		
+		//set the node and entity to origin position
+		mNode->setPosition(0,0,0);
+		mEntity->setDisplaySkeleton(true);
+		mEntity->getSkeleton()->getRootBone()->setPosition(0,0,0);
+		mEntity->_updateAnimation();
 
-		mNode->setPosition(0, 0, 0);
-		lastRootBonePos.x = 0;
-		lastRootBonePos.y = 0;
-		lastRootBonePos.z = 0;
+		// place root bone at origin position
+		Ogre::Vector3 dp = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
+		mNode->translate(-dp.x, 0, -dp.z);
+		mEntity->getSkeleton()->getRootBone()->translate(-dp.x, 0, -dp.z);
+
     }
-
     return BaseApplication::keyPressed(arg);
-
 }
 
 bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
+		
 	Ogre::Real x1, x2, z1, z2;
+
     if (state == CALC_AVATAR_PATH)	// Run all animations of the model
 	{
         // If the current time lenght <= total time lenght of the animation
         if(mAnimationState->getTimePosition() < mAnimationState->getLength() )
 		{
-            // Get current position
-            //Ogre::Vector3 currentPos = mEntity->getSkeleton()->getRootBone()->getPosition();
-			// project onto floor
-			//currentPos.y = 0;
-   //         mAnimationState->addTime(evt.timeSinceLastFrame);
-			////force animation update
-			//mEntity->_updateAnimation();
-			
-			x1 = mEntity->getSkeleton()->getRootBone()->getPosition().x;
-			z1 = mEntity->getSkeleton()->getRootBone()->getPosition().z;
 			mAnimationState->addTime(evt.timeSinceLastFrame);
+			//// Get current root bone position
+			//Ogre::Vector3 rp = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
+			//// get current node position
+			//Ogre::Vector3 np = mNode->getPosition();
+			//// translate the root bone
+			//mEntity->getSkeleton()->getRootBone()->translate(np.x+rp.x, 0,np.z+rp.z);
+			//force animation update
 			mEntity->_updateAnimation();
-			x2 = mEntity->getSkeleton()->getRootBone()->getPosition().x;
-			z2 = mEntity->getSkeleton()->getRootBone()->getPosition().z;
-
-			lastRootBonePos.x += x2-x1;
-			lastRootBonePos.y = 0;
-			lastRootBonePos.z += z2-z1;
-
-			framePositionCollection.push_back(lastRootBonePos);
+			// save this position 
+			framePositionCollection.push_back(mEntity->getSkeleton()->getRootBone()->_getDerivedPosition());
         }
 
 		// if the current animation has ended
@@ -258,7 +235,6 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			char str[50] = "";
 			sprintf(str, "Arc Lenght: %.3f", currentArcLenght);
 			mInfoLabel2->setCaption(str);
-			anim_state = AVATAR_ANIM_DONE;
 
 			// search for the vector in user defined path with the arcLenght 
 			// if the number of points in the defined path is lower than the number os animations done
@@ -288,17 +264,17 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				v.normalise();
 				m = s + dp*v;
 
-				//Ogre::Vector3 currentRootPos = mEntity->getSkeleton()->getRootBone()->getPosition();
+				Ogre::Vector3 currentRootPos = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
 
-
-
-				currentAnimationError = (m - lastRootBonePos).length();
+				currentAnimationError = (m - currentRootPos).length();
 
 			}
 
 			char str2[50];
 			sprintf(str2, "Anim Error: %f", currentAnimationError);
 			mInfoLabel3->setCaption(str2);
+
+			anim_state = AVATAR_ANIM_DONE;
         }
 
 		//this animation has ended, must check if there is another one to test
@@ -347,13 +323,12 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 				mEntity->_updateAnimation();
 				
 				// move the avatar to the point where the animation ended
-				//Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
-				mNode->setPosition(lastRootBonePos);
+				Ogre::Vector3 dp = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
+				mNode->translate(-dp.x, 0, -dp.z);
 
 				// start over again
 				//initPathSynthesis();
 
-				
 				// if user defined path has all been "animated" we must prepare to show the motion
 				if( mWalkList.size() == animationStep )
 				//if(anim_state != AVATAR_ANIM_IN_CALC)
@@ -361,16 +336,21 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 					state = SHOW_AVATAR_PATH;
 					mAnimationState->setEnabled(false);
 					mAnimationState->destroyBlendMask();
-
-					// reset avatar position
-					mNode->setPosition(0, 0, 0);
-					lastRootBonePos.x = lastRootBonePos.y = lastRootBonePos.z = 0;
 					
 					// set the animation state be idle for a moment
 					mAnimationState = mEntity->getAnimationState("idle");
 					mAnimationState->setEnabled(true);
 					mAnimationState->setLoop(false);
 					mAnimationState->setTimePosition(0);
+					
+					//set the node and entity to origin position
+					mNode->setPosition(0,0,0);
+					mEntity->_updateAnimation();
+
+					// place root bone at origin position
+					Ogre::Vector3 dp = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
+					mNode->translate(-dp.x, 0, -dp.z);
+					mEntity->getSkeleton()->getRootBone()->translate(-dp.x, 0, -dp.z);
 
 					mInfoLabel->setCaption("Please hold a moment...");
 					mInfoLabel2->hide();
@@ -394,17 +374,18 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			// we still have animations to run
 			if(animationPath->size())
 			{
-				// update avatar's position to the position where the animation ended
-				//Ogre::Vector3 v = mEntity->getSkeleton()->getRootBone()->getPosition();
-				//mNode->setPosition(v.x, 0, v.z);
-				mNode->setPosition(lastRootBonePos);
-
 				// prepare the next animation to show
 				mAnimationState = mEntity->getAnimationState( animationPath->front() );
 				animationPath->pop_back();
 				mAnimationState->setEnabled(true);
 				mAnimationState->setLoop(false);
 				mAnimationState->setTimePosition(0);
+
+				// update avatar's position to the position where the animation ended
+				// place root bone at origin position
+				Ogre::Vector3 dp = mEntity->getSkeleton()->getRootBone()->_getDerivedPosition();
+				mNode->translate(-dp.x, 0, -dp.z);
+				mEntity->getSkeleton()->getRootBone()->translate(-dp.x, 0, -dp.z);
 
 				Ogre::String strc = "Showing animation: ";
 				strc.append(mAnimationState->getAnimationName());
@@ -413,20 +394,13 @@ bool TutorialApplication::frameRenderingQueued(const Ogre::FrameEvent &evt) {
 			else
 			{
 				state = AVATAR_PATH_DONE;
-				mInfoLabel->setCaption("Calculated Motion Path has ended\n 'r' to replay.");
+				mInfoLabel->setCaption("Calculated Motion Path has ended.\n");
 			}
 		}
-		Ogre::Real x1, x2, z1, z2;
 
-		x1 = mEntity->getSkeleton()->getRootBone()->getPosition().x;
-		z1 = mEntity->getSkeleton()->getRootBone()->getPosition().z;
 		mAnimationState->addTime(evt.timeSinceLastFrame);
 		mEntity->_updateAnimation();
-		x2 = mEntity->getSkeleton()->getRootBone()->getPosition().x;
-		z2 = mEntity->getSkeleton()->getRootBone()->getPosition().z;
 
-		lastRootBonePos.x += x2-x1;
-		lastRootBonePos.z += z2-z1;
 	}
 
     return BaseApplication::frameRenderingQueued(evt);
